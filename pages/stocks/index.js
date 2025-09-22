@@ -1,14 +1,9 @@
 // pages/stocks/index.js
-import fs from "fs";
-import path from "path";
-import Link from "next/link";
-import PostCard from "../../components/PostCard";
-import { NextSeo } from "next-seo";
 
 export async function getServerSideProps() {
   return {
     redirect: {
-      destination: "/",
+      destination: "/", // đổi hướng về Home (hoặc trang bạn muốn)
       permanent: false,
     },
   };
@@ -17,5 +12,3 @@ export async function getServerSideProps() {
 export default function StocksRedirect() {
   return null;
 }
-
-
