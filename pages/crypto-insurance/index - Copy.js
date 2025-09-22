@@ -3,7 +3,7 @@ import path from "path";
 import PostCard from "../../components/PostCard";
 import { NextSeo } from "next-seo";
 
-export default function InsuranceTaxAlias({ posts }) {
+export default function InsuranceTax({ posts }) {
   return (
     <>
       <NextSeo
@@ -13,7 +13,7 @@ export default function InsuranceTaxAlias({ posts }) {
           title: "Crypto Insurance & Tax Insights 2025",
           description:
             "Stay updated with the latest crypto insurance and tax news, policies, and regulations.",
-          url: "https://finnews247.com/insurance",
+          url: "https://finnews247.com/crypto-insurance",
         }}
       />
       <div>
@@ -28,18 +28,19 @@ export default function InsuranceTaxAlias({ posts }) {
   );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const read = (f) =>
     JSON.parse(fs.readFileSync(path.join(process.cwd(), "data", f), "utf8"));
 
   const insurance = read("insurance.json");
   const tax = read("tax.json");
 
-  // Gộp + ép category = insurance để route /insurance/[slug] nhận diện
+  // Gộp + sort mới nhất
   const posts = [...insurance, ...tax]
     .map((p) => ({
       ...p,
-      category: "insurance",
+      // Ép category để PostCard build URL đúng route này
+      category: "crypto-insurance",
     }))
     .sort((a, b) => new Date(b.date) - new Date(a.date));
 

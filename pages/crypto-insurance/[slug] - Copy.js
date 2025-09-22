@@ -3,7 +3,7 @@ import BestWallets from "../../components/BestWallets";
 import TopStaking from "../../components/TopStaking";
 import TopExchanges from "../../components/TopExchanges";
 
-export default function InsuranceDetail({ post }) {
+export default function InsuranceTaxDetail({ post }) {
   if (!post) return <p className="p-6">Post not found.</p>;
 
   const title = `${post.title} | FinNews247`;
@@ -18,20 +18,28 @@ export default function InsuranceDetail({ post }) {
           title,
           description: desc,
           url: `https://finnews247.com/crypto-insurance/${post.slug}`,
+          images: post.image ? [{ url: post.image }] : [],
         }}
       />
 
-      {/* Tiêu đề */}
       <h1 className="text-2xl font-bold mb-4">{post.title}</h1>
       <p className="text-gray-600 mb-6">{post.date}</p>
 
-      {/* Nội dung chi tiết */}
+      {post.image && (
+        <div className="mb-6">
+          <img
+            src={post.image}
+            alt={post.title}
+            className="w-full h-auto rounded-lg shadow"
+          />
+        </div>
+      )}
+
       <div
         className="prose dark:prose-invert"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
 
-      {/* Sidebar mini widgets */}
       <div className="mt-10 space-y-6">
         <TopExchanges />
         <BestWallets />
@@ -50,28 +58,12 @@ export async function getServerSideProps({ params }) {
   const insurance = read("insurance.json");
   const tax = read("tax.json");
 
-  // Merge cả Insurance + Tax
-  const posts = [...insurance, ...tax].map((p) => {
-    const href = `/crypto-insurance/${p.slug}`;
-    return {
-      ...p,
-      category: "crypto-insurance",
-      path: "crypto-insurance",
-      section: "crypto-insurance",
-      href,
-      url: href,
-      link: href,
-    };
-  });
+  const posts = [...insurance, ...tax].map((p) => ({
+    ...p,
+    href: `/crypto-insurance/${p.slug}`,
+  }));
 
-  // Debug: in ra slug để check
-  console.log("URL params.slug =", params.slug);
-  console.log("Available slugs =", posts.map((p) => p.slug));
-
-  const post = posts.find(
-    (p) => p.slug.trim().toLowerCase() === params.slug.trim().toLowerCase()
-  );
-
+  const post = posts.find((p) => p.slug === params.slug);
   if (!post) return { notFound: true };
 
   return { props: { post } };
