@@ -11,7 +11,6 @@ import TopMovers from "../components/TopMovers";
 import FearGreed from "../components/FearGreed";
 
 export default function Home({
-  signalsPosts,
   altcoinPosts,
   exchangePosts,
   appPosts,
@@ -19,81 +18,130 @@ export default function Home({
   newsPosts,
   guidePosts,
 }) {
+  // Structured Data for SEO
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: "FinNews247 - Crypto Trading Signals & Market Coverage",
+    url: "https://finnews247.com/",
+    description:
+      "FinNews247 provides professional finance coverage with a focus on crypto trading signals, entry, target, stoploss, plus updates on cryptocurrencies, stocks, economy, and global markets.",
+    publisher: {
+      "@type": "Organization",
+      name: "FinNews247",
+      url: "https://finnews247.com/",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://finnews247.com/logo.png",
+      },
+    },
+  };
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-      {/* Sidebar */}
-      <aside className="md:col-span-1 space-y-6">
-        <TradingSignalsBoxMini />
-        <TopExchanges />
-        <BestWallets />
-        <TopStaking />
-        <TopMovers />
-        <FearGreed />
-      </aside>
+    <>
+      <NextSeo
+        title="FinNews247 - Crypto Trading Signals & Market Coverage"
+        description="Stay updated with reliable crypto trading signals (entry, target, stoploss) and market insights across cryptocurrencies, stocks, economy, and global markets."
+        openGraph={{
+          title: "FinNews247 - Crypto Trading Signals & Market Coverage",
+          description:
+            "FinNews247 delivers professional finance coverage with crypto trading signals, stock updates, economy, and market news.",
+          url: "https://finnews247.com/",
+          images: [{ url: "https://finnews247.com/logo.png" }],
+        }}
+        additionalMetaTags={[
+          {
+            name: "keywords",
+            content:
+              "crypto trading signals, bitcoin signals, ethereum signals, entry target stoploss, crypto analysis, finnews247",
+          },
+        ]}
+      />
 
-      {/* Main Content */}
-      <main className="md:col-span-3 space-y-12">
-        {/* Altcoins */}
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Altcoin Analysis</h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            {altcoinPosts.map((p) => (
-              <PostCard key={p.slug} post={p} />
-            ))}
-          </div>
-        </section>
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
 
-        {/* Exchanges */}
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Crypto Exchanges Insights</h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            {exchangePosts.map((p) => (
-              <PostCard key={p.slug} post={p} />
-            ))}
-          </div>
-        </section>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        {/* Sidebar with widgets */}
+        <aside className="md:col-span-1 space-y-6">
+          <TradingSignalsBoxMini />
+          <TopExchanges />
+          <BestWallets />
+          <TopStaking />
+          <TopMovers />
+          <FearGreed />
+        </aside>
 
-        {/* Apps */}
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Crypto Apps & Wallets</h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            {appPosts.map((p) => (
-              <PostCard key={p.slug} post={p} />
-            ))}
-          </div>
-        </section>
+        {/* Main Content area */}
+        <main className="md:col-span-3 space-y-12">
+          {/* Trading Signals highlight */}
+          <TradingSignalsBoxMain />
 
-        {/* Insurance & Tax */}
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Crypto Insurance & Tax</h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            {insuranceTaxPosts.map((p) => (
-              <PostCard key={p.slug} post={p} />
-            ))}
-          </div>
-        </section>
+          {/* Section: Altcoin Analysis (Altcoins + SEC Coin) */}
+          <section>
+            <h2 className="text-2xl font-semibold mb-4">Altcoin Analysis</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {altcoinPosts.map((p) => (
+                <PostCard key={p.slug} post={p} />
+              ))}
+            </div>
+          </section>
 
-        {/* News */}
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Crypto & Market News</h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            {newsPosts.map((p) => (
-              <PostCard key={p.slug} post={p} />
-            ))}
-          </div>
-        </section>
+          {/* Section: Crypto Exchanges Insights (Fidelity + Exchanges) */}
+          <section>
+            <h2 className="text-2xl font-semibold mb-4">Crypto Exchanges Insights</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {exchangePosts.map((p) => (
+                <PostCard key={p.slug} post={p} />
+              ))}
+            </div>
+          </section>
 
-        {/* Guides */}
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Guides & Reviews</h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            {guidePosts.map((p) => (
-              <PostCard key={p.slug} post={p} />
-            ))}
-          </div>
-        </section>
-      </main>
-    </div>
+          {/* Section: Crypto Apps & Wallets */}
+          <section>
+            <h2 className="text-2xl font-semibold mb-4">Crypto Apps & Wallets</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {appPosts.map((p) => (
+                <PostCard key={p.slug} post={p} />
+              ))}
+            </div>
+          </section>
+
+          {/* Section: Crypto Insurance & Tax */}
+          <section>
+            <h2 className="text-2xl font-semibold mb-4">Crypto Insurance & Tax</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {insuranceTaxPosts.map((p) => (
+                <PostCard key={p.slug} post={p} />
+              ))}
+            </div>
+          </section>
+
+          {/* Section: Crypto & Market News */}
+          <section>
+            <h2 className="text-2xl font-semibold mb-4">Crypto & Market News</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {newsPosts.map((p) => (
+                <PostCard key={p.slug} post={p} />
+              ))}
+            </div>
+          </section>
+
+          {/* Section: Guides & Reviews */}
+          <section>
+            <h2 className="text-2xl font-semibold mb-4">Guides & Reviews</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {guidePosts.map((p) => (
+                <PostCard key={p.slug} post={p} />
+              ))}
+            </div>
+          </section>
+        </main>
+      </div>
+    </>
   );
 }
 
@@ -104,17 +152,14 @@ export async function getServerSideProps() {
   };
 
   const SECTION_COUNTS = {
-    signals: 6,
-    altcoins: 6,
-    exchanges: 6,
+    altcoins: 8,
+    exchanges: 8,
     apps: 6,
     insuranceTax: 6,
     news: 6,
     guides: 6,
   };
 
-  // Load JSON
-  const signals = readData("signals.json");
   const altcoins = readData("altcoins.json");
   const seccoin = readData("seccoin.json");
   const fidelity = readData("fidelity.json");
@@ -129,7 +174,6 @@ export async function getServerSideProps() {
 
   return {
     props: {
-      signalsPosts: sortDesc([...signals]).slice(0, SECTION_COUNTS.signals),
       altcoinPosts: sortDesc([...altcoins, ...seccoin]).slice(0, SECTION_COUNTS.altcoins),
       exchangePosts: sortDesc([...fidelity, ...cryptoexchanges]).slice(0, SECTION_COUNTS.exchanges),
       appPosts: sortDesc([...apps]).slice(0, SECTION_COUNTS.apps),
