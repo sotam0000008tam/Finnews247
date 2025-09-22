@@ -1,0 +1,200 @@
+[
+  {
+    "id": 1,
+    "pair": "BTC/USDT",
+    "type": "Long",
+    "entry": "114000",
+    "target": "118500",
+    "stoploss": "112000",
+    "date": "2025-09-12 10:30",
+    "image": "signal1.png",
+    "excerpt": "Long BTC at 114,000, target 118,500, stoploss 112,000."
+  },
+  {
+    "id": 2,
+    "pair": "ETH/USDT",
+    "type": "Short",
+    "entry": "4520",
+    "target": "4300",
+    "stoploss": "4600",
+    "date": "2025-09-12 11:00",
+    "image": "signal2.png",
+    "excerpt": "Short ETH at 4,520, target 4,300, stoploss 4,600."
+  },
+  {
+    "id": 3,
+    "pair": "SOL/USDT",
+    "type": "Long",
+    "entry": "238",
+    "target": "260",
+    "stoploss": "230",
+    "date": "2025-09-12 12:00",
+    "image": "signal3.png",
+    "excerpt": "Long SOL at 238, target 260, stoploss 230."
+  },
+  {
+    "id": 4,
+    "pair": "XRP/USDT",
+    "type": "Long",
+    "entry": "3.05",
+    "target": "3.50",
+    "stoploss": "2.90",
+    "date": "2025-09-12 12:30",
+    "image": "signal4.png",
+    "excerpt": "Long XRP at 3.05, target 3.50, stoploss 2.90."
+  },
+  {
+    "id": 5,
+    "pair": "DOGE/USDT",
+    "type": "Short",
+    "entry": "0.262",
+    "target": "0.230",
+    "stoploss": "0.275",
+    "date": "2025-09-12 13:00",
+    "image": "signal5.png",
+    "excerpt": "Short DOGE at 0.262, target 0.230, stoploss 0.275."
+  },
+  {
+    "id": 6,
+    "pair": "TOWNS/USDT",
+    "type": "Long",
+    "entry": "0.03067",
+    "target": "0.07",
+    "stoploss": "0,02134",
+    "date": "2025-09-15 08:00",
+    "image": "signal6.png",
+    "excerpt": "Long TOWNS at 0.03067, target 0.07, stoploss 0.02134."
+  },
+  {
+    "id": 7,
+    "pair": "BTC/USDT",
+    "type": "Buy Setup",
+    "entry": "114850",
+    "target": "118500 - 120000 - 130000 - 140000 - 222222",
+    "stoploss": "106889",
+    "date": "2025-09-16 17:30",
+    "image": "signal7.png",
+    "excerpt": "Buy (Hold) BTC at 114,850, target 18500 - 120000 - 130000 - 140000 - 222222, stoploss 106,880."
+  },
+  {
+    "id": 8,
+    "pair": "TAKE/USDT.P",
+    "type": "Long",
+    "entry": "0.19376",
+    "target": "0.25 - 0.5 - 0.75 - 1 - 1.8",
+    "stoploss": "0.11089",
+    "date": "2025-09-16 21:30",
+    "image": "signal8.png",
+    "excerpt": "Long TAKE at 0.19376, target 0.25 - 0.5 - 0.75 - 1 - 1.8, stoploss 0.11089."
+  },
+  {
+    "id": 9,
+    "pair": "SYN/USDT.P",
+    "type": "Long",
+    "entry": "0.135",
+    "target": "0.3 - 0.5 - 0.75 - 1 - 1.46",
+    "stoploss": "0.0690",
+    "date": "2025-09-16 23:30",
+    "image": "signal9.png",
+    "excerpt": "Long SYN at 0.135, target 0.3 - 0.5 - 0.75 - 1 - 1.46, stoploss 0.069."
+  },
+  {
+    "id": 10,
+    "pair": "MUBARAK/USDT.P",
+    "type": "Long",
+    "entry": "0.0349",
+    "target": "0.038 - 0.07 - 0.1 - 0.12 - 0.3",
+    "stoploss": "0.02",
+    "date": "2025-09-17 01:30",
+    "image": "signal10.png",
+    "excerpt": "Long MUBARAK at 0.0349, target 0.038 - 0.07 - 0.1 - 0.12 - 0.3, stoploss 0.02."
+  },
+  {
+    "id": 11,
+    "pair": "PUMPBTC/USDT.P",
+    "type": "Long",
+    "entry": "0.1011",
+    "target": "detail",
+    "stoploss": "0.064",
+    "date": "2025-09-17 18:30",
+    "image": "signal11.png",
+    "excerpt": "Long PUMPBTC at 0.1011, target: in the green area on the picture, stoploss 0.064."
+  },
+  {
+    "id": 12,
+    "pair": "MYX/USDT.P",
+    "type": "Long",
+    "entry": "17.251",
+    "target": "detail",
+    "stoploss": "10.882",
+    "date": "2025-09-17 23:09",
+    "image": "signal12.png",
+    "excerpt": "Long MYX at 17.251, target: in the green area on the picture, stoploss 10.882."
+  },
+  {
+    "id": 13,
+    "pair": "BB/USDT.P",
+    "type": "Long",
+    "entry": "0.1866",
+    "target": "detail",
+    "stoploss": "0.12128",
+    "date": "2025-09-18 02:36",
+    "image": "signal13.png",
+    "excerpt": "Long BB at 0.1866, target: in the green area on the picture, stoploss 0.12128."
+  },
+  {
+    "id": 14,
+    "pair": "SUI/USDT",
+    "type": "Buy Setup",
+    "entry": "3.825",
+    "target": "15",
+    "stoploss": "3.0512",
+    "date": "2025-09-18 08:20",
+    "image": "signal14.png",
+    "excerpt": "Buy (Hold) SUI at 3.825, target 15$, stoploss 3.0512."
+  },
+  {
+    "id": 15,
+    "pair": "BROCCOLI714/USDT.P",
+    "type": "Long",
+    "entry": "0.03319",
+    "target": "detail",
+    "stoploss": "0.0188",
+    "date": "2025-09-18 14:50",
+    "image": "signal15.png",
+    "excerpt": "Long BROCCOLI714 at 0.03319, target: in the green area on the picture, stoploss 0.0188."
+  },
+  {
+    "id": 16,
+    "pair": "MOODENG/USDT.P",
+    "type": "Long",
+    "entry": "0.196",
+    "target": "detail",
+    "stoploss": "0.12",
+    "date": "2025-09-18 22:50",
+    "image": "signal16.png",
+    "excerpt": "Long MOODENG at 0.196, target: in the green area on the picture, stoploss 0.12."
+  },
+  {
+    "id": 17,
+    "pair": "ETH/USDT",
+    "type": "Long",
+    "entry": "4478",
+    "target": "9000",
+    "stoploss": "4054",
+    "date": "2025-09-19 09:00",
+    "image": "signal17.png",
+    "excerpt": "Long ETH at 4478, target: 9000, stoploss 4054."
+  },
+  {
+    "id": 18,
+    "pair": "AIN/USDT.P",
+    "type": "Long",
+    "entry": "0.15161",
+    "target": "detail",
+    "stoploss": "0.096",
+    "date": "2025-09-19 09:14",
+    "image": "signal18.png",
+    "excerpt": "Long AIN at 0.15161, target: in the green area on the picture, stoploss 0.096."
+  }
+]

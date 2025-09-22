@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Binance",
+    "logo": "/images/exchanges/binance.png",
+    "link": "https://accounts.binance.com/register?ref=AFFILIATE123"
+  },
+  {
+    "name": "OKX",
+    "logo": "/images/exchanges/okx.png",
+    "link": "https://www.okx.com/join/AFFILIATE123"
+  },
+  {
+    "name": "Bybit",
+    "logo": "/images/exchanges/bybit.png",
+    "link": "https://www.bybit.com/invite?ref=AFFILIATE123"
+  }
+]

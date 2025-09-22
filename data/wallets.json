@@ -1,0 +1,17 @@
+[
+  {
+    "name": "MetaMask",
+    "logo": "/images/wallets/metamask.png",
+    "link": "https://metamask.io/"
+  },
+  {
+    "name": "Trust Wallet",
+    "logo": "/images/wallets/trustwallet.png",
+    "link": "https://trustwallet.com/"
+  },
+  {
+    "name": "Ledger",
+    "logo": "/images/wallets/ledger.png",
+    "link": "https://shop.ledger.com/pages/ledger-nano-x"
+  }
+]

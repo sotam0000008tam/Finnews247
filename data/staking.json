@@ -1,0 +1,17 @@
+[
+  {
+    "name": "ETH 2.0 Staking",
+    "logo": "/images/staking/eth.png",
+    "link": "https://ethereum.org/en/staking/"
+  },
+  {
+    "name": "Solana Staking",
+    "logo": "/images/staking/sol.png",
+    "link": "https://solana.org/staking"
+  },
+  {
+    "name": "Cardano Staking",
+    "logo": "/images/staking/ada.png",
+    "link": "https://cardano.org/stake"
+  }
+]
