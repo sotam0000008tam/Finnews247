@@ -196,5 +196,60 @@
     "date": "2025-09-19 09:14",
     "image": "signal18.png",
     "excerpt": "Long AIN at 0.15161, target: in the green area on the picture, stoploss 0.096."
+  },
+  {
+    "id": 19,
+    "pair": "DOGE/USDT",
+    "type": "Long",
+    "entry": "0.235",
+    "target": "detail",
+    "stoploss": "0.186",
+    "date": "2025-09-23 09:14",
+    "image": "signal19.png",
+    "excerpt": "Long DOGE at 0.235, target: in the green area on the picture, stoploss 0.186."
+  },
+  {
+    "id": 20,
+    "pair": "BTC/USDT",
+    "type": "Long",
+    "entry": "112300",
+    "target": "detail",
+    "stoploss": "104800",
+    "date": "2025-09-23 16:43",
+    "image": "signal20.png",
+    "excerpt": "Long BTC at 112300, target: in the green area on the picture, stoploss 104800."
+  },
+  {
+    "id": 21,
+    "pair": "CHESS/USDT",
+    "type": "Long",
+    "entry": "0.0682",
+    "target": "detail",
+    "stoploss": "0.0532",
+    "date": "2025-09-24 19:14",
+    "image": "signal21.png",
+    "excerpt": "Long CHESS at 0.0682, target: in the green area on the picture, stoploss 0.0532."
+  },
+  {
+    "id": 22,
+    "pair": "ARIA/USDT.P",
+    "type": "Long",
+    "entry": "0.193",
+    "target": "detail",
+    "stoploss": "0.129",
+    "date": "2025-09-24 19:44",
+    "image": "signal22.png",
+    "excerpt": "Long ARIA at 0.193, target: in the green area on the picture, stoploss 0.129."
+  },
+  {
+    "id": 23,
+    "pair": "SKATE/USDT.P",
+    "type": "Long",
+    "entry": "0.04645",
+    "target": "detail",
+    "stoploss": "0.02664",
+    "date": "2025-09-24 20:14",
+    "image": "signal23.png",
+    "excerpt": "Long SKATE at 0.04645, target: in the green area on the picture, stoploss 0.02664."
   }
 ]
