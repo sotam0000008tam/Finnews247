@@ -7,9 +7,9 @@ import { NextSeo } from "next-seo";
 
 /**
  * Altcoins category page
- * Shows a pillar article at the top and lists cluster posts below.
+ * Show ONLY a list of the latest posts (new → old).
  */
-export default function Altcoins({ pillar, clusters }) {
+export default function Altcoins({ posts }) {
   return (
     <>
       <NextSeo
@@ -22,28 +22,13 @@ export default function Altcoins({ pillar, clusters }) {
           url: "https://finnews247.com/altcoins",
         }}
       />
+
       <div>
-        {pillar && (
-          <article className="prose lg:prose-xl max-w-none mb-12">
-            <h1>{pillar.title}</h1>
-            <p className="text-sm text-gray-500">{pillar.date}</p>
-            {pillar.image && (
-              <img
-                src={pillar.image}
-                alt={pillar.title}
-                className="my-4 rounded-lg shadow"
-              />
-            )}
-            <div dangerouslySetInnerHTML={{ __html: pillar.content }} />
-          </article>
-        )}
-        <div>
-          <h2 className="text-2xl font-semibold mb-4">Related Articles</h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            {clusters.map((p) => (
-              <PostCard key={p.slug} post={p} />
-            ))}
-          </div>
+        <h1 className="text-3xl font-semibold mb-6">Coin Analysis / Altcoins</h1>
+        <div className="grid md:grid-cols-2 gap-6">
+          {posts.map((p) => (
+            <PostCard key={p.slug} post={p} />
+          ))}
         </div>
       </div>
     </>
@@ -63,12 +48,10 @@ export async function getServerSideProps() {
   const altcoins = JSON.parse(rawAlt);
   const seccoins = JSON.parse(rawSec);
 
-  // 🔥 Gộp dữ liệu & sort mới → cũ
-  const all = [...altcoins, ...seccoins].sort(
+  // Gộp dữ liệu & sort mới → cũ
+  const posts = [...altcoins, ...seccoins].sort(
     (a, b) => new Date(b.date) - new Date(a.date)
   );
 
-  const [pillar, ...clusters] = all;
-
-  return { props: { pillar, clusters } };
+  return { props: { posts } };
 }

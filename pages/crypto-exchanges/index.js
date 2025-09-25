@@ -7,9 +7,9 @@ import { NextSeo } from "next-seo";
 
 /**
  * Crypto Exchanges category page
- * Displays the pillar article in full at the top and lists cluster posts below with pagination.
+ * Show ONLY a list of the latest posts (new → old).
  */
-export default function CryptoExchanges({ pillar, clusters }) {
+export default function CryptoExchanges({ posts }) {
   return (
     <>
       {/* SEO for Crypto Exchanges */}
@@ -25,30 +25,11 @@ export default function CryptoExchanges({ pillar, clusters }) {
       />
 
       <div>
-        {/* Pillar content */}
-        {pillar && (
-          <article className="prose lg:prose-xl max-w-none mb-12">
-            <h1>{pillar.title}</h1>
-            <p className="text-sm text-gray-500">{pillar.date}</p>
-            {pillar.image && (
-              <img
-                src={pillar.image}
-                alt={pillar.title}
-                className="my-4 rounded-lg shadow"
-              />
-            )}
-            <div dangerouslySetInnerHTML={{ __html: pillar.content }} />
-          </article>
-        )}
-
-        {/* Cluster posts listing */}
-        <div>
-          <h2 className="text-2xl font-semibold mb-4">Related Articles</h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            {clusters.map((p) => (
-              <PostCard key={p.slug} post={p} />
-            ))}
-          </div>
+        <h1 className="text-3xl font-semibold mb-6">Crypto Platforms / Exchanges Reviews</h1>
+        <div className="grid md:grid-cols-2 gap-6">
+          {posts.map((p) => (
+            <PostCard key={p.slug} post={p} />
+          ))}
         </div>
       </div>
     </>
@@ -61,12 +42,11 @@ export async function getServerSideProps() {
     return JSON.parse(raw);
   };
 
-  // 🔥 Gộp dữ liệu từ 2 file
+  // Merge data from multiple sources
   let all = [...read("cryptoexchanges.json"), ...read("fidelity.json")];
 
-  // 🔥 Sắp xếp mới nhất → cũ nhất
+  // Sort newest → oldest
   all.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-  const [pillar, ...clusters] = all;
-  return { props: { pillar, clusters } };
+  return { props: { posts: all } };
 }
