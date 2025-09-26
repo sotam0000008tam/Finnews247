@@ -48,7 +48,7 @@ export default function App({ Component, pageProps }) {
         }}
       />
 
-      {/* ✅ Google Search Console verification đặt trong <Head> */}
+      {/* ✅ Google Search Console verification */}
       <Head>
         <meta
           name="google-site-verification"

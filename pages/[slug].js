@@ -1,3 +1,4 @@
+// pages/[slug].js
 import fs from "fs";
 import path from "path";
 
@@ -16,7 +17,6 @@ export default function Post({ post }) {
       <h1>{post.title}</h1>
       <p className="text-sm text-gray-500">{post.date}</p>
 
-      {/* Thumbnail chính */}
       {post.image && (
         <img
           src={post.image}
@@ -25,16 +25,17 @@ export default function Post({ post }) {
         />
       )}
 
-      {/* Render nội dung HTML -> thêm class post-body để dùng timeline CSS */}
+      {/* ✅ Thêm wrapper phân biệt SEC Coin */}
       <div
-        className="post-body"
+        className={`post-body ${
+          post.category === "SEC Coin" ? "sec-coin-wrapper" : ""
+        }`}
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
     </article>
   );
 }
 
-// ✅ Luôn load dữ liệu mới từ news.json theo slug
 export async function getServerSideProps({ params }) {
   const raw = fs.readFileSync(
     path.join(process.cwd(), "data", "news.json"),
