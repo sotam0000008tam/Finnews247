@@ -251,5 +251,16 @@
     "date": "2025-09-24 20:14",
     "image": "signal23.png",
     "excerpt": "Long SKATE at 0.04645, target: in the green area on the picture, stoploss 0.02664."
+  },
+  {
+    "id": 24,
+    "pair": "ASTER/USDT.P",
+    "type": "Long",
+    "entry": "1.7955",
+    "target": "detail",
+    "stoploss": "1.2795",
+    "date": "2025-09-26 00:14",
+    "image": "signal23.png",
+    "excerpt": "Long ASTER at 1.7955, target: in the green area on the picture, stoploss 1.2795."
   }
 ]
