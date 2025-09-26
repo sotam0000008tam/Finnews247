@@ -25,8 +25,9 @@ export default function Post({ post }) {
         />
       )}
 
-      {/* Render nội dung HTML để hỗ trợ xuống dòng, ảnh, link */}
+      {/* Render nội dung HTML -> thêm class post-body để dùng timeline CSS */}
       <div
+        className="post-body"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
     </article>
