@@ -65,7 +65,11 @@ const nextConfig = {
   destination: '/sec-coin/crypto-highlights-sep26',
   permanent: true,
 },
-
+{
+  source: '/sec-coin/Altcoin%20Analysis',
+  destination: '/altcoins',
+  permanent: true,
+},
        
     ];
   },
