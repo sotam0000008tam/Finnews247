@@ -130,6 +130,26 @@ const nextConfig = {
   destination: '/asia-pacific-markets-close-mixed-ahead-of-u-s-cpi-data',
   permanent: true,
 },
+{
+  source: '/news/china-reports-slower-export-growth-august',
+  destination: '/china-reports-slower-export-growth-in-august',
+  permanent: true,
+},
+{
+  source: '/news/apple-stock-hits-record-high',
+  destination: '/apple-hits-record-high-on-ai-chip-hype',
+  permanent: true,
+},
+{
+  source: '/news/oil-prices-hold-78',
+  destination: '/oil-prices-hold-steady-at-78-amid-supply-balances',
+  permanent: true,
+},
+{
+  source: '/news/apple-hits-record-market-cap',
+  destination: '/apple-stock-hits-record-high-on-ai-integration-success',
+  permanent: true,
+},
        
     ];
   },
