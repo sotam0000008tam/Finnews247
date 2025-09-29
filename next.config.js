@@ -2,7 +2,7 @@
 const nextConfig = {
   async redirects() {
     return [
-      // 25 redirect từ link cũ /signals/:id -> link mới /signals/:slug
+      // ========= 25 redirect cũ: /signals/:id -> /signals/:slug (giữ nguyên) =========
       { source: '/signals/1',  destination: '/signals/btc-long-250912',           permanent: true },
       { source: '/signals/2',  destination: '/signals/eth-short-250912',          permanent: true },
       { source: '/signals/3',  destination: '/signals/sol-long-250912',           permanent: true },
@@ -29,27 +29,50 @@ const nextConfig = {
       { source: '/signals/24', destination: '/signals/aster-long-250926-0014',    permanent: true },
       { source: '/signals/25', destination: '/signals/mira-long-250926-1736',     permanent: true },
 
-      // 4 redirect cho Trading Signals News Update (82–85) – KHÔNG có /signals/ prefix ở source
+      // ========= Sửa đích đến 4 bài "Trading Signals News Update" (bỏ /signals) =========
       {
         source: '/trading-signals-09-18-2025-latest-crypto-news-update',
-        destination: '/signals/trading-signals-sep18-2025-market-update',
+        destination: '/trading-signals-sep18-2025-market-update',
         permanent: true,
       },
       {
         source: '/trading-signals-09-19-2025-latest-crypto-news-update',
-        destination: '/signals/trading-signals-sep19-2025-market-summary',
+        destination: '/trading-signals-sep19-2025-market-summary',
         permanent: true,
       },
       {
         source: '/trading-signals-09-23-2025-latest-crypto-news-update',
-        destination: '/signals/trading-signals-sep23-2025-crypto-news',
+        destination: '/trading-signals-sep23-2025-crypto-news',
         permanent: true,
       },
       {
         source: '/trading-signals-09-25-2025-latest-crypto-news-update',
-        destination: '/signals/trading-signals-sep25-2025-crypto-market-report',
+        destination: '/trading-signals-sep25-2025-crypto-market-report',
         permanent: true,
       },
+
+      // ========= Vá tạm soft-404 cho các slug /signals/... đang "Signal not found" =========
+      // TODO: Xoá các redirect này sau khi trang chi tiết đã load dữ liệu đúng (tránh soft-404).
+      { source: '/signals/ain-long-250919-0914',   destination: '/signals', permanent: true },
+      { source: '/signals/myx-long-250917-2309',   destination: '/signals', permanent: true },
+      { source: '/signals/syn-long-250916-2330',   destination: '/signals', permanent: true },
+      { source: '/signals/take-long-250916-2130',  destination: '/signals', permanent: true },
+      { source: '/signals/towns-long-250915-0800', destination: '/signals', permanent: true },
+      { source: '/signals/doge-short-250912',      destination: '/signals', permanent: true },
+      { source: '/signals/mira-long-250926-1736',  destination: '/signals', permanent: true },
+      { source: '/signals/aster-long-250926-0014', destination: '/signals', permanent: true },
+      { source: '/signals/skate-long-250924-2014', destination: '/signals', permanent: true },
+      { source: '/signals/aria-long-250924-1944',  destination: '/signals', permanent: true },
+      { source: '/signals/btc-long-250923-1643',   destination: '/signals', permanent: true },
+      { source: '/signals/doge-long-250923-0914',  destination: '/signals', permanent: true },
+      { source: '/signals/chess-long-250924-1914', destination: '/signals', permanent: true },
+      { source: '/signals/bb-long-250918-0236',    destination: '/signals', permanent: true },
+      { source: '/signals/sui-buysetup-250918-0820', destination: '/signals', permanent: true },
+      { source: '/signals/broccoli714-long-250918-1450', destination: '/signals', permanent: true },
+      { source: '/signals/moodeng-long-250918-2250', destination: '/signals', permanent: true },
+      { source: '/signals/eth-long-250919-0900',   destination: '/signals', permanent: true },
+      { source: '/signals/mubarak-long-250917-0130', destination: '/signals', permanent: true },
+      { source: '/signals/pumpbtc-long-250917-1830', destination: '/signals', permanent: true },
     ];
   },
 };
