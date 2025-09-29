@@ -26,7 +26,6 @@ function toTradingViewSymbol(pair) {
 
 function TVChart({ symbol, height = 520 }) {
   const containerId = "tvchart-container";
-
   return (
     <>
       <div id={containerId} className="w-full" style={{ height }} />
@@ -61,9 +60,7 @@ function TVChart({ symbol, height = 520 }) {
 
 function ZoomableImage({ src, alt }) {
   const [open, setOpen] = useState(false);
-
   if (!src) return null;
-
   return (
     <>
       <img
@@ -74,7 +71,7 @@ function ZoomableImage({ src, alt }) {
       />
       {open && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
           onClick={() => setOpen(false)}
         >
           <img
@@ -123,7 +120,7 @@ export default function SignalDetailPage() {
     riskStrategy,
     faq,
     disclaimer,
-    content
+    content,
   } = data;
 
   const imgUrl = resolveImage(image);
@@ -141,7 +138,7 @@ export default function SignalDetailPage() {
     description: pageDesc,
     author: { "@type": "Organization", name: "FinNews247" },
     datePublished: date,
-    mainEntityOfPage: `https://finnews247.com/signals/${id}`
+    mainEntityOfPage: `https://finnews247.com/signals/${id}`,
   };
 
   return (
@@ -153,18 +150,22 @@ export default function SignalDetailPage() {
       />
 
       <nav className="mb-4 text-sm">
-        <Link href="/signals" className="text-sky-600 hover:underline">Signals</Link>
+        <Link href="/signals" className="text-sky-600 hover:underline">
+          Signals
+        </Link>
         <span className="mx-2 text-gray-400">/</span>
         <span>{pair}</span>
       </nav>
 
       <header className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold">{pair} — {type}</h1>
+        <h1 className="text-2xl md:text-3xl font-bold">
+          {pair} — {type}
+        </h1>
         <p className="text-gray-600 mt-1">{date}</p>
         <p className="mt-2">{excerpt}</p>
       </header>
 
-      {/* Entry / Target / Stoploss */}
+      {/* Entry / Target / Stoploss (Vàng / Xanh / Đỏ) */}
       <div className="grid md:grid-cols-3 gap-4 mb-6">
         <div className="p-4 border rounded-xl bg-white">
           <div className="text-gray-500 text-sm">Entry</div>
@@ -180,7 +181,21 @@ export default function SignalDetailPage() {
         </div>
       </div>
 
-      {/* Chart + Zoomable Image */}
+      {/* 🔎 NEW: Methodology (ngắn gọn, tăng chữ, đặt dưới 3 ô) */}
+      <div className="mb-8 p-4 rounded-xl bg-white border">
+        <h2 className="text-lg font-semibold mb-2">Methodology (Summary)</h2>
+        <p className="text-sm text-gray-700">
+          Signals are derived from 1H–4H structure (trend, higher highs/lows),
+          liquidity cues (EQH/EQL, FVG), confluence with 20/50/200 EMA, and
+          momentum via RSI/MACD. Targets are tiered (TP1/TP2/TP3) at prior
+          swings, measured moves, and Fibonacci levels; stops sit at structural
+          invalidation. Typical risk is 0.25–1.0% per trade. After TP1, we move
+          to break-even and trail below 1H swing lows/highs to protect capital.
+          These insights are informational and not financial advice.
+        </p>
+      </div>
+
+      {/* Chart + Ảnh chú thích */}
       <div className="grid md:grid-cols-3 gap-6 mb-10">
         <div className="md:col-span-2 border rounded-xl overflow-hidden bg-white">
           <TVChart symbol={tvSymbol} height={520} />
@@ -194,27 +209,39 @@ export default function SignalDetailPage() {
             </div>
           )}
           <p className="text-xs text-gray-500 mt-2">
-            If the TradingView symbol is unavailable for this asset, rely on the annotated image for target zones and invalidation.
+            If the TradingView symbol is unavailable, use the annotated image as
+            reference for target zones & invalidation.
           </p>
         </div>
       </div>
 
-      {/* Nội dung */}
+      {/* Nội dung: ưu tiên intro/sections; fallback content nếu không có */}
       {intro || marketContext || technicalAnalysis || riskStrategy || faq || disclaimer ? (
         <>
           {intro && (
-            <section className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: intro }} />
+            <section
+              className="prose max-w-none mb-8"
+              dangerouslySetInnerHTML={{ __html: intro }}
+            />
           )}
           {marketContext && (
-            <section className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: marketContext }} />
+            <section
+              className="prose max-w-none mb-8"
+              dangerouslySetInnerHTML={{ __html: marketContext }}
+            />
           )}
           {technicalAnalysis && (
-            <section className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: technicalAnalysis }} />
+            <section
+              className="prose max-w-none mb-8"
+              dangerouslySetInnerHTML={{ __html: technicalAnalysis }}
+            />
           )}
           {riskStrategy && (
-            <section className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: riskStrategy }} />
+            <section
+              className="prose max-w-none mb-8"
+              dangerouslySetInnerHTML={{ __html: riskStrategy }}
+            />
           )}
-
           {Array.isArray(faq) && faq.length > 0 && (
             <section className="mb-8">
               <h2 className="text-xl font-semibold mb-3">FAQ</h2>
@@ -228,23 +255,65 @@ export default function SignalDetailPage() {
               </div>
             </section>
           )}
-
           {disclaimer && (
-            <section className="mt-6 p-4 bg-yellow-100 text-yellow-900 text-sm rounded"
+            <section
+              className="mt-6 p-4 bg-yellow-100 text-yellow-900 text-sm rounded"
               dangerouslySetInnerHTML={{ __html: disclaimer }}
             />
           )}
         </>
       ) : content ? (
-        <section className="prose max-w-none" dangerouslySetInnerHTML={{ __html: content }} />
+        <section
+          className="prose max-w-none"
+          dangerouslySetInnerHTML={{ __html: content }}
+        />
       ) : (
         <div className="text-sm text-gray-500">
           No detailed content provided for this signal.
         </div>
       )}
 
-      <div className="mt-10">
-        <Link href="/signals" className="text-sky-600 hover:underline">← Back to all signals</Link>
+      {/* Back link */}
+      <div className="mt-10 flex items-center gap-4 text-sky-600">
+        <Link href="/signals" className="hover:underline">
+          ← Back to all signals
+        </Link>
+      </div>
+
+      {/* ⬇️ Internal links xuống cuối trang */}
+      <div className="mt-8 pt-6 border-t">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Link
+            href="/exchanges"
+            className="block p-4 rounded-xl border bg-white dark:bg-gray-800 hover:shadow-md transition"
+          >
+            <div className="text-sm text-gray-500">Exchange</div>
+            <div className="text-lg font-semibold">Compare Top Exchanges</div>
+            <p className="text-sm text-gray-600 mt-1">
+              Fees • liquidity • listing quality.
+            </p>
+          </Link>
+          <Link
+            href="/wallets"
+            className="block p-4 rounded-xl border bg-white dark:bg-gray-800 hover:shadow-md transition"
+          >
+            <div className="text-sm text-gray-500">Wallets</div>
+            <div className="text-lg font-semibold">Best Crypto Wallets</div>
+            <p className="text-sm text-gray-600 mt-1">
+              Hardware & software custody options.
+            </p>
+          </Link>
+          <Link
+            href="/staking"
+            className="block p-4 rounded-xl border bg-white dark:bg-gray-800 hover:shadow-md transition"
+          >
+            <div className="text-sm text-gray-500">Staking</div>
+            <div className="text-lg font-semibold">Staking Yields & Risks</div>
+            <p className="text-sm text-gray-600 mt-1">
+              APY tracking & validator slashing risk.
+            </p>
+          </Link>
+        </div>
       </div>
     </div>
   );
