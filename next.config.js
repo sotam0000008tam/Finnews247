@@ -29,24 +29,24 @@ const nextConfig = {
       { source: '/signals/24', destination: '/signals/aster-long-250926-0014',    permanent: true },
       { source: '/signals/25', destination: '/signals/mira-long-250926-1736',     permanent: true },
 
-      // 4 redirect cho Trading Signals News Update (82-85)
+      // 4 redirect cho Trading Signals News Update (82–85) – KHÔNG có /signals/ prefix ở source
       {
-        source: '/signals/trading-signals-09-18-2025-latest-crypto-news-update',
+        source: '/trading-signals-09-18-2025-latest-crypto-news-update',
         destination: '/signals/trading-signals-sep18-2025-market-update',
         permanent: true,
       },
       {
-        source: '/signals/trading-signals-09-19-2025-latest-crypto-news-update',
+        source: '/trading-signals-09-19-2025-latest-crypto-news-update',
         destination: '/signals/trading-signals-sep19-2025-market-summary',
         permanent: true,
       },
       {
-        source: '/signals/trading-signals-09-23-2025-latest-crypto-news-update',
+        source: '/trading-signals-09-23-2025-latest-crypto-news-update',
         destination: '/signals/trading-signals-sep23-2025-crypto-news',
         permanent: true,
       },
       {
-        source: '/signals/trading-signals-09-25-2025-latest-crypto-news-update',
+        source: '/trading-signals-09-25-2025-latest-crypto-news-update',
         destination: '/signals/trading-signals-sep25-2025-crypto-market-report',
         permanent: true,
       },
