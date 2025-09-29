@@ -95,6 +95,11 @@ const nextConfig = {
   destination: '/insurance/custodial-risk-insurance-explained',
   permanent: true,
 },
+{
+  source: '/news/ecb-hints-policy-tightening-rising-inflation',
+  destination: '/ecb-hints-at-policy-tightening-amid-rising-inflation',
+  permanent: true,
+},
        
     ];
   },
