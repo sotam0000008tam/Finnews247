@@ -70,6 +70,11 @@ const nextConfig = {
   destination: '/altcoins',
   permanent: true,
 },
+{
+  source: '/insurance/smart-contract-insurance',
+  destination: '/insurance/smart-contract-insurance-how-it-works',
+  permanent: true,
+},
        
     ];
   },
