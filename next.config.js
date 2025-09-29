@@ -105,6 +105,16 @@ const nextConfig = {
   destination: '/meta-unveils-new-ar-headset-targeting-business-users',
   permanent: true,
 },
+{
+  source: '/trading-signals-2025-09-18-latest-crypto-news-update',
+  destination: '/trading-signals-sep18-2025-market-update',
+  permanent: true,
+},
+{
+  source: '/news/figure-ipo-raises-787m',
+  destination: '/blockchain-lender-figure-raises-787-5-million-in-landmark-u-s-ipo',
+  permanent: true,
+},
        
     ];
   },
