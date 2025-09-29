@@ -100,6 +100,11 @@ const nextConfig = {
   destination: '/ecb-hints-at-policy-tightening-amid-rising-inflation',
   permanent: true,
 },
+{
+  source: '/news/meta-unveils-new-ar-headset',
+  destination: '/meta-unveils-new-ar-headset-targeting-business-users',
+  permanent: true,
+},
        
     ];
   },
