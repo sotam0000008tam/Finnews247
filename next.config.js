@@ -150,6 +150,16 @@ const nextConfig = {
   destination: '/apple-stock-hits-record-high-on-ai-integration-success',
   permanent: true,
 },
+{
+  source: '/economy',
+  destination: '/market',
+  permanent: true,
+},
+{
+  source: '/stocks',
+  destination: '/market',
+  permanent: true,
+},
        
     ];
   },
