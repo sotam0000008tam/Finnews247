@@ -80,6 +80,11 @@ const nextConfig = {
   destination: '/fidelity-crypto/fidelity-crypto-platform-2025-features-outlook',
   permanent: true,
 },
+{
+  source: '/guides/trading-vs-investing-in-crypto-key-differences',
+  destination: '/guides/how-to-evaluate-new-altcoins-before-investing',
+  permanent: true,
+},
        
     ];
   },
