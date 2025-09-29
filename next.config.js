@@ -75,6 +75,11 @@ const nextConfig = {
   destination: '/insurance/smart-contract-insurance-how-it-works',
   permanent: true,
 },
+{
+  source: '/fidelity-crypto/understanding-fidelity-s-new-crypto-trading-platform-for-2025',
+  destination: '/fidelity-crypto/fidelity-crypto-platform-2025-features-outlook',
+  permanent: true,
+},
        
     ];
   },
