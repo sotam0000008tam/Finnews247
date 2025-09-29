@@ -115,6 +115,21 @@ const nextConfig = {
   destination: '/blockchain-lender-figure-raises-787-5-million-in-landmark-u-s-ipo',
   permanent: true,
 },
+{
+  source: '/news/gold-prices-climb-as-investors-seek-safety',
+  destination: '/gold-prices-climb-as-investors-seek-safety',
+  permanent: true,
+},
+{
+  source: '/news/eurozone-industrial-output-rebounds',
+  destination: '/eurozone-industrial-output-rebounds-supported-by-exports',
+  permanent: true,
+},
+{
+  source: '/news/asia-markets-close-mixed',
+  destination: '/asia-pacific-markets-close-mixed-ahead-of-u-s-cpi-data',
+  permanent: true,
+},
        
     ];
   },
