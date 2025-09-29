@@ -85,6 +85,11 @@ const nextConfig = {
   destination: '/guides/how-to-evaluate-new-altcoins-before-investing',
   permanent: true,
 },
+{
+  source: '/guides/kraken-vs-kucoin-exchange-fee-features-showdown',
+  destination: '/guides/how-to-diversify-your-crypto-portfolio',
+  permanent: true,
+},
        
     ];
   },
