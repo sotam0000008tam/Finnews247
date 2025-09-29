@@ -51,28 +51,7 @@ const nextConfig = {
         permanent: true,
       },
 
-      // ========= Vá tạm soft-404 cho các slug /signals/... đang "Signal not found" =========
-      // TODO: Xoá các redirect này sau khi trang chi tiết đã load dữ liệu đúng (tránh soft-404).
-      { source: '/signals/ain-long-250919-0914',   destination: '/signals', permanent: true },
-      { source: '/signals/myx-long-250917-2309',   destination: '/signals', permanent: true },
-      { source: '/signals/syn-long-250916-2330',   destination: '/signals', permanent: true },
-      { source: '/signals/take-long-250916-2130',  destination: '/signals', permanent: true },
-      { source: '/signals/towns-long-250915-0800', destination: '/signals', permanent: true },
-      { source: '/signals/doge-short-250912',      destination: '/signals', permanent: true },
-      { source: '/signals/mira-long-250926-1736',  destination: '/signals', permanent: true },
-      { source: '/signals/aster-long-250926-0014', destination: '/signals', permanent: true },
-      { source: '/signals/skate-long-250924-2014', destination: '/signals', permanent: true },
-      { source: '/signals/aria-long-250924-1944',  destination: '/signals', permanent: true },
-      { source: '/signals/btc-long-250923-1643',   destination: '/signals', permanent: true },
-      { source: '/signals/doge-long-250923-0914',  destination: '/signals', permanent: true },
-      { source: '/signals/chess-long-250924-1914', destination: '/signals', permanent: true },
-      { source: '/signals/bb-long-250918-0236',    destination: '/signals', permanent: true },
-      { source: '/signals/sui-buysetup-250918-0820', destination: '/signals', permanent: true },
-      { source: '/signals/broccoli714-long-250918-1450', destination: '/signals', permanent: true },
-      { source: '/signals/moodeng-long-250918-2250', destination: '/signals', permanent: true },
-      { source: '/signals/eth-long-250919-0900',   destination: '/signals', permanent: true },
-      { source: '/signals/mubarak-long-250917-0130', destination: '/signals', permanent: true },
-      { source: '/signals/pumpbtc-long-250917-1830', destination: '/signals', permanent: true },
+       
     ];
   },
 };
