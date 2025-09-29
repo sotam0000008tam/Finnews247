@@ -90,6 +90,11 @@ const nextConfig = {
   destination: '/guides/how-to-diversify-your-crypto-portfolio',
   permanent: true,
 },
+{
+  source: '/insurance/custodial-risk-insurance',
+  destination: '/insurance/custodial-risk-insurance-explained',
+  permanent: true,
+},
        
     ];
   },
