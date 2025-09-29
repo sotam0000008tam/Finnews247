@@ -50,6 +50,21 @@ const nextConfig = {
         destination: '/trading-signals-sep25-2025-crypto-market-report',
         permanent: true,
       },
+{
+  source: '/sec-coin/altcoin-analysis-31',
+  destination: '/sec-coin/ethereum-altcoin-trends-sep24',
+  permanent: true,
+},
+{
+  source: '/sec-coin/altcoin-analysis-32',
+  destination: '/sec-coin/altcoin-market-pulse-sep25',
+  permanent: true,
+},
+{
+  source: '/sec-coin/altcoin-analysis-33',
+  destination: '/sec-coin/crypto-highlights-sep26',
+  permanent: true,
+},
 
        
     ];
