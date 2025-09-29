@@ -1,6 +1,6 @@
 [
   {
-    "id": 1,
+    "id": "btc-long-250912",
     "pair": "BTC/USDT",
     "type": "Long",
     "entry": "114000",
@@ -8,10 +8,19 @@
     "stoploss": "112000",
     "date": "2025-09-12 10:30",
     "image": "signal1.png",
-    "excerpt": "Long BTC at 114,000, target 118,500, stoploss 112,000."
+    "excerpt": "Long BTC at 114,000, target 118,500, stoploss 112,000.",
+    "intro": "<h1>BTC/USDT Long Signal - September 12, 2025</h1><p>Bitcoin is consolidating above 114,000 after a recent liquidity sweep at 112,000. The long setup aims for 118,500 with stoploss protection at 112,000.</p>",
+    "marketContext": "<h2>Market Context</h2><p>BTC remains the dominant crypto asset, supported by ETF inflows and stable macro sentiment. Institutional demand continues to drive resilience.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><p>BTC trades above the 20/50 EMA on 4H with RSI showing bullish divergence. A confirmed breakout over 116,000 opens the path to 118,500.</p><h3>Key Levels</h3><ul><li>Entry: 114,000</li><li>Target: 118,500</li><li>Stoploss: 112,000</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Risk 0.5%-1% per trade. Partial profit-taking suggested near 117,800 and trailing stops recommended to lock in gains.</p>",
+    "faq": [
+      { "q": "Is BTC still a safe long above 110k?", "a": "Yes, while ETF inflows remain and higher-low structure holds." },
+      { "q": "Could BTC retrace before hitting target?", "a": "A dip to 112,500 is possible, but the setup is valid while above 112,000." }
+    ],
+    "disclaimer": "<p>For educational purposes only. Not financial advice. Manage your own risk responsibly.</p>"
   },
   {
-    "id": 2,
+    "id": "eth-short-250912",
     "pair": "ETH/USDT",
     "type": "Short",
     "entry": "4520",
@@ -19,10 +28,19 @@
     "stoploss": "4600",
     "date": "2025-09-12 11:00",
     "image": "signal2.png",
-    "excerpt": "Short ETH at 4,520, target 4,300, stoploss 4,600."
+    "excerpt": "Short ETH at 4,520, target 4,300, stoploss 4,600.",
+    "intro": "<h1>ETH/USDT Short Signal - September 12, 2025</h1><p>Ethereum is facing resistance near 4,600. The short entry is planned at 4,520, targeting 4,300 with a stoploss at 4,600.</p>",
+    "marketContext": "<h2>Market Context</h2><p>Ethereum staking grows steadily, but ETH lags BTC as flows rotate to Bitcoin ETFs. L2 competition pressures ETH’s dominance.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><p>ETH prints lower highs below 4,600. MACD trends bearish, RSI rejects 60 zone. Breakdown under 4,450 accelerates toward 4,300.</p><h3>Key Levels</h3><ul><li>Entry: 4,520</li><li>Target: 4,300</li><li>Stoploss: 4,600</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Risk 0.5%-1%. Consider partial exit near 4,380 and move stop to breakeven on momentum continuation.</p>",
+    "faq": [
+      { "q": "Why short ETH now?", "a": "ETH fails to reclaim 4,600 and trends bearish on 4H charts." },
+      { "q": "Could ETH bounce first?", "a": "Yes, a spike to 4,560 may occur. Stop at 4,600 protects against invalidation." }
+    ],
+    "disclaimer": "<p>This content is informational only, not investment advice. Derivatives trading carries risk.</p>"
   },
   {
-    "id": 3,
+    "id": "sol-long-250912",
     "pair": "SOL/USDT",
     "type": "Long",
     "entry": "238",
@@ -30,10 +48,19 @@
     "stoploss": "230",
     "date": "2025-09-12 12:00",
     "image": "signal3.png",
-    "excerpt": "Long SOL at 238, target 260, stoploss 230."
+    "excerpt": "Long SOL at 238, target 260, stoploss 230.",
+    "intro": "<h1>SOL/USDT Long Signal - September 12, 2025</h1><p>Solana is gaining traction from DeFi and gaming sectors. A long entry at 238 aims for 260 with a stoploss at 230.</p>",
+    "marketContext": "<h2>Market Context</h2><p>Institutional and retail activity is picking up on Solana, boosting volumes and liquidity. Ecosystem adoption supports bullish momentum.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><p>SOL broke out above 230 with strong volume. EMAs aligned upward and momentum targets 260.</p><h3>Key Levels</h3><ul><li>Entry: 238</li><li>Target: 260</li><li>Stoploss: 230</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Take-profits recommended at 248, 255, and 260. Adjust stops below 235 once first TP is hit.</p>",
+    "faq": [
+      { "q": "Is Solana strong enough for 260?", "a": "Yes, if 235-238 holds as support, upside remains valid." },
+      { "q": "What invalidates the setup?", "a": "A 4H close below 230 invalidates the bullish bias." }
+    ],
+    "disclaimer": "<p>For educational purposes only. Not financial advice. Always manage your own risk.</p>"
   },
   {
-    "id": 4,
+    "id": "xrp-long-250912",
     "pair": "XRP/USDT",
     "type": "Long",
     "entry": "3.05",
@@ -41,10 +68,19 @@
     "stoploss": "2.90",
     "date": "2025-09-12 12:30",
     "image": "signal4.png",
-    "excerpt": "Long XRP at 3.05, target 3.50, stoploss 2.90."
+    "excerpt": "Long XRP at 3.05, target 3.50, stoploss 2.90.",
+    "intro": "<h1>XRP/USDT Long Signal - September 12, 2025</h1><p>XRP is consolidating near 3.05 with bullish potential toward 3.50 while protected by a 2.90 stoploss.</p>",
+    "marketContext": "<h2>Market Context</h2><p>Ripple’s cross-border payment adoption and ETF exposure in 2025 enhance investor confidence in XRP.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><p>XRP holds bullish continuation patterns. A push above 3.20 strengthens momentum toward 3.50.</p><h3>Key Levels</h3><ul><li>Entry: 3.05</li><li>Target: 3.50</li><li>Stoploss: 2.90</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Scale out at 3.30 and 3.45, with the remainder trailed for an extension over 3.50.</p>",
+    "faq": [
+      { "q": "Why long XRP now?", "a": "Ripple partnerships and technical structure point to bullish continuation." },
+      { "q": "Could regulation impact XRP?", "a": "Yes, SEC rulings could cause volatility. Risk must be managed." }
+    ],
+    "disclaimer": "<p>Informational use only. Not investment advice. Trade responsibly.</p>"
   },
   {
-    "id": 5,
+    "id": "doge-short-250912",
     "pair": "DOGE/USDT",
     "type": "Short",
     "entry": "0.262",
@@ -52,21 +88,40 @@
     "stoploss": "0.275",
     "date": "2025-09-12 13:00",
     "image": "signal5.png",
-    "excerpt": "Short DOGE at 0.262, target 0.230, stoploss 0.275."
+    "excerpt": "Short DOGE at 0.262, target 0.230, stoploss 0.275.",
+    "intro": "<h1>DOGE/USDT Short Signal - September 12, 2025</h1><p>Dogecoin is stalling near 0.27. The plan is to short 0.262 targeting 0.230 with invalidation at 0.275.</p>",
+    "marketContext": "<h2>Market Context</h2><p>Speculative flows in meme coins are weakening, with DOGE losing momentum to newer rivals.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><p>DOGE rejected 0.27 resistance with bearish RSI divergence. A break under 0.255 paves way to 0.230.</p><h3>Key Levels</h3><ul><li>Entry: 0.262</li><li>Target: 0.230</li><li>Stoploss: 0.275</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Keep position size small due to DOGE volatility. Partial exits advised near 0.245 with trailing stops thereafter.</p>",
+    "faq": [
+      { "q": "Why short DOGE now?", "a": "Momentum weakens at resistance and social hype fades." },
+      { "q": "Could external news spike DOGE?", "a": "Yes, tweets or hype events may push DOGE higher, which is why stoploss is placed at 0.275." }
+    ],
+    "disclaimer": "<p>Educational purposes only. Not financial advice.</p>"
   },
+  
   {
-    "id": 6,
+    "id": "towns-long-250915-0800",
     "pair": "TOWNS/USDT",
     "type": "Long",
     "entry": "0.03067",
     "target": "0.07",
-    "stoploss": "0,02134",
+    "stoploss": "0.02134",
     "date": "2025-09-15 08:00",
     "image": "signal6.png",
-    "excerpt": "Long TOWNS at 0.03067, target 0.07, stoploss 0.02134."
+    "excerpt": "Long TOWNS at 0.03067, target 0.07, stoploss 0.02134.",
+    "intro": "<h1>TOWNS/USDT Long Signal – September 15, 2025</h1><p>TOWNS shows accumulation near 0.03 after a double bottom. The setup suggests long entry at 0.03067, with upside toward 0.07 and stoploss 0.02134.</p>",
+    "marketContext": "<h2>Market Context</h2><p>Altcoins are gaining traction as BTC consolidates above 110K. Micro-cap tokens like TOWNS attract speculative flows during such phases.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><ul><li>Double bottom confirmed near 0.02.</li><li>Volume spikes support accumulation phase.</li><li>Target 0.07 aligns with prior swing high from June 2025.</li></ul><h3>Key Levels</h3><ul><li>Entry: 0.03067</li><li>Target: 0.07</li><li>Stoploss: 0.02134</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Allocate small position size due to volatility. Consider scaling partial exits near 0.05 and 0.065 before final 0.07 target.</p>",
+    "faq": [
+      { "q": "Why trade TOWNS now?", "a": "Market sentiment favors high-beta tokens as BTC consolidates." },
+      { "q": "Main risk for TOWNS?", "a": "Low liquidity may cause sudden wicks; hence stoploss at 0.02134." }
+    ],
+    "disclaimer": "<p>High-risk trade. Informational only, not financial advice.</p>"
   },
   {
-    "id": 7,
+    "id": "btc-buysetup-250916-1730",
     "pair": "BTC/USDT",
     "type": "Buy Setup",
     "entry": "114850",
@@ -74,10 +129,19 @@
     "stoploss": "106889",
     "date": "2025-09-16 17:30",
     "image": "signal7.png",
-    "excerpt": "Buy (Hold) BTC at 114,850, target 18500 - 120000 - 130000 - 140000 - 222222, stoploss 106,880."
+    "excerpt": "Buy (Hold) BTC at 114,850, target 118500 - 120000 - 130000 - 140000 - 222222, stoploss 106,889.",
+    "intro": "<h1>BTC/USDT Buy Setup – September 16, 2025</h1><p>Bitcoin consolidates near 115K, presenting a buy setup at 114,850 with multi-level targets up to 222,222.</p>",
+    "marketContext": "<h2>Market Context</h2><p>ETF inflows and long-term holder accumulation continue to restrict supply. Institutional demand strengthens the long-term bull case.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><ul><li>Strong support at 110K tested multiple times.</li><li>Bullish flag forming below resistance zone.</li><li>Momentum indicators remain upward biased.</li></ul><h3>Key Levels</h3><ul><li>Entry: 114,850</li><li>Targets: 118,500 → 120,000 → 130,000 → 140,000 → 222,222</li><li>Stoploss: 106,889</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Scale out profits at each resistance zone. Maintain core position for long-term stretch targets.</p>",
+    "faq": [
+      { "q": "Is BTC still bullish above 110K?", "a": "Yes, strong institutional demand and higher lows confirm trend." },
+      { "q": "Why such a high stretch target?", "a": "Long-term Fibonacci projections and scarcity model justify extended upside." }
+    ],
+    "disclaimer": "<p>This is a buy setup idea, not financial advice. Manage risk accordingly.</p>"
   },
   {
-    "id": 8,
+    "id": "take-long-250916-2130",
     "pair": "TAKE/USDT.P",
     "type": "Long",
     "entry": "0.19376",
@@ -85,10 +149,19 @@
     "stoploss": "0.11089",
     "date": "2025-09-16 21:30",
     "image": "signal8.png",
-    "excerpt": "Long TAKE at 0.19376, target 0.25 - 0.5 - 0.75 - 1 - 1.8, stoploss 0.11089."
+    "excerpt": "Long TAKE at 0.19376, target 0.25 - 0.5 - 0.75 - 1 - 1.8, stoploss 0.11089.",
+    "intro": "<h1>TAKE/USDT Long Signal – September 16, 2025</h1><p>TAKE token is seeing renewed speculative interest. Long entry at 0.19376 aims for multiple upside targets with stoploss at 0.11089.</p>",
+    "marketContext": "<h2>Market Context</h2><p>DeFi tokens are gaining momentum during altcoin rotation. TAKE’s upcoming governance updates may fuel speculative demand.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><ul><li>Support at 0.18 remains solid.</li><li>Volume increase suggests accumulation.</li><li>Targets align with Fibonacci extensions and prior pivots.</li></ul><h3>Key Levels</h3><ul><li>Entry: 0.19376</li><li>Targets: 0.25 → 0.5 → 0.75 → 1 → 1.8</li><li>Stoploss: 0.11089</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Only risk small capital due to volatility. Take profits progressively at each level.</p>",
+    "faq": [
+      { "q": "Why is TAKE interesting now?", "a": "Altcoin speculation and governance roadmap updates add hype." },
+      { "q": "How to manage risk?", "a": "Use staggered exits and strict stoploss at 0.11089." }
+    ],
+    "disclaimer": "<p>High-risk speculative token. Not financial advice.</p>"
   },
   {
-    "id": 9,
+    "id": "syn-long-250916-2330",
     "pair": "SYN/USDT.P",
     "type": "Long",
     "entry": "0.135",
@@ -96,10 +169,19 @@
     "stoploss": "0.0690",
     "date": "2025-09-16 23:30",
     "image": "signal9.png",
-    "excerpt": "Long SYN at 0.135, target 0.3 - 0.5 - 0.75 - 1 - 1.46, stoploss 0.069."
+    "excerpt": "Long SYN at 0.135, target 0.3 - 0.5 - 0.75 - 1 - 1.46, stoploss 0.069.",
+    "intro": "<h1>SYN/USDT Long Signal – September 16, 2025</h1><p>SYN provides exposure to cross-chain DeFi. Entry at 0.135 targets incremental upside levels with stoploss at 0.069.</p>",
+    "marketContext": "<h2>Market Context</h2><p>Cross-chain liquidity is a key theme in DeFi 2025. SYN benefits from growing demand for interoperability.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><ul><li>Breakout confirmed above 0.12.</li><li>Buy-side flows signal accumulation.</li><li>Targets reflect historical resistances and Fibonacci projections.</li></ul><h3>Key Levels</h3><ul><li>Entry: 0.135</li><li>Targets: 0.3 → 0.5 → 0.75 → 1 → 1.46</li><li>Stoploss: 0.069</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Volatile asset — risk small. Consider taking profits at 0.3 and 0.5 before extended levels.</p>",
+    "faq": [
+      { "q": "Why SYN now?", "a": "Cross-chain adoption trend supports SYN’s upside." },
+      { "q": "Main risk?", "a": "Volatility and sudden DeFi narrative shifts." }
+    ],
+    "disclaimer": "<p>Educational purpose only. Not financial advice.</p>"
   },
   {
-    "id": 10,
+    "id": "mubarak-long-250917-0130",
     "pair": "MUBARAK/USDT.P",
     "type": "Long",
     "entry": "0.0349",
@@ -107,10 +189,20 @@
     "stoploss": "0.02",
     "date": "2025-09-17 01:30",
     "image": "signal10.png",
-    "excerpt": "Long MUBARAK at 0.0349, target 0.038 - 0.07 - 0.1 - 0.12 - 0.3, stoploss 0.02."
+    "excerpt": "Long MUBARAK at 0.0349, target 0.038 - 0.07 - 0.1 - 0.12 - 0.3, stoploss 0.02.",
+    "intro": "<h1>MUBARAK/USDT Long Signal – September 17, 2025</h1><p>MUBARAK token shows early speculative demand. Entry at 0.0349 with multiple upside targets, stoploss at 0.02.</p>",
+    "marketContext": "<h2>Market Context</h2><p>Micro-cap altcoins with community backing often spike during speculative phases of the market.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><ul><li>Accumulation seen around 0.03.</li><li>Breakout levels identified toward 0.07 and 0.1.</li><li>Tiered targets allow scaling profits.</li></ul><h3>Key Levels</h3><ul><li>Entry: 0.0349</li><li>Targets: 0.038 → 0.07 → 0.1 → 0.12 → 0.3</li><li>Stoploss: 0.02</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Allocate very small capital. Take profits quickly on spikes. Maintain hard stoploss at 0.02.</p>",
+    "faq": [
+      { "q": "Why trade MUBARAK?", "a": "Speculative token with short-term hype potential." },
+      { "q": "Risk of trading?", "a": "Extremely volatile; liquidity risk is high." }
+    ],
+    "disclaimer": "<p>Not financial advice. High-risk micro-cap trade idea only.</p>"
   },
+  
   {
-    "id": 11,
+    "id": "pumpbtc-long-250917-1830",
     "pair": "PUMPBTC/USDT.P",
     "type": "Long",
     "entry": "0.1011",
@@ -118,10 +210,19 @@
     "stoploss": "0.064",
     "date": "2025-09-17 18:30",
     "image": "signal11.png",
-    "excerpt": "Long PUMPBTC at 0.1011, target: in the green area on the picture, stoploss 0.064."
+    "excerpt": "Long PUMPBTC at 0.1011, target: in the green area on the picture, stoploss 0.064.",
+    "intro": "<h1>PUMPBTC/USDT Long Signal – September 17, 2025</h1><p>PUMPBTC shows a breakout above 0.095 with speculative momentum. Entry is suggested at 0.1011 with stoploss at 0.064.</p>",
+    "marketContext": "<h2>Market Context</h2><p>Bitcoin trades above 112K, encouraging high-risk speculation in meme and experimental tokens like PUMPBTC.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><ul><li>Breakout confirmed above 0.095 zone.</li><li>Volume spikes support momentum-driven moves.</li><li>Support identified between 0.07–0.08.</li></ul><h3>Key Levels</h3><ul><li>Entry: 0.1011</li><li>Target: Chart green zone</li><li>Stoploss: 0.064</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Allocate very small capital. Use hard stoploss. Take profits quickly if price surges into illiquid zones.</p>",
+    "faq": [
+      { "q": "Why long PUMPBTC now?", "a": "Breakout momentum aligns with speculative risk-on sentiment." },
+      { "q": "What is the biggest risk?", "a": "Thin liquidity could cause slippage and wicks; stoploss is critical." }
+    ],
+    "disclaimer": "<p>This trade idea is educational, not investment advice.</p>"
   },
   {
-    "id": 12,
+    "id": "myx-long-250917-2309",
     "pair": "MYX/USDT.P",
     "type": "Long",
     "entry": "17.251",
@@ -129,10 +230,19 @@
     "stoploss": "10.882",
     "date": "2025-09-17 23:09",
     "image": "signal12.png",
-    "excerpt": "Long MYX at 17.251, target: in the green area on the picture, stoploss 10.882."
+    "excerpt": "Long MYX at 17.251, target: in the green area on the picture, stoploss 10.882.",
+    "intro": "<h1>MYX/USDT Long Signal – September 17, 2025</h1><p>MYX shows bullish structure above 15 USD. Entry at 17.251 with wide stoploss at 10.882 aims for upside continuation.</p>",
+    "marketContext": "<h2>Market Context</h2><p>Mid-cap altcoins like MYX attract capital rotation as majors consolidate. Integration news and DeFi narratives support demand.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><ul><li>Support: 15 USD level held multiple times.</li><li>Resistance: Break above 20 USD unlocks higher zones.</li><li>Indicators: MACD and RSI lean bullish.</li></ul><h3>Key Levels</h3><ul><li>Entry: 17.251</li><li>Target: Chart green band</li><li>Stoploss: 10.882</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Given wide stop, use reduced size. Scale out near 20–22 USD before targeting higher moves.</p>",
+    "faq": [
+      { "q": "Is MYX sustainable above 17?", "a": "Yes, if BTC remains stable and volume supports continuation." },
+      { "q": "Why such a wide stoploss?", "a": "Volatility in mid-caps requires room; invalidation only below 11 USD." }
+    ],
+    "disclaimer": "<p>Informational only. Trade at your own risk.</p>"
   },
   {
-    "id": 13,
+    "id": "bb-long-250918-0236",
     "pair": "BB/USDT.P",
     "type": "Long",
     "entry": "0.1866",
@@ -140,10 +250,19 @@
     "stoploss": "0.12128",
     "date": "2025-09-18 02:36",
     "image": "signal13.png",
-    "excerpt": "Long BB at 0.1866, target: in the green area on the picture, stoploss 0.12128."
+    "excerpt": "Long BB at 0.1866, target: in the green area on the picture, stoploss 0.12128.",
+    "intro": "<h1>BB/USDT Long Signal – September 18, 2025</h1><p>BB token recovers from 0.12 lows, forming higher lows. Entry at 0.1866 with stoploss 0.12128 targets breakout upside.</p>",
+    "marketContext": "<h2>Market Context</h2><p>Speculative flows shift into small-cap names. Hype around partnerships boosts BB’s visibility.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><ul><li>Trend: Higher lows form bullish base.</li><li>Volume: Increasing gradually, confirming interest.</li><li>Target: Chart shows potential doubling from entry.</li></ul><h3>Key Levels</h3><ul><li>Entry: 0.1866</li><li>Target: Green target zone</li><li>Stoploss: 0.12128</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Trade small size. Consider partial exits near 0.22–0.25 before extended targets.</p>",
+    "faq": [
+      { "q": "Why long BB now?", "a": "Partnership announcements plus bullish structure support entry." },
+      { "q": "Risk factor?", "a": "Low liquidity and thin order books increase risk of sharp moves." }
+    ],
+    "disclaimer": "<p>Educational analysis only. Not investment advice.</p>"
   },
   {
-    "id": 14,
+    "id": "sui-buysetup-250918-0820",
     "pair": "SUI/USDT",
     "type": "Buy Setup",
     "entry": "3.825",
@@ -151,10 +270,19 @@
     "stoploss": "3.0512",
     "date": "2025-09-18 08:20",
     "image": "signal14.png",
-    "excerpt": "Buy (Hold) SUI at 3.825, target 15$, stoploss 3.0512."
+    "excerpt": "Buy (Hold) SUI at 3.825, target 15$, stoploss 3.0512.",
+    "intro": "<h1>SUI/USDT Buy Setup – September 18, 2025</h1><p>SUI consolidates above 3.5 and presents a buy setup at 3.825, with a medium-term target of 15 USD and stoploss at 3.0512.</p>",
+    "marketContext": "<h2>Market Context</h2><p>SUI’s ecosystem expansion and DeFi traction place it among top L1 contenders. Developer activity remains robust.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><ul><li>Support: Price repeatedly held 3.5 zone.</li><li>Pattern: Ascending triangle signals breakout.</li><li>Projection: Measured move points to 15 USD.</li></ul><h3>Key Levels</h3><ul><li>Entry: 3.825</li><li>Target: 15</li><li>Stoploss: 3.0512</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Position size moderately. Long-term investors may hold; traders can scale out 20–30% near 8–10 USD levels.</p>",
+    "faq": [
+      { "q": "Why target 15 USD?", "a": "Chart projection from triangle breakout supports long-term target." },
+      { "q": "Risk of invalidation?", "a": "Breakdown below 3.05 would negate bullish bias." }
+    ],
+    "disclaimer": "<p>Medium-term investment idea. Not financial advice.</p>"
   },
   {
-    "id": 15,
+    "id": "broccoli714-long-250918-1450",
     "pair": "BROCCOLI714/USDT.P",
     "type": "Long",
     "entry": "0.03319",
@@ -162,10 +290,19 @@
     "stoploss": "0.0188",
     "date": "2025-09-18 14:50",
     "image": "signal15.png",
-    "excerpt": "Long BROCCOLI714 at 0.03319, target: in the green area on the picture, stoploss 0.0188."
+    "excerpt": "Long BROCCOLI714 at 0.03319, target: in the green area on the picture, stoploss 0.0188.",
+    "intro": "<h1>BROCCOLI714/USDT Long Signal – September 18, 2025</h1><p>BROCCOLI714 rebounds strongly from 0.02 lows. Entry at 0.03319 with stoploss 0.0188 aims to capture speculative upside.</p>",
+    "marketContext": "<h2>Market Context</h2><p>Community-driven novelty tokens gain attention in bullish altcoin phases, despite lacking fundamentals.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><ul><li>Trend: Recovery from 0.02 formed bullish impulse.</li><li>Volume: Rising activity supports rally potential.</li><li>Support: 0.025 acts as base.</li></ul><h3>Key Levels</h3><ul><li>Entry: 0.03319</li><li>Target: Chart green zone</li><li>Stoploss: 0.0188</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Only suitable for high-risk allocation. Use hard stoploss, consider quick partial exits on spikes.</p>",
+    "faq": [
+      { "q": "Why trade BROCCOLI714?", "a": "Momentum-driven rallies in novelty tokens can deliver quick upside." },
+      { "q": "What’s the main risk?", "a": "Volatility and lack of liquidity make sharp retracements common." }
+    ],
+    "disclaimer": "<p>Speculative idea for educational purposes. Not financial advice.</p>"
   },
   {
-    "id": 16,
+    "id": "moodeng-long-250918-2250",
     "pair": "MOODENG/USDT.P",
     "type": "Long",
     "entry": "0.196",
@@ -173,10 +310,19 @@
     "stoploss": "0.12",
     "date": "2025-09-18 22:50",
     "image": "signal16.png",
-    "excerpt": "Long MOODENG at 0.196, target: in the green area on the picture, stoploss 0.12."
+    "excerpt": "Long MOODENG at 0.196, target: in the green area on the picture, stoploss 0.12.",
+    "intro": "<h1>MOODENG/USDT Long Signal – September 18, 2025</h1><p>MOODENG enters a bullish phase with entry at 0.196 and stoploss at 0.12. Targets are highlighted in the green chart zone.</p>",
+    "marketContext": "<h2>Market Context</h2><p>Small-cap tokens like MOODENG benefit from the broader bullish cycle as Bitcoin trades above $112K. Risk appetite is expanding across micro-cap assets.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><ul><li>Trend: Breakout confirmed above 0.15 support.</li><li>Volume: Spike in trading volume indicates speculative inflows.</li><li>Support: 0.12 serves as invalidation level.</li></ul><h3>Key Levels</h3><ul><li>Entry: 0.196</li><li>Target: Chart green zone</li><li>Stoploss: 0.12</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Use minimal allocation. Small-caps carry higher volatility. Exit partially on first strong push above 0.22–0.25.</p>",
+    "faq": [
+      { "q": "Why trade MOODENG?", "a": "Momentum breakout plus retail hype create asymmetric upside." },
+      { "q": "What risk to consider?", "a": "Thin liquidity and volatility; use small size with hard stop." }
+    ],
+    "disclaimer": "<p>This is educational content only, not financial advice.</p>"
   },
   {
-    "id": 17,
+    "id": "eth-long-250919-0900",
     "pair": "ETH/USDT",
     "type": "Long",
     "entry": "4478",
@@ -184,10 +330,19 @@
     "stoploss": "4054",
     "date": "2025-09-19 09:00",
     "image": "signal17.png",
-    "excerpt": "Long ETH at 4478, target: 9000, stoploss 4054."
+    "excerpt": "Long ETH at 4478, target: 9000, stoploss 4054.",
+    "intro": "<h1>Ethereum (ETH/USDT) Long Signal – September 19, 2025</h1><p>Ethereum sets up a long trade at 4,478 with a bullish target at 9,000 and protective stoploss at 4,054.</p>",
+    "marketContext": "<h2>Market Context</h2><p>ETH benefits from institutional adoption, ETH ETFs, and growing DeFi + L2 ecosystem usage. Momentum aligns with BTC-led rally.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><ul><li>Pattern: Breakout from 4,200–4,300 consolidation.</li><li>Momentum: RSI & MACD bullish.</li><li>Resistance: 5,000 acts as first major barrier before 9,000.</li></ul><h3>Key Levels</h3><ul><li>Entry: 4,478</li><li>Target: 9,000</li><li>Stoploss: 4,054</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Scale in with partial positions. Take partial profits near 5,500–6,000 and trail stops higher for long-term target.</p>",
+    "faq": [
+      { "q": "Why target 9,000?", "a": "Projection from breakout and cycle extension aligns with prior ETH rallies." },
+      { "q": "What risk factors?", "a": "High gas fees or competition from L2s could slow ETH growth." }
+    ],
+    "disclaimer": "<p>This ETH signal is for informational purposes only.</p>"
   },
   {
-    "id": 18,
+    "id": "ain-long-250919-0914",
     "pair": "AIN/USDT.P",
     "type": "Long",
     "entry": "0.15161",
@@ -195,10 +350,19 @@
     "stoploss": "0.096",
     "date": "2025-09-19 09:14",
     "image": "signal18.png",
-    "excerpt": "Long AIN at 0.15161, target: in the green area on the picture, stoploss 0.096."
+    "excerpt": "Long AIN at 0.15161, target: in the green area on the picture, stoploss 0.096.",
+    "intro": "<h1>AIN/USDT Long Signal – September 19, 2025</h1><p>AIN offers a speculative long entry at 0.15161 with stoploss at 0.096. Targets are defined in the green chart area.</p>",
+    "marketContext": "<h2>Market Context</h2><p>AI-related tokens are trending in 2025, with speculative capital flowing into projects like AIN.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><ul><li>Support: Strong base formed near 0.10.</li><li>Breakout: Surpassed 0.14 resistance.</li><li>Momentum: Fresh bullish indicators after breakout.</li></ul><h3>Key Levels</h3><ul><li>Entry: 0.15161</li><li>Target: Chart green band</li><li>Stoploss: 0.096</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Trade small size. AI tokens are highly volatile. Consider scaling out on quick spikes.</p>",
+    "faq": [
+      { "q": "Why long AIN?", "a": "Correlation with AI hype and sector momentum." },
+      { "q": "What’s the invalidation?", "a": "Break below 0.096 invalidates bullish bias." }
+    ],
+    "disclaimer": "<p>Educational only. Trade with caution.</p>"
   },
   {
-    "id": 19,
+    "id": "doge-long-250923-0914",
     "pair": "DOGE/USDT",
     "type": "Long",
     "entry": "0.235",
@@ -206,10 +370,19 @@
     "stoploss": "0.186",
     "date": "2025-09-23 09:14",
     "image": "signal19.png",
-    "excerpt": "Long DOGE at 0.235, target: in the green area on the picture, stoploss 0.186."
+    "excerpt": "Long DOGE at 0.235, target: in the green area on the picture, stoploss 0.186.",
+    "intro": "<h1>DOGE/USDT Long Signal – September 23, 2025</h1><p>DOGE offers a long setup at 0.235 with stoploss at 0.186. Profit zones indicated in chart.</p>",
+    "marketContext": "<h2>Market Context</h2><p>DOGE thrives during meme-driven rallies. Social buzz remains supportive in current bullish market.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><ul><li>Trend: Higher lows since 0.18 bounce.</li><li>Volume: Increasing retail participation.</li><li>Resistance: Next cap near 0.30.</li></ul><h3>Key Levels</h3><ul><li>Entry: 0.235</li><li>Target: Green chart zone</li><li>Stoploss: 0.186</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Keep risk low. DOGE can be headline-sensitive. Partial profits recommended near 0.28–0.30.</p>",
+    "faq": [
+      { "q": "Why long DOGE?", "a": "Meme-driven rallies often outperform in bullish phases." },
+      { "q": "What’s the risk?", "a": "Sharp retracements from overbought hype moves." }
+    ],
+    "disclaimer": "<p>This DOGE trade idea is not financial advice.</p>"
   },
   {
-    "id": 20,
+    "id": "btc-long-250923-1643",
     "pair": "BTC/USDT",
     "type": "Long",
     "entry": "112300",
@@ -217,10 +390,19 @@
     "stoploss": "104800",
     "date": "2025-09-23 16:43",
     "image": "signal20.png",
-    "excerpt": "Long BTC at 112300, target: in the green area on the picture, stoploss 104800."
+    "excerpt": "Long BTC at 112300, target: in the green area on the picture, stoploss 104800.",
+    "intro": "<h1>BTC/USDT Long Signal – September 23, 2025</h1><p>Bitcoin long entry suggested at 112,300 with stoploss at 104,800. Targets are mapped in the green chart area.</p>",
+    "marketContext": "<h2>Market Context</h2><p>BTC broke through 110K with record ETF inflows and institutional accumulation, reinforcing bullish macro trend.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><ul><li>Trend: Strong uptrend since 95K breakout.</li><li>Support: Base built around 105K.</li><li>Momentum: RSI not yet overheated.</li></ul><h3>Key Levels</h3><ul><li>Entry: 112,300</li><li>Target: Chart green band</li><li>Stoploss: 104,800</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>High conviction setup. Use partial exits near 115–118K and trail remainder for higher targets.</p>",
+    "faq": [
+      { "q": "Is BTC still safe to long?", "a": "Yes, as long as ETF flows remain positive and structure holds above 105K." },
+      { "q": "Could BTC retrace first?", "a": "Yes, pullback to 110K possible before continuation higher." }
+    ],
+    "disclaimer": "<p>This BTC signal is for educational use only.</p>"
   },
   {
-    "id": 21,
+    "id": "chess-long-250924-1914",
     "pair": "CHESS/USDT",
     "type": "Long",
     "entry": "0.0682",
@@ -228,10 +410,19 @@
     "stoploss": "0.0532",
     "date": "2025-09-24 19:14",
     "image": "signal21.png",
-    "excerpt": "Long CHESS at 0.0682, target: in the green area on the picture, stoploss 0.0532."
+    "excerpt": "Long CHESS at 0.0682, target: in the green area on the picture, stoploss 0.0532.",
+    "intro": "<h1>CHESS/USDT Long Signal – September 24, 2025</h1><p>CHESS sets up for a long at 0.0682 with stoploss at 0.0532. Target zones are mapped in the green chart band.</p>",
+    "marketContext": "<h2>Market Context</h2><p>CHESS, part of the DeFi ecosystem, is gaining attention as liquidity rotates back into altcoins while Bitcoin stabilizes above $112K.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><ul><li>Trend: Reversal from 0.055 created a bullish base.</li><li>Volume: Spikes show renewed investor interest.</li><li>Resistance: Next test lies near 0.08.</li></ul><h3>Key Levels</h3><ul><li>Entry: 0.0682</li><li>Target: Chart green zone</li><li>Stoploss: 0.0532</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Allocate small size due to volatility. Consider scaling profits around 0.075–0.08.</p>",
+    "faq": [
+      { "q": "Why trade CHESS?", "a": "DeFi tokens often benefit from liquidity rotation in bullish cycles." },
+      { "q": "What’s the main risk?", "a": "Failure to hold 0.055 base could lead to deeper correction." }
+    ],
+    "disclaimer": "<p>This CHESS signal is informational only, not financial advice.</p>"
   },
   {
-    "id": 22,
+    "id": "aria-long-250924-1944",
     "pair": "ARIA/USDT.P",
     "type": "Long",
     "entry": "0.193",
@@ -239,10 +430,19 @@
     "stoploss": "0.129",
     "date": "2025-09-24 19:44",
     "image": "signal22.png",
-    "excerpt": "Long ARIA at 0.193, target: in the green area on the picture, stoploss 0.129."
+    "excerpt": "Long ARIA at 0.193, target: in the green area on the picture, stoploss 0.129.",
+    "intro": "<h1>ARIA/USDT Long Signal – September 24, 2025</h1><p>ARIA offers a long setup at 0.193 with stoploss at 0.129. Target area shown in chart.</p>",
+    "marketContext": "<h2>Market Context</h2><p>Speculative flows are rotating into small-cap projects like ARIA as traders seek outsized returns.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><ul><li>Support: Solid base at 0.13.</li><li>Breakout: Cleared 0.18 resistance with strength.</li><li>Momentum: MACD bullish crossover confirmed.</li></ul><h3>Key Levels</h3><ul><li>Entry: 0.193</li><li>Target: Chart green zone</li><li>Stoploss: 0.129</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>High volatility play. Use tight sizing. Partial exits recommended near 0.22–0.25.</p>",
+    "faq": [
+      { "q": "Why ARIA now?", "a": "Breakout from accumulation zone with fresh momentum." },
+      { "q": "What invalidates the trade?", "a": "Breakdown below 0.129 stoploss zone." }
+    ],
+    "disclaimer": "<p>This ARIA trade setup is for education only.</p>"
   },
   {
-    "id": 23,
+    "id": "skate-long-250924-2014",
     "pair": "SKATE/USDT.P",
     "type": "Long",
     "entry": "0.04645",
@@ -250,10 +450,19 @@
     "stoploss": "0.02664",
     "date": "2025-09-24 20:14",
     "image": "signal23.png",
-    "excerpt": "Long SKATE at 0.04645, target: in the green area on the picture, stoploss 0.02664."
+    "excerpt": "Long SKATE at 0.04645, target: in the green area on the picture, stoploss 0.02664.",
+    "intro": "<h1>SKATE/USDT Long Signal – September 24, 2025</h1><p>Gaming token SKATE sets up for long entry at 0.04645 with stoploss 0.02664.</p>",
+    "marketContext": "<h2>Market Context</h2><p>Gaming and meme tokens like SKATE attract capital as sector sentiment remains hot.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><ul><li>Trend: Sharp recovery from 0.03 lows.</li><li>Volume: Elevated turnover hints at accumulation.</li><li>Resistance: 0.06 acts as next upside barrier.</li></ul><h3>Key Levels</h3><ul><li>Entry: 0.04645</li><li>Target: Chart green zone</li><li>Stoploss: 0.02664</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Scale out near resistance. Limit exposure due to thin liquidity.</p>",
+    "faq": [
+      { "q": "Why long SKATE?", "a": "Sector momentum plus breakout from base." },
+      { "q": "What’s risky here?", "a": "Micro-cap volatility and pump/retrace dynamics." }
+    ],
+    "disclaimer": "<p>Informational only. Not financial advice.</p>"
   },
   {
-    "id": 24,
+    "id": "aster-long-250926-0014",
     "pair": "ASTER/USDT.P",
     "type": "Long",
     "entry": "1.7955",
@@ -261,10 +470,19 @@
     "stoploss": "1.2795",
     "date": "2025-09-26 00:14",
     "image": "signal24.png",
-    "excerpt": "Long ASTER at 1.7955, target: in the green area on the picture, stoploss 1.2795."
+    "excerpt": "Long ASTER at 1.7955, target: in the green area on the picture, stoploss 1.2795.",
+    "intro": "<h1>ASTER/USDT Long Signal – September 26, 2025</h1><p>ASTER signals a long entry at 1.7955 with protective stoploss at 1.2795.</p>",
+    "marketContext": "<h2>Market Context</h2><p>ASTER benefits from L2 and staking narratives, backed by strong community support.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><ul><li>Support: 1.30 zone holds well.</li><li>Breakout: Surged past 1.70 resistance.</li><li>Indicators: RSI bullish but not overbought.</li></ul><h3>Key Levels</h3><ul><li>Entry: 1.7955</li><li>Target: Chart green zone</li><li>Stoploss: 1.2795</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Use staggered exits. High beta token; manage size accordingly.</p>",
+    "faq": [
+      { "q": "Why ASTER?", "a": "Strong L2/staking story plus bullish technicals." },
+      { "q": "What could fail?", "a": "Loss of 1.30 support invalidates the setup." }
+    ],
+    "disclaimer": "<p>Not investment advice. Trade at your own risk.</p>"
   },
   {
-    "id": 25,
+    "id": "mira-long-250926-1736",
     "pair": "MIRA/USDT",
     "type": "Long",
     "entry": "1.444",
@@ -272,6 +490,15 @@
     "stoploss": "1.104",
     "date": "2025-09-26 17:36",
     "image": "signal25.png",
-    "excerpt": "Long MIRA at 1.444, target: in the green area on the picture, stoploss 1.104."
+    "excerpt": "Long MIRA at 1.444, target: in the green area on the picture, stoploss 1.104.",
+    "intro": "<h1>MIRA/USDT Long Signal – September 26, 2025</h1><p>MIRA offers a long setup at 1.444 with stoploss 1.104. Profit targets are shown on chart.</p>",
+    "marketContext": "<h2>Market Context</h2><p>MIRA adoption grows with early partnerships. Altcoin investors are noticing its potential.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><ul><li>Trend: Uptrend intact since 1.10 rebound.</li><li>Resistance: Key level at 1.60.</li><li>Volume: Rising turnover supports buyers.</li></ul><h3>Key Levels</h3><ul><li>Entry: 1.444</li><li>Target: Chart green zone</li><li>Stoploss: 1.104</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Moderate allocation only. Consider trailing stop once above 1.55.</p>",
+    "faq": [
+      { "q": "Why MIRA?", "a": "Growing partnerships and strong trend support bullish bias." },
+      { "q": "What’s the risk?", "a": "Low liquidity; sharp reversals possible." }
+    ],
+    "disclaimer": "<p>This signal is educational, not financial advice.</p>"
   }
 ]

@@ -1,160 +1,250 @@
-// pages/signals/[id].js
 import { useRouter } from "next/router";
-import signals from "../../data/signals.json";
 import { NextSeo } from "next-seo";
+import Script from "next/script";
+import Link from "next/link";
 import { useState } from "react";
-import BestWallets from "../../components/BestWallets";
-import TopStaking from "../../components/TopStaking";
-import TopExchanges from "../../components/TopExchanges"; // ✅ giữ nguyên import gốc
+import signals from "../../data/signals.json";
 
-export default function SignalDetail() {
+function resolveImage(src) {
+  if (!src) return null;
+  if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("/")) {
+    return src;
+  }
+  return `/images/${src}`;
+}
+
+function toTradingViewSymbol(pair) {
+  if (!pair) return "BINANCE:BTCUSDT";
+  let p = pair.toUpperCase().trim();
+  const isPerp = p.includes(".P");
+  let compact = p.replace("/", "").replace(/\s+/g, "");
+  if (isPerp) {
+    return `BYBIT:${compact}`;
+  }
+  return `BINANCE:${compact}`;
+}
+
+function TVChart({ symbol, height = 520 }) {
+  const containerId = "tvchart-container";
+
+  return (
+    <>
+      <div id={containerId} className="w-full" style={{ height }} />
+      <Script
+        src="https://s3.tradingview.com/tv.js"
+        strategy="lazyOnload"
+        onLoad={() => {
+          const safeSymbol = symbol || "BINANCE:BTCUSDT";
+          try {
+            /* global TradingView */
+            new TradingView.widget({
+              container_id: containerId,
+              symbol: safeSymbol,
+              interval: "60",
+              timezone: "Etc/UTC",
+              theme: "light",
+              style: "1",
+              locale: "en",
+              autosize: true,
+              hide_side_toolbar: false,
+              allow_symbol_change: true,
+              studies: ["RSI@tv-basicstudies", "MACD@tv-basicstudies"],
+            });
+          } catch (e) {
+            console.error("TradingView init error:", e);
+          }
+        }}
+      />
+    </>
+  );
+}
+
+function ZoomableImage({ src, alt }) {
+  const [open, setOpen] = useState(false);
+
+  if (!src) return null;
+
+  return (
+    <>
+      <img
+        src={src}
+        alt={alt}
+        className="w-full h-auto rounded-md border cursor-zoom-in"
+        onClick={() => setOpen(true)}
+      />
+      {open && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
+          onClick={() => setOpen(false)}
+        >
+          <img
+            src={src}
+            alt={alt}
+            className="max-w-[95%] max-h-[90%] rounded shadow-lg cursor-zoom-out"
+          />
+        </div>
+      )}
+    </>
+  );
+}
+
+export default function SignalDetailPage() {
   const router = useRouter();
   const { id } = router.query;
-  const signal = signals.find((s) => String(s.id) === String(id));
 
-  const [isOpen, setIsOpen] = useState(false);
+  const data = signals.find((s) => String(s.id) === String(id));
 
-  if (!signal) return <p className="p-6">Signal not found.</p>;
+  if (!data) {
+    return (
+      <div className="container mx-auto px-4 py-10">
+        <h1 className="text-2xl font-bold mb-2">Signal not found</h1>
+        <p className="text-gray-600 mb-6">
+          The requested trading signal does not exist or has been removed.
+        </p>
+        <Link href="/signals" className="text-sky-600 hover:underline">
+          ← Back to Signals
+        </Link>
+      </div>
+    );
+  }
 
-  const title = `${signal.pair} — ${signal.type} | Crypto Trading Signal`;
-  const desc = `Trading signal for ${signal.pair}: ${signal.type}. Entry ${signal.entry}, Target ${signal.target}, Stoploss ${signal.stoploss} (${signal.date}).`;
-  const tvSymbol = signal.pair.replace("/", "");
+  const {
+    pair,
+    type,
+    entry,
+    target,
+    stoploss,
+    date,
+    image,
+    excerpt,
+    intro,
+    marketContext,
+    technicalAnalysis,
+    riskStrategy,
+    faq,
+    disclaimer,
+    content
+  } = data;
 
-  // ✅ JSON-LD cho từng tín hiệu (NewsArticle)
+  const imgUrl = resolveImage(image);
+  const tvSymbol = toTradingViewSymbol(pair);
+
+  const pageTitle = `${pair} ${type} Signal — Entry ${entry}, Target ${target}, Stoploss ${stoploss}`;
+  const pageDesc =
+    excerpt ||
+    `Crypto trading signal for ${pair} — Entry ${entry}, Target ${target}, Stoploss ${stoploss}.`;
+
   const structuredData = {
     "@context": "https://schema.org",
-    "@type": "NewsArticle",
-    headline: `${signal.pair} ${signal.type} Signal`,
-    datePublished: signal.date,
+    "@type": "Article",
+    headline: pageTitle,
+    description: pageDesc,
     author: { "@type": "Organization", name: "FinNews247" },
-    publisher: {
-      "@type": "Organization",
-      name: "FinNews247",
-      logo: { "@type": "ImageObject", url: "https://finnews247.com/logo.png" },
-    },
-    image: [
-      signal.image
-        ? `https://finnews247.com/images/${signal.image}`
-        : "https://finnews247.com/default-signal.jpg",
-    ],
-    description: `Signal details for ${signal.pair}: Entry ${signal.entry}, Target ${signal.target}, Stoploss ${signal.stoploss}.`,
-    mainEntityOfPage: `https://finnews247.com/signals/${signal.id}`,
+    datePublished: date,
+    mainEntityOfPage: `https://finnews247.com/signals/${id}`
   };
 
   return (
-    <div className="container mx-auto px-4 py-6">
-      {/* ✅ SEO Meta cho signal detail */}
-      <NextSeo
-        title={title}
-        description={desc}
-        openGraph={{
-          title,
-          description: desc,
-          url: `https://finnews247.com/signals/${id}`,
-          images: [
-            {
-              url: signal.image
-                ? `https://finnews247.com/images/${signal.image}`
-                : "https://finnews247.com/default-signal.jpg",
-            },
-          ],
-        }}
-        additionalMetaTags={[
-          {
-            name: "keywords",
-            content: `${signal.pair} trading signal, crypto ${signal.type.toLowerCase()} signal, entry target stoploss, ${signal.pair} forecast, crypto signals`,
-          },
-        ]}
-      />
-
-      {/* ✅ JSON-LD Structured Data cho từng signal */}
+    <div className="container mx-auto px-4 py-8">
+      <NextSeo title={pageTitle} description={pageDesc} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
-      <h1 className="text-2xl font-bold mb-2">
-        {signal.pair} —{" "}
-        <span
-          className={signal.type === "Long" ? "text-green-600" : "text-red-600"}
-        >
-          {signal.type}
-        </span>
-      </h1>
-      <p className="text-gray-600 mb-4">{signal.date}</p>
+      <nav className="mb-4 text-sm">
+        <Link href="/signals" className="text-sky-600 hover:underline">Signals</Link>
+        <span className="mx-2 text-gray-400">/</span>
+        <span>{pair}</span>
+      </nav>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Info block */}
-        <div className="space-y-2">
-          {/* Entry / Target / Stoploss xuống 3 dòng riêng biệt */}
-          <p>
-            <b>Entry:</b> {signal.entry}
-          </p>
-          <p>
-            <b>Target:</b> {signal.target}
-          </p>
-          <p>
-            <b>Stoploss:</b> {signal.stoploss}
-          </p>
+      <header className="mb-6">
+        <h1 className="text-2xl md:text-3xl font-bold">{pair} — {type}</h1>
+        <p className="text-gray-600 mt-1">{date}</p>
+        <p className="mt-2">{excerpt}</p>
+      </header>
 
-          <p className="text-sm text-gray-600">{signal.excerpt}</p>
-          <div className="mt-4 p-3 bg-yellow-100 text-yellow-900 text-sm rounded">
-            ⚠️ <b>Disclaimer:</b> This content is for informational purposes
-            only and not financial advice.
-          </div>
+      {/* Entry / Target / Stoploss */}
+      <div className="grid md:grid-cols-3 gap-4 mb-6">
+        <div className="p-4 border rounded-xl bg-white">
+          <div className="text-gray-500 text-sm">Entry</div>
+          <div className="text-lg font-semibold text-yellow-600">{entry}</div>
         </div>
-
-        {/* Charts block (giữ nguyên cấu trúc gốc) */}
-        <div
-          className={`grid gap-6 ${
-            signal.image ? "md:grid-cols-2" : "md:grid-cols-1"
-          }`}
-        >
-          {/* Custom chart image với zoom */}
-          {signal.image && (
-            <div>
-              <h2 className="text-lg font-semibold mb-2">📊 Custom Chart</h2>
-              <img
-                src={`/images/${signal.image}`}
-                alt={`${signal.pair} custom chart`}
-                className="rounded-xl border w-full h-auto cursor-pointer hover:opacity-90"
-                onClick={() => setIsOpen(true)}
-              />
-              {isOpen && (
-                <div
-                  className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <img
-                    src={`/images/${signal.image}`}
-                    alt={`${signal.pair} zoomed chart`}
-                    className="max-h-[90vh] max-w-[90vw] rounded-lg shadow-lg"
-                  />
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* TradingView Chart */}
-          <div>
-            <h2 className="text-lg font-semibold mb-2">📈 Live TradingView</h2>
-            <iframe
-              src={`https://s.tradingview.com/widgetembed/?frameElementId=tradingview_${tvSymbol}&symbol=BINANCE:${tvSymbol}&interval=60&hidesidetoolbar=1&theme=light&style=1&timezone=Etc/UTC`}
-              width="100%"
-              height="500"
-              frameBorder="0"
-              allowTransparency={true}
-              scrolling="no"
-            ></iframe>
-          </div>
+        <div className="p-4 border rounded-xl bg-white">
+          <div className="text-gray-500 text-sm">Target</div>
+          <div className="text-lg font-semibold text-green-600">{target}</div>
+        </div>
+        <div className="p-4 border rounded-xl bg-white">
+          <div className="text-gray-500 text-sm">Stoploss</div>
+          <div className="text-lg font-semibold text-red-600">{stoploss}</div>
         </div>
       </div>
 
-      {/* ✅ Extra Boxes bên dưới */}
-      <div className="mt-10 space-y-6">
-        <TopExchanges />
-        <BestWallets />
-        <TopStaking />
+      {/* Chart + Zoomable Image */}
+      <div className="grid md:grid-cols-3 gap-6 mb-10">
+        <div className="md:col-span-2 border rounded-xl overflow-hidden bg-white">
+          <TVChart symbol={tvSymbol} height={520} />
+        </div>
+        <div className="border rounded-xl p-3 bg-white">
+          {imgUrl ? (
+            <ZoomableImage src={imgUrl} alt={`${pair} ${type} setup`} />
+          ) : (
+            <div className="text-sm text-gray-500">
+              No image provided for this signal.
+            </div>
+          )}
+          <p className="text-xs text-gray-500 mt-2">
+            If the TradingView symbol is unavailable for this asset, rely on the annotated image for target zones and invalidation.
+          </p>
+        </div>
+      </div>
+
+      {/* Nội dung */}
+      {intro || marketContext || technicalAnalysis || riskStrategy || faq || disclaimer ? (
+        <>
+          {intro && (
+            <section className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: intro }} />
+          )}
+          {marketContext && (
+            <section className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: marketContext }} />
+          )}
+          {technicalAnalysis && (
+            <section className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: technicalAnalysis }} />
+          )}
+          {riskStrategy && (
+            <section className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: riskStrategy }} />
+          )}
+
+          {Array.isArray(faq) && faq.length > 0 && (
+            <section className="mb-8">
+              <h2 className="text-xl font-semibold mb-3">FAQ</h2>
+              <div className="space-y-3">
+                {faq.map((item, idx) => (
+                  <div key={idx} className="p-4 border rounded-lg bg-white">
+                    <p className="font-medium">Q: {item.q}</p>
+                    <p className="text-gray-700 mt-1">A: {item.a}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {disclaimer && (
+            <section className="mt-6 p-4 bg-yellow-100 text-yellow-900 text-sm rounded"
+              dangerouslySetInnerHTML={{ __html: disclaimer }}
+            />
+          )}
+        </>
+      ) : content ? (
+        <section className="prose max-w-none" dangerouslySetInnerHTML={{ __html: content }} />
+      ) : (
+        <div className="text-sm text-gray-500">
+          No detailed content provided for this signal.
+        </div>
+      )}
+
+      <div className="mt-10">
+        <Link href="/signals" className="text-sky-600 hover:underline">← Back to all signals</Link>
       </div>
     </div>
   );
