@@ -165,6 +165,11 @@ const nextConfig = {
   destination: '/nasdaq-hits-record-high-as-tech-rally-continues',
   permanent: true,
 },
+{
+  source: '/insurance-for-nfts',
+  destination: '/insurance/insurance-for-nfts',
+  permanent: true,
+},
        
     ];
   },
