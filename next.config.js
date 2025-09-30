@@ -160,6 +160,11 @@ const nextConfig = {
   destination: '/market',
   permanent: true,
 },
+{
+  source: '/news/nasdaq-hits-record-high-tech-rally-continues',
+  destination: '/nasdaq-hits-record-high-as-tech-rally-continues',
+  permanent: true,
+},
        
     ];
   },
