@@ -540,5 +540,26 @@
       { "q": "What’s the main risk?", "a": "Volatility and lack of liquidity make sharp retracements common." }
     ],
     "disclaimer": "<p>Speculative idea for educational purposes. Not financial advice.</p>"
+  },
+
+  {
+    "id": "zec-long-251003-0131",
+    "pair": "ZEC/USDT",
+    "type": "Long",
+    "entry": "143.4",
+    "target": "detail",
+    "stoploss": "86.16",
+    "date": "2025-10-03 01:31",
+    "image": "signal28.png",
+    "excerpt": "Long ZEC at 143.4, target in the green area on the picture, stoploss 86.16.",
+    "intro": "<h1>ZEC/USDT Long Setup — October 03, 2025</h1>\n<p>Developer momentum and DeFi interest in ZEC remain elevated. Plan is to go long from <b>143.4</b>, aiming for <b>15</b>, with a protective stop at <b>86.16</b>. Reclaiming former supply and a run of constructive weekly closes argue for a multi‑week continuation.</p>\n<aside class=\"mt-4 p-3 border-l-4 border-blue-500 bg-blue-50 text-sm\"><strong>Session notes:</strong> Liquidity is typically thicker during U.S. hours; for breakout adds, look for a <b>retest-and-hold</b> confirmation instead of chasing the first impulse candle.</aside>",
+  "marketContext": "<h2>Market Context</h2><p>Ongoing ecosystem growth and DeFi adoption keep ZEC in the mix among leading L1s. Developer participation continues to be strong.</p>",
+  "technicalAnalysis": "<h2>Technical Analysis</h2><ul><li>Support: The 143.3 area has repeatedly acted as a floor.</li><li>Pattern: An ascending triangle suggests an upside break.</li><li>Projection: The measured objective aligns near 150 USD.</li></ul><h3>Key Levels</h3><ul><li>Entry: 143.3</li><li>Target: 1000$</li><li>Stoploss: 86.16</li></ul>",
+  "riskStrategy": "<h2>Risk Management</h2><p>Size positions moderately. Long‑horizon holders can maintain exposure; active traders might trim 20–30% into the 200–300 USD area.</p>",
+  "faq": [
+    { "q": "Why is the target 1000$?", "a": "The triangle’s measured move provides a long‑term objective in that region." },
+    { "q": "What would invalidate the setup?", "a": "A decisive break below 86.16 would negate the bullish thesis." }
+  ],
+    "disclaimer": "<p>Medium-term investment idea. Not financial advice.</p>"
   }
 ]
