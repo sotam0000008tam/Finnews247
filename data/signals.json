@@ -520,5 +520,25 @@
       { "q": "Risk of trading?", "a": "Extremely volatile; liquidity risk is high." }
     ],
     "disclaimer": "<p>Not financial advice. High-risk micro-cap trade idea only.</p>"
+  },
+  {
+    "id": "broccoli714-long-251002-1836",
+    "pair": "BROCCOLI714/USDT",
+    "type": "Long",
+    "entry": "0.03342",
+    "target": "detail",
+    "stoploss": "0.01871",
+    "date": "2025-10-02 18:36",
+    "image": "signal27.png",
+    "excerpt": "Long BROCCOLI714 at 0.03342, target: in the green area on the picture, stoploss 0.01871.",
+    "intro": "<h1>BROCCOLI714/USDT Long Trade Signal – October 02, 2025</h1>\n<p>The TOWNS token, part of an emerging micro-cap project, is gaining visibility as speculative capital rotates into smaller-cap cryptocurrencies. This signal suggests a long entry at 0.03342 with a target of 0.07 and stoploss at 0.01871.</p>\n<aside class=\"mt-4 p-3 border-l-4 border-amber-400 bg-amber-50 text-sm\"><strong>Liquidity note:</strong> Micro-caps can gap on both entries and exits. Prefer <b>limit orders</b> and pre-define partial TPs. Re-check tokenomics/unlock schedule; unexpected emissions can invalidate the setup quickly.</aside>",
+    "marketContext": "<h2>Market Context</h2><p>Community-driven novelty tokens gain attention in bullish altcoin phases, despite lacking fundamentals.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><ul><li>Trend: Recovery from 0.026 formed bullish impulse.</li><li>Volume: Rising activity supports rally potential.</li><li>Support: 0.03 acts as base.</li></ul><h3>Key Levels</h3><ul><li>Entry: 0.03342</li><li>Target: Chart green zone</li><li>Stoploss: 0.01871</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Only suitable for high-risk allocation. Use hard stoploss, consider quick partial exits on spikes.</p>",
+    "faq": [
+      { "q": "Why trade BROCCOLI714?", "a": "Momentum-driven rallies in novelty tokens can deliver quick upside." },
+      { "q": "What’s the main risk?", "a": "Volatility and lack of liquidity make sharp retracements common." }
+    ],
+    "disclaimer": "<p>Speculative idea for educational purposes. Not financial advice.</p>"
   }
 ]
