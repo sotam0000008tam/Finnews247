@@ -125,7 +125,12 @@ export default function SignalDetailPage({ signal }) {
     );
   }
 
+  // Destructure `id` along with other properties from the signal. Without destructuring
+  // or otherwise defining `id`, the structured data generation below would reference
+  // an undefined variable, causing a ReferenceError during prerendering. Including
+  // `id` here ensures it is available in scope.
   const {
+    id,
     pair,
     type,
     entry,
@@ -345,16 +350,16 @@ export default function SignalDetailPage({ signal }) {
 // demand using the fallback strategy specified below. This avoids 404
 // errors for newly added signals and improves SEO by having static pages
 // available for older signals.
-import fs from "fs";
-import path from "path";
+import fs from 'fs';
+import path from 'path';
 
 export async function getStaticPaths() {
-  const filePath = path.join(process.cwd(), "data", "signals.json");
+  const filePath = path.join(process.cwd(), 'data', 'signals.json');
   let signalsData = [];
   try {
-    signalsData = JSON.parse(fs.readFileSync(filePath, "utf8"));
+    signalsData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
   } catch (err) {
-    console.warn("Error reading signals.json in getStaticPaths", err);
+    console.warn('Error reading signals.json in getStaticPaths', err);
   }
   const paths = Array.isArray(signalsData)
     ? signalsData.map((s) => ({ params: { id: String(s.id) } }))
@@ -366,17 +371,17 @@ export async function getStaticPaths() {
     // will wait for the page to be generated, avoiding a flash of a
     // fallback page. Once generated, the page is cached and served for
     // subsequent requests.
-    fallback: "blocking",
+    fallback: 'blocking',
   };
 }
 
 export async function getStaticProps({ params }) {
-  const filePath = path.join(process.cwd(), "data", "signals.json");
+  const filePath = path.join(process.cwd(), 'data', 'signals.json');
   let signalsData = [];
   try {
-    signalsData = JSON.parse(fs.readFileSync(filePath, "utf8"));
+    signalsData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
   } catch (err) {
-    console.warn("Error reading signals.json in getStaticProps", err);
+    console.warn('Error reading signals.json in getStaticProps', err);
   }
   const signal = Array.isArray(signalsData)
     ? signalsData.find((s) => String(s.id) === String(params.id))
