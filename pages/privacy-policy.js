@@ -12,11 +12,12 @@ export default function PrivacyPolicy() {
       <NextSeo
         title="Privacy Policy | FinNews247"
         description="Learn how FinNews247 collects and uses your data. Our privacy policy explains cookies, analytics and advertising practices to keep your information safe."
+        canonical="https://www.finnews247.com/privacy-policy"
         openGraph={{
           title: "Privacy Policy | FinNews247",
           description:
             "FinNews247 privacy practices for users accessing crypto trading signals and market coverage. Understand how we collect, use and protect your data.",
-          url: "https://finnews247.com/privacy-policy",
+          url: "https://www.finnews247.com/privacy-policy",
         }}
         additionalMetaTags={[
           {

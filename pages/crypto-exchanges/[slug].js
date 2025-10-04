@@ -17,10 +17,11 @@ export default function CryptoExchangesPost({ post }) {
       <NextSeo
         title={`${post.title} | FinNews`}
         description={post.excerpt}
+        canonical={`https://www.finnews247.com/crypto-exchanges/${post.slug}`}
         openGraph={{
           title: `${post.title} | FinNews`,
           description: post.excerpt,
-          url: `https://finnews247.com/crypto-exchanges/${post.slug}`,
+          url: `https://www.finnews247.com/crypto-exchanges/${post.slug}`,
         }}
       />
       <h1>{post.title}</h1>

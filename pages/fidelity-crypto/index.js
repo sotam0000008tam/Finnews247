@@ -16,11 +16,12 @@ export default function FidelityCrypto({ posts, totalPages, currentPage }) {
       <NextSeo
         title="Fidelity Crypto Insights | FinNews"
         description="In-depth analysis and news on Fidelity's crypto offerings, ETFs and institutional adoption."
+        canonical="https://www.finnews247.com/fidelity-crypto"
         openGraph={{
           title: "Fidelity Crypto Insights | FinNews",
           description:
             "Stay informed on Fidelity's latest moves in cryptocurrency, including crypto ETFs, custody services and more.",
-          url: "https://finnews247.com/fidelity-crypto",
+          url: "https://www.finnews247.com/fidelity-crypto",
         }}
       />
 

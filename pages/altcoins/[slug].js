@@ -17,10 +17,12 @@ export default function AltcoinPost({ post }) {
       <NextSeo
         title={`${post.title} | FinNews`}
         description={post.excerpt}
+        canonical={`https://www.finnews247.com/altcoins/${post.slug}`}
         openGraph={{
           title: `${post.title} | FinNews`,
           description: post.excerpt,
-          url: `https://finnews247.com/altcoins/${post.slug}`,
+          // Use the www domain consistently for OG URL
+          url: `https://www.finnews247.com/altcoins/${post.slug}`,
         }}
       />
       <h1>{post.title}</h1>

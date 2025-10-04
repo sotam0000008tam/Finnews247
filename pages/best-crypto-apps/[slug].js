@@ -17,10 +17,11 @@ export default function AppPost({ post }) {
       <NextSeo
         title={`${post.title} | FinNews`}
         description={post.excerpt}
+        canonical={`https://www.finnews247.com/best-crypto-apps-wallets/${post.slug}`}
         openGraph={{
           title: `${post.title} | FinNews`,
           description: post.excerpt,
-          url: `https://finnews247.com/best-crypto-apps-wallets/${post.slug}`,
+          url: `https://www.finnews247.com/best-crypto-apps-wallets/${post.slug}`,
         }}
       />
       <h1>{post.title}</h1>

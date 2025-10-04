@@ -12,12 +12,13 @@ export default function Market({ posts, totalPages, currentPage }) {
       <NextSeo
         title="Crypto & Market News | FinNews247"
         description="Latest news and analysis on cryptocurrencies and global markets. Stay updated on Bitcoin, Ethereum, stocks, forex, and more."
+        canonical="https://www.finnews247.com/market"
         openGraph={{
           title: "Crypto & Market News | FinNews247",
           description:
             "Comprehensive updates on crypto and financial markets: Bitcoin, Ethereum, stocks, forex, and commodities.",
-          url: "https://finnews247.com/market",
-          images: [{ url: "https://finnews247.com/images/market-banner.jpg" }],
+          url: "https://www.finnews247.com/market",
+          images: [{ url: "https://www.finnews247.com/images/market-banner.jpg" }],
         }}
       />
 

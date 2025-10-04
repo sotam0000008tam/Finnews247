@@ -12,12 +12,13 @@ export default function Crypto({ posts, totalPages, currentPage }) {
       <NextSeo
         title="Crypto News | FinNews"
         description="Latest cryptocurrency news, Bitcoin, Ethereum, and altcoin updates with market insights."
+        canonical="https://www.finnews247.com/crypto"
         openGraph={{
           title: "Crypto News | FinNews",
           description:
             "Stay updated with real-time cryptocurrency market trends, Bitcoin, Ethereum, DeFi and NFTs.",
-          url: "https://finnews247.com/crypto",
-          images: [{ url: "https://finnews247.com/images/crypto-banner.jpg" }],
+          url: "https://www.finnews247.com/crypto",
+          images: [{ url: "https://www.finnews247.com/images/crypto-banner.jpg" }],
         }}
       />
 

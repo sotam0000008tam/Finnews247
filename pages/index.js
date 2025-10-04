@@ -23,16 +23,17 @@ export default function Home({
     "@context": "https://schema.org",
     "@type": "WebPage",
     name: "FinNews247 - Crypto Trading Signals & Market Coverage",
-    url: "https://finnews247.com/",
+    url: "https://www.finnews247.com/",
     description:
       "FinNews247 provides professional finance coverage with a focus on crypto trading signals, entry, target, stoploss, plus updates on cryptocurrencies, stocks, economy, and global markets.",
     publisher: {
       "@type": "Organization",
       name: "FinNews247",
-      url: "https://finnews247.com/",
+      // Use the www domain consistently for publisher URLs and logo to avoid duplicate origins.
+      url: "https://www.finnews247.com/",
       logo: {
         "@type": "ImageObject",
-        url: "https://finnews247.com/logo.png",
+        url: "https://www.finnews247.com/logo.png",
       },
     },
   };
@@ -176,15 +177,9 @@ export async function getServerSideProps() {
   return {
     props: {
       altcoinPosts: sortDesc([...altcoins, ...seccoin]).slice(0, SECTION_COUNTS.altcoins),
-      exchangePosts: sortDesc([...fidelity, ...cryptoexchanges]).slice(
-        0,
-        SECTION_COUNTS.exchanges
-      ),
+      exchangePosts: sortDesc([...fidelity, ...cryptoexchanges]).slice(0, SECTION_COUNTS.exchanges),
       appPosts: sortDesc([...apps]).slice(0, SECTION_COUNTS.apps),
-      insuranceTaxPosts: sortDesc([...insurance, ...tax]).slice(
-        0,
-        SECTION_COUNTS.insuranceTax
-      ),
+      insuranceTaxPosts: sortDesc([...insurance, ...tax]).slice(0, SECTION_COUNTS.insuranceTax),
       newsPosts: sortDesc([...news]).slice(0, SECTION_COUNTS.news),
       guidePosts: sortDesc([...guides]).slice(0, SECTION_COUNTS.guides),
     },

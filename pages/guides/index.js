@@ -15,11 +15,12 @@ export default function Guides({ posts, totalPages, currentPage }) {
       <NextSeo
         title="Crypto Guides & Reviews | FinNews"
         description="Discover how‑to guides, reviews and comparisons for crypto exchanges, wallets and more."
+        canonical="https://www.finnews247.com/guides"
         openGraph={{
           title: "Crypto Guides & Reviews | FinNews",
           description:
             "Browse our comprehensive guides covering everything from opening an exchange account to comparing top wallets and platforms.",
-          url: "https://finnews247.com/guides",
+          url: "https://www.finnews247.com/guides",
         }}
       />
       <div>

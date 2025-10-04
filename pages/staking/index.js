@@ -36,10 +36,11 @@ export default function StakingPage() {
       <NextSeo
         title={title}
         description={description}
+        canonical="https://www.finnews247.com/staking"
         openGraph={{
           title,
           description,
-          url: "https://finnews247.com/staking",
+          url: "https://www.finnews247.com/staking",
           type: "article",
         }}
       />

@@ -21,10 +21,11 @@ export default function NewsDetail() {
       <NextSeo
         title={title}
         description={desc}
+        canonical={`https://www.finnews247.com/news/${slug}`}
         openGraph={{
           title,
           description: desc,
-          url: `https://finnews247.com/news/${slug}`,
+          url: `https://www.finnews247.com/news/${slug}`,
         }}
       />
 

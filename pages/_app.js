@@ -48,17 +48,19 @@ export default function App({ Component, pageProps }) {
         }}
       />
 
-      {/* ✅ Google Search Console verification và canonical */}
+      {/* ✅ Google Search Console verification */}
       <Head>
         <meta
           name="google-site-verification"
           content="Akkp3qaq0RfqlqI75Qw8nhIIiu21X7vMBIkV0yfahj0"
         />
-        {/* Canonical URL: specify www.finnews247.com as the preferred domain. */}
-        <link
-          rel="canonical"
-          href={`https://www.finnews247.com${router.asPath || ""}`}
-        />
+        {/*
+          We intentionally do not set a global canonical URL here.  Each page
+          defines its own canonical tag via the NextSeo component.  Adding
+          a canonical link globally causes duplicate <link rel="canonical">
+          tags which confuse search engines.  See individual pages for
+          canonical definitions.
+        */}
       </Head>
 
       {/* SEO mặc định toàn site */}

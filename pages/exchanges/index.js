@@ -36,10 +36,11 @@ export default function ExchangesPage() {
       <NextSeo
         title={title}
         description={description}
+        canonical="https://www.finnews247.com/exchanges"
         openGraph={{
           title,
           description,
-          url: "https://finnews247.com/exchanges",
+          url: "https://www.finnews247.com/exchanges",
           type: "article",
         }}
       />

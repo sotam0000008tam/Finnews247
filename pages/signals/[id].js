@@ -7,11 +7,7 @@ import signals from "../../data/signals.json";
 
 function resolveImage(src) {
   if (!src) return null;
-  if (
-    src.startsWith("http://") ||
-    src.startsWith("https://") ||
-    src.startsWith("/")
-  ) {
+  if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("/")) {
     return src;
   }
   return `/images/${src}`;
@@ -93,10 +89,8 @@ export default function SignalDetailPage() {
   const router = useRouter();
   const { id } = router.query;
 
-  // Tìm tín hiệu theo id
   const data = signals.find((s) => String(s.id) === String(id));
 
-  // Nếu không tìm thấy thì trả về trang 404 đơn giản
   if (!data) {
     return (
       <div className="container mx-auto px-4 py-10">
@@ -111,7 +105,6 @@ export default function SignalDetailPage() {
     );
   }
 
-  // Destructure dữ liệu
   const {
     pair,
     type,
@@ -138,7 +131,6 @@ export default function SignalDetailPage() {
     excerpt ||
     `Crypto trading signal for ${pair} — Entry ${entry}, Target ${target}, Stoploss ${stoploss}.`;
 
-  // Article schema
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -146,10 +138,12 @@ export default function SignalDetailPage() {
     description: pageDesc,
     author: { "@type": "Organization", name: "FinNews247" },
     datePublished: date,
-    mainEntityOfPage: `https://finnews247.com/signals/${id}`,
+    mainEntityOfPage: `https://www.finnews247.com/signals/${id}`,
   };
 
-  // Breadcrumb schema
+  // Breadcrumb structured data for better SEO. This defines the hierarchical path
+  // from Home → Trading Signals → Specific Signal. Using the www version of
+  // the domain ensures consistency in search engines.
   const breadcrumbData = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -182,8 +176,6 @@ export default function SignalDetailPage() {
         description={pageDesc}
         canonical={`https://www.finnews247.com/signals/${id}`}
       />
-
-      {/* Article JSON-LD */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -210,7 +202,7 @@ export default function SignalDetailPage() {
         <p className="mt-2">{excerpt}</p>
       </header>
 
-      {/* Entry / Target / Stoploss */}
+      {/* Entry / Target / Stoploss (Vàng / Xanh / Đỏ) */}
       <div className="grid md:grid-cols-3 gap-4 mb-6">
         <div className="p-4 border rounded-xl bg-white">
           <div className="text-gray-500 text-sm">Entry</div>
@@ -226,7 +218,7 @@ export default function SignalDetailPage() {
         </div>
       </div>
 
-      {/* Methodology summary */}
+      {/* 🔎 NEW: Methodology (ngắn gọn, tăng chữ, đặt dưới 3 ô) */}
       <div className="mb-8 p-4 rounded-xl bg-white border">
         <h2 className="text-lg font-semibold mb-2">Methodology (Summary)</h2>
         <p className="text-sm text-gray-700">
@@ -240,7 +232,7 @@ export default function SignalDetailPage() {
         </p>
       </div>
 
-      {/* Chart + Image */}
+      {/* Chart + Ảnh chú thích */}
       <div className="grid md:grid-cols-3 gap-6 mb-10">
         <div className="md:col-span-2 border rounded-xl overflow-hidden bg-white">
           <TVChart symbol={tvSymbol} height={520} />
@@ -260,13 +252,8 @@ export default function SignalDetailPage() {
         </div>
       </div>
 
-      {/* Nội dung chi tiết */}
-      {intro ||
-      marketContext ||
-      technicalAnalysis ||
-      riskStrategy ||
-      faq ||
-      disclaimer ? (
+      {/* Nội dung: ưu tiên intro/sections; fallback content nếu không có */}
+      {intro || marketContext || technicalAnalysis || riskStrategy || faq || disclaimer ? (
         <>
           {intro && (
             <section
@@ -292,7 +279,6 @@ export default function SignalDetailPage() {
               dangerouslySetInnerHTML={{ __html: riskStrategy }}
             />
           )}
-          {/* FAQ: lặp qua mảng câu hỏi & trả lời */}
           {Array.isArray(faq) && faq.length > 0 && (
             <section className="mb-8">
               <h2 className="text-xl font-semibold mb-3">FAQ</h2>
@@ -306,7 +292,6 @@ export default function SignalDetailPage() {
               </div>
             </section>
           )}
-          {/* Disclaimer (nếu có) */}
           {disclaimer && (
             <section
               className="mt-6 p-4 bg-yellow-100 text-yellow-900 text-sm rounded"
@@ -332,7 +317,7 @@ export default function SignalDetailPage() {
         </Link>
       </div>
 
-      {/* Internal links at the bottom */}
+      {/* ⬇️ Internal links xuống cuối trang */}
       <div className="mt-8 pt-6 border-t">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Link

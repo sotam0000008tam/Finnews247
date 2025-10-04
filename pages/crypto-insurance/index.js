@@ -10,11 +10,12 @@ export default function InsuranceTaxIndex({ posts }) {
       <NextSeo
         title="Crypto Insurance & Tax | FinNews247"
         description="Stay updated with the latest insights on crypto insurance and tax compliance."
+        canonical="https://www.finnews247.com/crypto-insurance"
         openGraph={{
           title: "Crypto Insurance & Tax | FinNews247",
           description:
             "Stay updated with the latest insights on crypto insurance and tax compliance.",
-          url: "https://finnews247.com/crypto-insurance",
+          url: "https://www.finnews247.com/crypto-insurance",
         }}
       />
 

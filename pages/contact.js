@@ -13,11 +13,12 @@ export default function Contact() {
       <NextSeo
         title="Contact FinNews247 | Crypto Trading Signals Support"
         description="Get in touch with FinNews247 for questions about crypto trading signals, advertising partnerships or editorial inquiries."
+        canonical="https://www.finnews247.com/contact"
         openGraph={{
           title: "Contact FinNews247 | Crypto Trading Signals Support",
           description:
             "Reach the FinNews247 team for support, partnerships or editorial inquiries related to crypto trading signals and market news.",
-          url: "https://finnews247.com/contact",
+          url: "https://www.finnews247.com/contact",
         }}
         additionalMetaTags={[
           {

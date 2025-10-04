@@ -14,10 +14,11 @@ export default function InsuranceDetail({ post }) {
       <NextSeo
         title={title}
         description={desc}
+        canonical={`https://www.finnews247.com/crypto-insurance/${post.slug}`}
         openGraph={{
           title,
           description: desc,
-          url: `https://finnews247.com/crypto-insurance/${post.slug}`,
+          url: `https://www.finnews247.com/crypto-insurance/${post.slug}`,
         }}
       />
 

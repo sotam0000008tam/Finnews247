@@ -3,7 +3,11 @@ const path = require("path");
 
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: "https://finnews247.com",
+  // Define the canonical site URL using the www subdomain.  Using a single
+  // consistent domain avoids duplicate content between www and non‑www versions
+  // and ensures that generated sitemaps and robots.txt reference the same
+  // canonical hostname.  See https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL#choosing_between_www_and_non-www
+  siteUrl: "https://www.finnews247.com",
   generateRobotsTxt: true,
   changefreq: "daily",
   priority: 0.7,

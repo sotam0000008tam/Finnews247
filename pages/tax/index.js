@@ -15,11 +15,12 @@ export default function TaxPage({ posts, totalPages, currentPage }) {
       <NextSeo
         title="Crypto Tax & Compliance | FinNews"
         description="Stay compliant with our crypto tax guides, reporting tips and software reviews."
+        canonical="https://www.finnews247.com/tax"
         openGraph={{
           title: "Crypto Tax & Compliance | FinNews",
           description:
             "Learn how to report crypto transactions, minimize taxes legally and stay up to date on regulations.",
-          url: "https://finnews247.com/tax",
+          url: "https://www.finnews247.com/tax",
         }}
       />
 

@@ -16,11 +16,12 @@ export default function BestCryptoApps({ posts, totalPages, currentPage }) {
       <NextSeo
         title="Best Crypto Apps & Wallets | FinNews"
         description="Discover top crypto apps for trading, portfolio management, tax reporting and more."
+        canonical="https://www.finnews247.com/best-crypto-apps-wallets"
         openGraph={{
           title: "Best Crypto Apps & Wallets | FinNews",
           description:
             "Find the best apps to buy, trade and manage cryptocurrencies with in-depth reviews and comparisons.",
-          url: "https://finnews247.com/best-crypto-apps-wallets",
+          url: "https://www.finnews247.com/best-crypto-apps-wallets",
         }}
       />
 

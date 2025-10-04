@@ -15,11 +15,13 @@ export default function Altcoins({ posts }) {
       <NextSeo
         title="Altcoins 2025 – Guides, Analysis & Price Predictions | FinNews"
         description="Guides, analysis and price predictions for altcoins in 2025, including Sec Coin and other emerging projects."
+        canonical="https://www.finnews247.com/altcoins"
         openGraph={{
           title: "Altcoins 2025 – Guides, Analysis & Price Predictions",
           description:
             "Comprehensive guides and analysis on major altcoins with price predictions for 2025.",
-          url: "https://finnews247.com/altcoins",
+          // Use the www domain consistently for OG URL
+          url: "https://www.finnews247.com/altcoins",
         }}
       />
 

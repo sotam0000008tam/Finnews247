@@ -16,11 +16,12 @@ export default function SecCoin({ posts, totalPages, currentPage }) {
       <NextSeo
         title="SEC & Regulation Analysis | FinNews"
         description="Analysis of regulatory actions, SEC cases and their impact on the cryptocurrency market."
+        canonical="https://www.finnews247.com/sec-coin"
         openGraph={{
           title: "SEC & Regulation Analysis | FinNews",
           description:
             "Stay up-to-date on SEC lawsuits, regulatory developments and their implications for crypto investors.",
-          url: "https://finnews247.com/sec-coin",
+          url: "https://www.finnews247.com/sec-coin",
         }}
       />
 

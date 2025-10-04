@@ -21,10 +21,11 @@ export default function InsuranceTaxDetail({ post }) {
       <NextSeo
         title={`${post.title} | FinNews247`}
         description={post.excerpt}
+        canonical={`https://www.finnews247.com/insurance/${post.slug}`}
         openGraph={{
           title: `${post.title} | FinNews247`,
           description: post.excerpt,
-          url: `https://finnews247.com/insurance/${post.slug}`,
+          url: `https://www.finnews247.com/insurance/${post.slug}`,
         }}
       />
 

@@ -36,10 +36,11 @@ export default function WalletsPage() {
       <NextSeo
         title={title}
         description={description}
+        canonical="https://www.finnews247.com/wallets"
         openGraph={{
           title,
           description,
-          url: "https://finnews247.com/wallets",
+          url: "https://www.finnews247.com/wallets",
           type: "article",
         }}
       />

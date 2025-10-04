@@ -25,7 +25,7 @@ export default function SignalsPage() {
   const itemListElement = signals.map((s, index) => ({
     "@type": "ListItem",
     position: index + 1,
-    url: `https://finnews247.com/signals/${s.id}`,
+    url: `https://www.finnews247.com/signals/${s.id}`,
     name: `${s.pair} ${s.type} Signal`,
   }));
 
@@ -35,7 +35,7 @@ export default function SignalsPage() {
     name: "Crypto Trading Signals",
     description:
       "List of latest cryptocurrency trading signals including entry, target, and stoploss.",
-    url: "https://finnews247.com/signals",
+    url: "https://www.finnews247.com/signals",
     itemListElement,
   };
 
@@ -49,6 +49,7 @@ export default function SignalsPage() {
       <NextSeo
         title="Trading Signals | FinNews"
         description="Latest crypto trading signals with entry, target, and stoploss."
+        canonical="https://www.finnews247.com/signals"
       />
 
       {/* FAQ Schema SEO */}
