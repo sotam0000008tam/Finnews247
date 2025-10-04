@@ -93,8 +93,10 @@ export default function SignalDetailPage() {
   const router = useRouter();
   const { id } = router.query;
 
+  // Tìm tín hiệu theo id
   const data = signals.find((s) => String(s.id) === String(id));
 
+  // Nếu không tìm thấy thì trả về trang 404 đơn giản
   if (!data) {
     return (
       <div className="container mx-auto px-4 py-10">
@@ -109,6 +111,7 @@ export default function SignalDetailPage() {
     );
   }
 
+  // Destructure dữ liệu
   const {
     pair,
     type,
@@ -135,6 +138,7 @@ export default function SignalDetailPage() {
     excerpt ||
     `Crypto trading signal for ${pair} — Entry ${entry}, Target ${target}, Stoploss ${stoploss}.`;
 
+  // Article schema
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -145,7 +149,7 @@ export default function SignalDetailPage() {
     mainEntityOfPage: `https://finnews247.com/signals/${id}`,
   };
 
-  // Breadcrumb structured data for better SEO
+  // Breadcrumb schema
   const breadcrumbData = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -178,6 +182,8 @@ export default function SignalDetailPage() {
         description={pageDesc}
         canonical={`https://www.finnews247.com/signals/${id}`}
       />
+
+      {/* Article JSON-LD */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -204,7 +210,7 @@ export default function SignalDetailPage() {
         <p className="mt-2">{excerpt}</p>
       </header>
 
-      {/* Entry / Target / Stoploss (Vàng / Xanh / Đỏ) */}
+      {/* Entry / Target / Stoploss */}
       <div className="grid md:grid-cols-3 gap-4 mb-6">
         <div className="p-4 border rounded-xl bg-white">
           <div className="text-gray-500 text-sm">Entry</div>
@@ -220,7 +226,7 @@ export default function SignalDetailPage() {
         </div>
       </div>
 
-      {/* 🔎 Methodology (Summary) */}
+      {/* Methodology summary */}
       <div className="mb-8 p-4 rounded-xl bg-white border">
         <h2 className="text-lg font-semibold mb-2">Methodology (Summary)</h2>
         <p className="text-sm text-gray-700">
@@ -254,7 +260,7 @@ export default function SignalDetailPage() {
         </div>
       </div>
 
-      {/* Content sections */}
+      {/* Nội dung chi tiết */}
       {intro ||
       marketContext ||
       technicalAnalysis ||
@@ -286,6 +292,7 @@ export default function SignalDetailPage() {
               dangerouslySetInnerHTML={{ __html: riskStrategy }}
             />
           )}
+          {/* FAQ: lặp qua mảng câu hỏi & trả lời */}
           {Array.isArray(faq) && faq.length > 0 && (
             <section className="mb-8">
               <h2 className="text-xl font-semibold mb-3">FAQ</h2>
@@ -298,7 +305,8 @@ export default function SignalDetailPage() {
                 ))}
               </div>
             </section>
-          ))}
+          )}
+          {/* Disclaimer (nếu có) */}
           {disclaimer && (
             <section
               className="mt-6 p-4 bg-yellow-100 text-yellow-900 text-sm rounded"
@@ -324,7 +332,7 @@ export default function SignalDetailPage() {
         </Link>
       </div>
 
-      {/* Internal links at bottom */}
+      {/* Internal links at the bottom */}
       <div className="mt-8 pt-6 border-t">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Link
@@ -352,9 +360,7 @@ export default function SignalDetailPage() {
             className="block p-4 rounded-xl border bg-white dark:bg-gray-800 hover:shadow-md transition"
           >
             <div className="text-sm text-gray-500">Staking</div>
-            <div className="text-lg font-semibold">
-              Staking Yields & Risks
-            </div>
+            <div className="text-lg font-semibold">Staking Yields & Risks</div>
             <p className="text-sm text-gray-600 mt-1">
               APY tracking & validator slashing risk.
             </p>
