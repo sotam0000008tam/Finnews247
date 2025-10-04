@@ -6,7 +6,7 @@ import PostCard from "../../components/PostCard";
 import { NextSeo } from "next-seo";
 
 /**
- * Best Crypto Apps listing page.
+ * Best Crypto Apps listing page
  * Reads posts from data/bestapps.json and displays them with pagination.
  */
 export default function BestCryptoApps({ posts, totalPages, currentPage }) {
@@ -31,9 +31,7 @@ export default function BestCryptoApps({ posts, totalPages, currentPage }) {
       />
 
       <div>
-        <h1 className="text-3xl font-semibold mb-6">
-          Best Crypto Apps & Wallets
-        </h1>
+        <h1 className="text-3xl font-semibold mb-6">Best Crypto Apps & Wallets</h1>
 
         <div className="grid md:grid-cols-2 gap-6">
           {posts.map((p) => (
@@ -48,11 +46,11 @@ export default function BestCryptoApps({ posts, totalPages, currentPage }) {
               return (
                 <Link
                   key={pageNum}
-                  href={
+                    href={
                     pageNum === 1
                       ? "/best-crypto-apps"
                       : `/best-crypto-apps?page=${pageNum}`
-                  }
+                    }
                   className={`px-3 py-1 rounded ${
                     pageNum === currentPage
                       ? "bg-sky-600 text-white"
