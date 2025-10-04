@@ -17,8 +17,7 @@ function toTradingViewSymbol(pair) {
   let p = pair.toUpperCase().trim();
   const isPerp = p.includes(".P");
   let compact = p.replace("/", "").replace(/\s+/g, "");
-  if (isPerp) return `BYBIT:${compact}`;
-  return `BINANCE:${compact}`;
+  return isPerp ? `BYBIT:${compact}` : `BINANCE:${compact}`;
 }
 
 function TVChart({ symbol, height = 520 }) {
@@ -82,15 +81,13 @@ function ZoomableImage({ src, alt }) {
   );
 }
 
-// Pre-render paths for all signals
+// Pre-render all signal pages
 export async function getStaticPaths() {
-  const paths = signals.map((s) => ({
-    params: { id: String(s.id) },
-  }));
+  const paths = signals.map((s) => ({ params: { id: String(s.id) } }));
   return { paths, fallback: false };
 }
 
-// Fetch data for each signal
+// Get data for each signal
 export async function getStaticProps({ params }) {
   const signal = signals.find((s) => String(s.id) === params.id) || null;
   if (!signal) {
@@ -115,6 +112,7 @@ export default function SignalDetailPage({ signal }) {
   }
 
   const {
+    id,
     pair,
     type,
     entry,
@@ -130,7 +128,6 @@ export default function SignalDetailPage({ signal }) {
     faq,
     disclaimer,
     content,
-    id,
   } = signal;
 
   const imgUrl = resolveImage(image);
@@ -140,8 +137,7 @@ export default function SignalDetailPage({ signal }) {
     excerpt ||
     `Crypto trading signal for ${pair} — Entry ${entry}, Target ${target}, Stoploss ${stoploss}.`;
 
-  // JSON-LD
-  const structuredData = {
+  const articleJson = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: pageTitle,
@@ -150,30 +146,38 @@ export default function SignalDetailPage({ signal }) {
     datePublished: date,
     mainEntityOfPage: `https://www.finnews247.com/signals/${id}`,
   };
-  const breadcrumbData = {
+  const breadcrumbJson = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: "https://www.finnews247.com/",
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Trading Signals",
-        item: "https://www.finnews247.com/signals",
-      },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: pair,
-        item: `https://www.finnews247.com/signals/${id}`,
-      },
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.finnews247.com/" },
+      { "@type": "ListItem", position: 2, name: "Trading Signals", item: "https://www.finnews247.com/signals" },
+      { "@type": "ListItem", position: 3, name: pair, item: `https://www.finnews247.com/signals/${id}` },
     ],
   };
+
+  // Build array of optional sections
+  const sections = [];
+  if (intro) sections.push(<section key="intro" className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: intro }} />);
+  if (marketContext) sections.push(<section key="market" className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: marketContext }} />);
+  if (technicalAnalysis) sections.push(<section key="technical" className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: technicalAnalysis }} />);
+  if (riskStrategy) sections.push(<section key="risk" className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: riskStrategy }} />);
+  if (Array.isArray(faq) && faq.length > 0) {
+    sections.push(
+      <section key="faq" className="mb-8">
+        <h2 className="text-xl font-semibold mb-3">FAQ</h2>
+        <div className="space-y-3">
+          {faq.map((item, idx) => (
+            <div key={idx} className="p-4 border rounded-lg bg-white">
+              <p className="font-medium">Q: {item.q}</p>
+              <p className="text-gray-700 mt-1">A: {item.a}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
+  if (disclaimer) sections.push(<section key="disclaimer" className="mt-6 p-4 bg-yellow-100 text-yellow-900 text-sm rounded" dangerouslySetInnerHTML={{ __html: disclaimer }} />);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -185,19 +189,11 @@ export default function SignalDetailPage({ signal }) {
           title: pageTitle,
           description: pageDesc,
           url: `https://www.finnews247.com/signals/${id}`,
-          images: imgUrl
-            ? [{ url: imgUrl }]
-            : [{ url: "https://www.finnews247.com/logo.png" }],
+          images: imgUrl ? [{ url: imgUrl }] : [{ url: "https://www.finnews247.com/logo.png" }],
         }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJson) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJson) }} />
 
       <nav className="mb-4 text-sm">
         <Link href="/signals" className="text-sky-600 hover:underline">
@@ -233,8 +229,7 @@ export default function SignalDetailPage({ signal }) {
       <div className="mb-8 p-4 rounded-xl bg-white border">
         <h2 className="text-lg font-semibold mb-2">Methodology (Summary)</h2>
         <p className="text-sm text-gray-700">
-          Signals are derived from 1H–4H structure, liquidity cues,
-          confluence with EMA, and momentum via RSI/MACD. Targets are tiered at prior swings; stops sit at structural invalidation. Risk per trade is typically 0.25–1.0%.
+          Signals are derived from 1H–4H structure, liquidity cues, confluence with EMA, and momentum via RSI/MACD. Targets are tiered; stops sit at structural invalidation. Risk per trade is typically 0.25–1.0%.
         </p>
       </div>
 
@@ -246,72 +241,21 @@ export default function SignalDetailPage({ signal }) {
           {imgUrl ? (
             <ZoomableImage src={imgUrl} alt={`${pair} ${type} setup`} />
           ) : (
-            <div className="text-sm text-gray-500">
-              No image provided for this signal.
-            </div>
+            <div className="text-sm text-gray-500">No image provided for this signal.</div>
           )}
           <p className="text-xs text-gray-500 mt-2">
-            If the TradingView symbol is unavailable, use the annotated image as
-            reference for target zones & invalidation.
+            If the TradingView symbol is unavailable, use the annotated image as reference for target zones & invalidation.
           </p>
         </div>
       </div>
 
-      {intro || marketContext || technicalAnalysis || riskStrategy || faq || disclaimer ? (
-        <>
-          {intro && (
-            <section
-              className="prose max-w-none mb-8"
-              dangerouslySetInnerHTML={{ __html: intro }}
-            />
-          )}
-          {marketContext && (
-            <section
-              className="prose max-w-none mb-8"
-              dangerouslySetInnerHTML={{ __html: marketContext }}
-            />
-          )}
-          {technicalAnalysis && (
-            <section
-              className="prose max-w-none mb-8"
-              dangerouslySetInnerHTML={{ __html: technicalAnalysis }}
-            />
-          )}
-          {riskStrategy && (
-            <section
-              className="prose max-w-none mb-8"
-              dangerouslySetInnerHTML={{ __html: riskStrategy }}
-            />
-          )}
-          {Array.isArray(faq) && faq.length > 0 && (
-            <section className="mb-8">
-              <h2 className="text-xl font-semibold mb-3">FAQ</h2>
-              <div className="space-y-3">
-                {faq.map((item, idx) => (
-                  <div key={idx} className="p-4 border rounded-lg bg-white">
-                    <p className="font-medium">Q: {item.q}</p>
-                    <p className="text-gray-700 mt-1">A: {item.a}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
-          ))}
-          {disclaimer && (
-            <section
-              className="mt-6 p-4 bg-yellow-100 text-yellow-900 text-sm rounded"
-              dangerouslySetInnerHTML={{ __html: disclaimer }}
-            />
-          )}
-        </>
+      {/* Render sections or fallback */}
+      {sections.length > 0 ? (
+        <>{sections}</>
       ) : content ? (
-        <section
-          className="prose max-w-none"
-          dangerouslySetInnerHTML={{ __html: content }}
-        />
+        <section className="prose max-w-none" dangerouslySetInnerHTML={{ __html: content }} />
       ) : (
-        <div className="text-sm text-gray-500">
-          No detailed content provided for this signal.
-        </div>
+        <div className="text-sm text-gray-500">No detailed content provided for this signal.</div>
       )}
 
       <div className="mt-10 flex items-center gap-4 text-sky-600">
