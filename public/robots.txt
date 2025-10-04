@@ -1,9 +1,12 @@
-# *
+#
+# robots.txt
+#
+# We allow all user agents to crawl everything, including the ads.txt file.
+# Define the canonical sitemap URL using the www domain for consistency.
+
 User-agent: *
 Allow: /
-
-# Explicitly allow the ads.txt file to be crawled by advertising crawlers.
 Allow: /ads.txt
 
 # Sitemaps
-Sitemap: https://finnews247.com/sitemap.xml
+Sitemap: https://www.finnews247.com/sitemap.xml

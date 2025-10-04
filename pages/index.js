@@ -8,7 +8,7 @@ import TopExchanges from "../components/TopExchanges";
 import BestWallets from "../components/BestWallets";
 import TopStaking from "../components/TopStaking";
 import TopMovers from "../components/TopMovers";
-import FearGreed from "../components/FearGreed";
+// Note: Fear & Greed widget removed to simplify sidebar and avoid external API delays.
 
 export default function Home({
   altcoinPosts,
@@ -42,12 +42,13 @@ export default function Home({
       <NextSeo
         title="FinNews247 - Crypto Trading Signals & Market Coverage"
         description="Stay updated with reliable crypto trading signals (entry, target, stoploss) and market insights across cryptocurrencies, stocks, economy, and global markets."
+        canonical="https://www.finnews247.com/"
         openGraph={{
           title: "FinNews247 - Crypto Trading Signals & Market Coverage",
           description:
             "FinNews247 delivers professional finance coverage with crypto trading signals, stock updates, economy, and market news.",
-          url: "https://finnews247.com/",
-          images: [{ url: "https://finnews247.com/logo.png" }],
+          url: "https://www.finnews247.com/",
+          images: [{ url: "https://www.finnews247.com/logo.png" }],
         }}
         additionalMetaTags={[
           {
@@ -72,7 +73,7 @@ export default function Home({
           <BestWallets />
           <TopStaking />
           <TopMovers />
-          <FearGreed />
+          {/* FearGreed widget removed */}
         </aside>
 
         {/* Main Content area */}
@@ -175,9 +176,15 @@ export async function getServerSideProps() {
   return {
     props: {
       altcoinPosts: sortDesc([...altcoins, ...seccoin]).slice(0, SECTION_COUNTS.altcoins),
-      exchangePosts: sortDesc([...fidelity, ...cryptoexchanges]).slice(0, SECTION_COUNTS.exchanges),
+      exchangePosts: sortDesc([...fidelity, ...cryptoexchanges]).slice(
+        0,
+        SECTION_COUNTS.exchanges
+      ),
       appPosts: sortDesc([...apps]).slice(0, SECTION_COUNTS.apps),
-      insuranceTaxPosts: sortDesc([...insurance, ...tax]).slice(0, SECTION_COUNTS.insuranceTax),
+      insuranceTaxPosts: sortDesc([...insurance, ...tax]).slice(
+        0,
+        SECTION_COUNTS.insuranceTax
+      ),
       newsPosts: sortDesc([...news]).slice(0, SECTION_COUNTS.news),
       guidePosts: sortDesc([...guides]).slice(0, SECTION_COUNTS.guides),
     },

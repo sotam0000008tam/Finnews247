@@ -3,18 +3,15 @@ import { NextSeo } from "next-seo";
 import Script from "next/script";
 import Link from "next/link";
 import { useState } from "react";
-// We'll load the signal data at build time via getStaticProps instead of
-// statically importing the entire dataset here. Importing the JSON here
-// means the list of available signals is frozen at build time and will not
-// include newly added signals until the site is redeployed. By moving the
-// data-loading logic into getStaticProps/getStaticPaths we allow Vercel to
-// generate pages on demand (via fallback) for IDs that weren't present
-// during the last build.
-// The component receives a `signal` prop from getStaticProps.
+import signals from "../../data/signals.json";
 
 function resolveImage(src) {
   if (!src) return null;
-  if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("/")) {
+  if (
+    src.startsWith("http://") ||
+    src.startsWith("https://") ||
+    src.startsWith("/")
+  ) {
     return src;
   }
   return `/images/${src}`;
@@ -92,26 +89,13 @@ function ZoomableImage({ src, alt }) {
   );
 }
 
-export default function SignalDetailPage({ signal }) {
+export default function SignalDetailPage() {
   const router = useRouter();
-  // During fallback rendering Next.js sets router.isFallback to true. We
-  // display a simple loading state until the page has been statically
-  // generated on-demand. Without this check a React error would occur
-  // because the `signal` prop will be undefined during fallback.
-  if (router.isFallback) {
-    return (
-      <div className="container mx-auto px-4 py-10">
-        <h1 className="text-xl font-semibold mb-2">Loading…</h1>
-        <p className="text-gray-600">Please wait while we load the signal.</p>
-      </div>
-    );
-  }
+  const { id } = router.query;
 
-  // If no signal data was found return a 404-like message. This handles
-  // cases where an invalid ID is requested; getStaticProps will return
-  // `notFound: true` so this branch should rarely be executed, but it's here
-  // as a safeguard for client-side navigation.
-  if (!signal) {
+  const data = signals.find((s) => String(s.id) === String(id));
+
+  if (!data) {
     return (
       <div className="container mx-auto px-4 py-10">
         <h1 className="text-2xl font-bold mb-2">Signal not found</h1>
@@ -125,12 +109,7 @@ export default function SignalDetailPage({ signal }) {
     );
   }
 
-  // Destructure `id` along with other properties from the signal. Without destructuring
-  // or otherwise defining `id`, the structured data generation below would reference
-  // an undefined variable, causing a ReferenceError during prerendering. Including
-  // `id` here ensures it is available in scope.
   const {
-    id,
     pair,
     type,
     entry,
@@ -146,7 +125,7 @@ export default function SignalDetailPage({ signal }) {
     faq,
     disclaimer,
     content,
-  } = signal;
+  } = data;
 
   const imgUrl = resolveImage(image);
   const tvSymbol = toTradingViewSymbol(pair);
@@ -166,12 +145,47 @@ export default function SignalDetailPage({ signal }) {
     mainEntityOfPage: `https://finnews247.com/signals/${id}`,
   };
 
+  // Breadcrumb structured data for better SEO
+  const breadcrumbData = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://www.finnews247.com/",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Trading Signals",
+        item: "https://www.finnews247.com/signals",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: pair,
+        item: `https://www.finnews247.com/signals/${id}`,
+      },
+    ],
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <NextSeo title={pageTitle} description={pageDesc} />
+      <NextSeo
+        title={pageTitle}
+        description={pageDesc}
+        canonical={`https://www.finnews247.com/signals/${id}`}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      {/* Breadcrumb JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
       />
 
       <nav className="mb-4 text-sm">
@@ -206,7 +220,7 @@ export default function SignalDetailPage({ signal }) {
         </div>
       </div>
 
-      {/* 🔎 NEW: Methodology (ngắn gọn, tăng chữ, đặt dưới 3 ô) */}
+      {/* 🔎 Methodology (Summary) */}
       <div className="mb-8 p-4 rounded-xl bg-white border">
         <h2 className="text-lg font-semibold mb-2">Methodology (Summary)</h2>
         <p className="text-sm text-gray-700">
@@ -220,7 +234,7 @@ export default function SignalDetailPage({ signal }) {
         </p>
       </div>
 
-      {/* Chart + Ảnh chú thích */}
+      {/* Chart + Image */}
       <div className="grid md:grid-cols-3 gap-6 mb-10">
         <div className="md:col-span-2 border rounded-xl overflow-hidden bg-white">
           <TVChart symbol={tvSymbol} height={520} />
@@ -235,13 +249,18 @@ export default function SignalDetailPage({ signal }) {
           )}
           <p className="text-xs text-gray-500 mt-2">
             If the TradingView symbol is unavailable, use the annotated image as
-            reference for target zones &amp; invalidation.
+            reference for target zones & invalidation.
           </p>
         </div>
       </div>
 
-      {/* Nội dung: ưu tiên intro/sections; fallback content nếu không có */}
-      {intro || marketContext || technicalAnalysis || riskStrategy || faq || disclaimer ? (
+      {/* Content sections */}
+      {intro ||
+      marketContext ||
+      technicalAnalysis ||
+      riskStrategy ||
+      faq ||
+      disclaimer ? (
         <>
           {intro && (
             <section
@@ -279,7 +298,7 @@ export default function SignalDetailPage({ signal }) {
                 ))}
               </div>
             </section>
-          )}
+          ))}
           {disclaimer && (
             <section
               className="mt-6 p-4 bg-yellow-100 text-yellow-900 text-sm rounded"
@@ -305,7 +324,7 @@ export default function SignalDetailPage({ signal }) {
         </Link>
       </div>
 
-      {/* ⬇️ Internal links xuống cuối trang */}
+      {/* Internal links at bottom */}
       <div className="mt-8 pt-6 border-t">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Link
@@ -325,7 +344,7 @@ export default function SignalDetailPage({ signal }) {
             <div className="text-sm text-gray-500">Wallets</div>
             <div className="text-lg font-semibold">Best Crypto Wallets</div>
             <p className="text-sm text-gray-600 mt-1">
-              Hardware &amp; software custody options.
+              Hardware & software custody options.
             </p>
           </Link>
           <Link
@@ -333,74 +352,15 @@ export default function SignalDetailPage({ signal }) {
             className="block p-4 rounded-xl border bg-white dark:bg-gray-800 hover:shadow-md transition"
           >
             <div className="text-sm text-gray-500">Staking</div>
-            <div className="text-lg font-semibold">Staking Yields &amp; Risks</div>
+            <div className="text-lg font-semibold">
+              Staking Yields & Risks
+            </div>
             <p className="text-sm text-gray-600 mt-1">
-              APY tracking &amp; validator slashing risk.
+              APY tracking & validator slashing risk.
             </p>
           </Link>
         </div>
       </div>
     </div>
   );
-}
-
-// Use static generation with fallback to handle dynamic signal pages. This
-// function tells Next.js which signal IDs to pre-render at build time. If a
-// signal ID isn't in the returned list, Next.js will serve the page on
-// demand using the fallback strategy specified below. This avoids 404
-// errors for newly added signals and improves SEO by having static pages
-// available for older signals.
-import fs from 'fs';
-import path from 'path';
-
-export async function getStaticPaths() {
-  const filePath = path.join(process.cwd(), 'data', 'signals.json');
-  let signalsData = [];
-  try {
-    signalsData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-  } catch (err) {
-    console.warn('Error reading signals.json in getStaticPaths', err);
-  }
-  const paths = Array.isArray(signalsData)
-    ? signalsData.map((s) => ({ params: { id: String(s.id) } }))
-    : [];
-  return {
-    paths,
-    // When fallback is set to 'blocking', Next.js will render pages for IDs
-    // not returned in paths on-demand at request time. The initial request
-    // will wait for the page to be generated, avoiding a flash of a
-    // fallback page. Once generated, the page is cached and served for
-    // subsequent requests.
-    fallback: 'blocking',
-  };
-}
-
-export async function getStaticProps({ params }) {
-  const filePath = path.join(process.cwd(), 'data', 'signals.json');
-  let signalsData = [];
-  try {
-    signalsData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-  } catch (err) {
-    console.warn('Error reading signals.json in getStaticProps', err);
-  }
-  const signal = Array.isArray(signalsData)
-    ? signalsData.find((s) => String(s.id) === String(params.id))
-    : null;
-  if (!signal) {
-    // By returning notFound: true, Next.js will render the built-in 404
-    // page. This prevents infinite fallback loops and ensures invalid
-    // signal IDs return a proper 404 status code.
-    return { notFound: true };
-  }
-  return {
-    props: {
-      signal,
-    },
-    // Revalidate the page at most once per hour. This allows ISR to
-    // regenerate pages when the signals.json file changes (for example,
-    // when new signals are added). Adjust the value (in seconds) to suit
-    // how frequently you expect signal updates. Setting it to 3600 means
-    // a refresh every hour.
-    revalidate: 3600,
-  };
 }

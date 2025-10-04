@@ -48,11 +48,16 @@ export default function App({ Component, pageProps }) {
         }}
       />
 
-      {/* ✅ Google Search Console verification */}
+      {/* ✅ Google Search Console verification và canonical */}
       <Head>
         <meta
           name="google-site-verification"
           content="Akkp3qaq0RfqlqI75Qw8nhIIiu21X7vMBIkV0yfahj0"
+        />
+        {/* Canonical URL: specify www.finnews247.com as the preferred domain. */}
+        <link
+          rel="canonical"
+          href={`https://www.finnews247.com${router.asPath || ""}`}
         />
       </Head>
 
