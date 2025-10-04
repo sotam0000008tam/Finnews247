@@ -6,7 +6,11 @@ import { useState } from "react";
 
 function resolveImage(src) {
   if (!src) return null;
-  if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("/")) {
+  if (
+    src.startsWith("http://") ||
+    src.startsWith("https://") ||
+    src.startsWith("/")
+  ) {
     return src;
   }
   return `/images/${src}`;
@@ -17,7 +21,8 @@ function toTradingViewSymbol(pair) {
   let p = pair.toUpperCase().trim();
   const isPerp = p.includes(".P");
   let compact = p.replace("/", "").replace(/\s+/g, "");
-  return isPerp ? `BYBIT:${compact}` : `BINANCE:${compact}`;
+  if (isPerp) return `BYBIT:${compact}`;
+  return `BINANCE:${compact}`;
 }
 
 function TVChart({ symbol, height = 520 }) {
@@ -81,13 +86,15 @@ function ZoomableImage({ src, alt }) {
   );
 }
 
-// Pre-render all signal pages
+// Pre-render all available signals
 export async function getStaticPaths() {
-  const paths = signals.map((s) => ({ params: { id: String(s.id) } }));
+  const paths = signals.map((s) => ({
+    params: { id: String(s.id) },
+  }));
   return { paths, fallback: false };
 }
 
-// Get data for each signal
+// Fetch individual signal by ID
 export async function getStaticProps({ params }) {
   const signal = signals.find((s) => String(s.id) === params.id) || null;
   if (!signal) {
@@ -97,22 +104,12 @@ export async function getStaticProps({ params }) {
 }
 
 export default function SignalDetailPage({ signal }) {
+  // If there is no signal, Next.js will render the built-in 404 page
   if (!signal) {
-    return (
-      <div className="container mx-auto px-4 py-10">
-        <h1 className="text-2xl font-bold mb-2">Signal not found</h1>
-        <p className="text-gray-600 mb-6">
-          The requested trading signal does not exist or has been removed.
-        </p>
-        <Link href="/signals" className="text-sky-600 hover:underline">
-          ← Back to Signals
-        </Link>
-      </div>
-    );
+    return null;
   }
 
   const {
-    id,
     pair,
     type,
     entry,
@@ -128,16 +125,19 @@ export default function SignalDetailPage({ signal }) {
     faq,
     disclaimer,
     content,
+    id,
   } = signal;
 
   const imgUrl = resolveImage(image);
   const tvSymbol = toTradingViewSymbol(pair);
+
   const pageTitle = `${pair} ${type} Signal — Entry ${entry}, Target ${target}, Stoploss ${stoploss}`;
   const pageDesc =
     excerpt ||
     `Crypto trading signal for ${pair} — Entry ${entry}, Target ${target}, Stoploss ${stoploss}.`;
 
-  const articleJson = {
+  // JSON-LD: Article schema
+  const articleSchema = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: pageTitle,
@@ -146,38 +146,31 @@ export default function SignalDetailPage({ signal }) {
     datePublished: date,
     mainEntityOfPage: `https://www.finnews247.com/signals/${id}`,
   };
-  const breadcrumbJson = {
+  // JSON-LD: Breadcrumb schema
+  const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.finnews247.com/" },
-      { "@type": "ListItem", position: 2, name: "Trading Signals", item: "https://www.finnews247.com/signals" },
-      { "@type": "ListItem", position: 3, name: pair, item: `https://www.finnews247.com/signals/${id}` },
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://www.finnews247.com/",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Trading Signals",
+        item: "https://www.finnews247.com/signals",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: pair,
+        item: `https://www.finnews247.com/signals/${id}`,
+      },
     ],
   };
-
-  // Build array of optional sections
-  const sections = [];
-  if (intro) sections.push(<section key="intro" className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: intro }} />);
-  if (marketContext) sections.push(<section key="market" className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: marketContext }} />);
-  if (technicalAnalysis) sections.push(<section key="technical" className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: technicalAnalysis }} />);
-  if (riskStrategy) sections.push(<section key="risk" className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: riskStrategy }} />);
-  if (Array.isArray(faq) && faq.length > 0) {
-    sections.push(
-      <section key="faq" className="mb-8">
-        <h2 className="text-xl font-semibold mb-3">FAQ</h2>
-        <div className="space-y-3">
-          {faq.map((item, idx) => (
-            <div key={idx} className="p-4 border rounded-lg bg-white">
-              <p className="font-medium">Q: {item.q}</p>
-              <p className="text-gray-700 mt-1">A: {item.a}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-    );
-  }
-  if (disclaimer) sections.push(<section key="disclaimer" className="mt-6 p-4 bg-yellow-100 text-yellow-900 text-sm rounded" dangerouslySetInnerHTML={{ __html: disclaimer }} />);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -189,12 +182,22 @@ export default function SignalDetailPage({ signal }) {
           title: pageTitle,
           description: pageDesc,
           url: `https://www.finnews247.com/signals/${id}`,
-          images: imgUrl ? [{ url: imgUrl }] : [{ url: "https://www.finnews247.com/logo.png" }],
+          images: imgUrl
+            ? [{ url: imgUrl }]
+            : [{ url: "https://www.finnews247.com/logo.png" }],
         }}
       />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJson) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJson) }} />
+      {/* Structured data scripts */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
 
+      {/* Navigation breadcrumbs */}
       <nav className="mb-4 text-sm">
         <Link href="/signals" className="text-sky-600 hover:underline">
           Signals
@@ -203,6 +206,7 @@ export default function SignalDetailPage({ signal }) {
         <span>{pair}</span>
       </nav>
 
+      {/* Page header */}
       <header className="mb-6">
         <h1 className="text-2xl md:text-3xl font-bold">
           {pair} — {type}
@@ -211,6 +215,7 @@ export default function SignalDetailPage({ signal }) {
         <p className="mt-2">{excerpt}</p>
       </header>
 
+      {/* Entry / Target / Stoploss */}
       <div className="grid md:grid-cols-3 gap-4 mb-6">
         <div className="p-4 border rounded-xl bg-white">
           <div className="text-gray-500 text-sm">Entry</div>
@@ -226,13 +231,21 @@ export default function SignalDetailPage({ signal }) {
         </div>
       </div>
 
+      {/* Methodology summary */}
       <div className="mb-8 p-4 rounded-xl bg-white border">
         <h2 className="text-lg font-semibold mb-2">Methodology (Summary)</h2>
         <p className="text-sm text-gray-700">
-          Signals are derived from 1H–4H structure, liquidity cues, confluence with EMA, and momentum via RSI/MACD. Targets are tiered; stops sit at structural invalidation. Risk per trade is typically 0.25–1.0%.
+          Signals are derived from 1H–4H structure (trend, higher highs/lows),
+          liquidity cues (EQH/EQL, FVG), confluence with 20/50/200 EMA, and
+          momentum via RSI/MACD. Targets are tiered (TP1/TP2/TP3) at prior
+          swings, measured moves, and Fibonacci levels; stops sit at structural
+          invalidation. Typical risk is 0.25–1.0% per trade. After TP1, we move
+          to break-even and trail below 1H swing lows/highs to protect capital.
+          These insights are informational and not financial advice.
         </p>
       </div>
 
+      {/* Chart + Image */}
       <div className="grid md:grid-cols-3 gap-6 mb-10">
         <div className="md:col-span-2 border rounded-xl overflow-hidden bg-white">
           <TVChart symbol={tvSymbol} height={520} />
@@ -241,27 +254,127 @@ export default function SignalDetailPage({ signal }) {
           {imgUrl ? (
             <ZoomableImage src={imgUrl} alt={`${pair} ${type} setup`} />
           ) : (
-            <div className="text-sm text-gray-500">No image provided for this signal.</div>
+            <div className="text-sm text-gray-500">
+              No image provided for this signal.
+            </div>
           )}
           <p className="text-xs text-gray-500 mt-2">
-            If the TradingView symbol is unavailable, use the annotated image as reference for target zones & invalidation.
+            If the TradingView symbol is unavailable, use the annotated image as
+            reference for target zones &amp; invalidation.
           </p>
         </div>
       </div>
 
-      {/* Render sections or fallback */}
-      {sections.length > 0 ? (
-        <>{sections}</>
-      ) : content ? (
-        <section className="prose max-w-none" dangerouslySetInnerHTML={{ __html: content }} />
-      ) : (
-        <div className="text-sm text-gray-500">No detailed content provided for this signal.</div>
+      {/* Content sections */}
+      {intro && (
+        <section
+          className="prose max-w-none mb-8"
+          dangerouslySetInnerHTML={{ __html: intro }}
+        />
       )}
+      {marketContext && (
+        <section
+          className="prose max-w-none mb-8"
+          dangerouslySetInnerHTML={{ __html: marketContext }}
+        />
+      )}
+      {technicalAnalysis && (
+        <section
+          className="prose max-w-none mb-8"
+          dangerouslySetInnerHTML={{ __html: technicalAnalysis }}
+        />
+      )}
+      {riskStrategy && (
+        <section
+          className="prose max-w-none mb-8"
+          dangerouslySetInnerHTML={{ __html: riskStrategy }}
+        />
+      )}
+      {Array.isArray(faq) && faq.length > 0 && (
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-3">FAQ</h2>
+          <div className="space-y-3">
+            {faq.map((item, idx) => (
+              <div key={idx} className="p-4 border rounded-lg bg-white">
+                <p className="font-medium">Q: {item.q}</p>
+                <p className="text-gray-700 mt-1">A: {item.a}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+      {disclaimer && (
+        <section
+          className="mt-6 p-4 bg-yellow-100 text-yellow-900 text-sm rounded"
+          dangerouslySetInnerHTML={{ __html: disclaimer }}
+        />
+      )}
+      {/* If no intro, marketContext, etc., but content exists, show content */}
+      {!intro &&
+        !marketContext &&
+        !technicalAnalysis &&
+        !riskStrategy &&
+        (!faq || faq.length === 0) &&
+        !disclaimer &&
+        content && (
+          <section
+            className="prose max-w-none"
+            dangerouslySetInnerHTML={{ __html: content }}
+          />
+        )}
+      {!intro &&
+        !marketContext &&
+        !technicalAnalysis &&
+        !riskStrategy &&
+        (!faq || faq.length === 0) &&
+        !disclaimer &&
+        !content && (
+          <div className="text-sm text-gray-500">
+            No detailed content provided for this signal.
+          </div>
+        )}
 
+      {/* Back link */}
       <div className="mt-10 flex items-center gap-4 text-sky-600">
         <Link href="/signals" className="hover:underline">
           ← Back to all signals
         </Link>
+      </div>
+
+      {/* Internal links */}
+      <div className="mt-8 pt-6 border-t">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Link
+            href="/exchanges"
+            className="block p-4 rounded-xl border bg-white dark:bg-gray-800 hover:shadow-md transition"
+          >
+            <div className="text-sm text-gray-500">Exchange</div>
+            <div className="text-lg font-semibold">Compare Top Exchanges</div>
+            <p className="text-sm text-gray-600 mt-1">
+              Fees • liquidity • listing quality.
+            </p>
+          </Link>
+          <Link
+            href="/wallets"
+            className="block p-4 rounded-xl border bg-white dark:bg-gray-800 hover:shadow-md transition"
+          >
+            <div className="text-sm text-gray-500">Wallets</div>
+            <div className="text-lg font-semibold">Best Crypto Wallets</div>
+            <p className="text-sm text-gray-600 mt-1">
+              Hardware &amp; software custody options.
+            </p>
+          </Link>
+          <Link
+            href="/staking"
+            className="block p-4 rounded-xl border bg-white dark:bg-gray-800 hover:shadow-md transition"
+          >
+            <div className="text-sm text-gray-500">Staking</div>
+            <div className="text-lg font-semibold">Staking Yields &amp; Risks</div>
+            <p className="text-sm text-gray-600 mt-1">
+              APY tracking &amp; validator slashing risk.
+            </p>
+          </Link>
+        </div>
       </div>
     </div>
   );
