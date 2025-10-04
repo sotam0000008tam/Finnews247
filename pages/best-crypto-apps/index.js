@@ -1,18 +1,12 @@
-// pages/best-crypto-apps/index.js
 import fs from "fs";
 import path from "path";
 import Link from "next/link";
 import PostCard from "../../components/PostCard";
 import { NextSeo } from "next-seo";
 
-/**
- * Best Crypto Apps listing page
- * Reads posts from data/bestapps.json and displays them with pagination.
- */
 export default function BestCryptoApps({ posts, totalPages, currentPage }) {
   return (
     <>
-      {/* SEO for Best Crypto Apps */}
       <NextSeo
         title="Best Crypto Apps & Wallets | FinNews"
         description="Discover top crypto apps for trading, portfolio management, tax reporting and more."
@@ -22,23 +16,16 @@ export default function BestCryptoApps({ posts, totalPages, currentPage }) {
           description:
             "Find the best apps to buy, trade and manage cryptocurrencies with in-depth reviews and comparisons.",
           url: "https://www.finnews247.com/best-crypto-apps",
-          images: [
-            {
-              url: "https://www.finnews247.com/logo.png",
-            },
-          ],
+          images: [{ url: "https://www.finnews247.com/logo.png" }],
         }}
       />
-
       <div>
         <h1 className="text-3xl font-semibold mb-6">Best Crypto Apps & Wallets</h1>
-
         <div className="grid md:grid-cols-2 gap-6">
           {posts.map((p) => (
             <PostCard key={p.slug} post={p} />
           ))}
         </div>
-
         {totalPages > 1 && (
           <div className="mt-6 flex justify-center space-x-2">
             {Array.from({ length: totalPages }).map((_, i) => {
@@ -46,11 +33,11 @@ export default function BestCryptoApps({ posts, totalPages, currentPage }) {
               return (
                 <Link
                   key={pageNum}
-                    href={
+                  href={
                     pageNum === 1
                       ? "/best-crypto-apps"
                       : `/best-crypto-apps?page=${pageNum}`
-                    }
+                  }
                   className={`px-3 py-1 rounded ${
                     pageNum === currentPage
                       ? "bg-sky-600 text-white"
@@ -79,6 +66,6 @@ export async function getServerSideProps({ query }) {
   const page = Math.max(1, parseInt(query.page || "1", 10));
   const totalPages = Math.max(1, Math.ceil(all.length / perPage));
   const start = (page - 1) * perPage;
-  const pagePosts = all.slice(start, start + perPage);
-  return { props: { posts: pagePosts, totalPages, currentPage: page } };
+  const posts = all.slice(start, start + perPage);
+  return { props: { posts, totalPages, currentPage: page } };
 }

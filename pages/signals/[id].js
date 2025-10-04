@@ -1,9 +1,8 @@
-import { useRouter } from "next/router";
 import { NextSeo } from "next-seo";
-import Script from "next/script";
 import Link from "next/link";
-import { useState } from "react";
+import Script from "next/script";
 import signals from "../../data/signals.json";
+import { useState } from "react";
 
 function resolveImage(src) {
   if (!src) return null;
@@ -18,9 +17,7 @@ function toTradingViewSymbol(pair) {
   let p = pair.toUpperCase().trim();
   const isPerp = p.includes(".P");
   let compact = p.replace("/", "").replace(/\s+/g, "");
-  if (isPerp) {
-    return `BYBIT:${compact}`;
-  }
+  if (isPerp) return `BYBIT:${compact}`;
   return `BINANCE:${compact}`;
 }
 
@@ -28,7 +25,7 @@ function TVChart({ symbol, height = 520 }) {
   const containerId = "tvchart-container";
   return (
     <>
-      <div id={containerId} className="w-full" style={{ height }} />
+      <div id={containerId} style={{ height }} />
       <Script
         src="https://s3.tradingview.com/tv.js"
         strategy="lazyOnload"
@@ -85,13 +82,25 @@ function ZoomableImage({ src, alt }) {
   );
 }
 
-export default function SignalDetailPage() {
-  const router = useRouter();
-  const { id } = router.query;
+// Pre-render paths for all signals
+export async function getStaticPaths() {
+  const paths = signals.map((s) => ({
+    params: { id: String(s.id) },
+  }));
+  return { paths, fallback: false };
+}
 
-  const data = signals.find((s) => String(s.id) === String(id));
+// Fetch data for each signal
+export async function getStaticProps({ params }) {
+  const signal = signals.find((s) => String(s.id) === params.id) || null;
+  if (!signal) {
+    return { notFound: true };
+  }
+  return { props: { signal } };
+}
 
-  if (!data) {
+export default function SignalDetailPage({ signal }) {
+  if (!signal) {
     return (
       <div className="container mx-auto px-4 py-10">
         <h1 className="text-2xl font-bold mb-2">Signal not found</h1>
@@ -121,16 +130,17 @@ export default function SignalDetailPage() {
     faq,
     disclaimer,
     content,
-  } = data;
+    id,
+  } = signal;
 
   const imgUrl = resolveImage(image);
   const tvSymbol = toTradingViewSymbol(pair);
-
   const pageTitle = `${pair} ${type} Signal — Entry ${entry}, Target ${target}, Stoploss ${stoploss}`;
   const pageDesc =
     excerpt ||
     `Crypto trading signal for ${pair} — Entry ${entry}, Target ${target}, Stoploss ${stoploss}.`;
 
+  // JSON-LD
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -140,10 +150,6 @@ export default function SignalDetailPage() {
     datePublished: date,
     mainEntityOfPage: `https://www.finnews247.com/signals/${id}`,
   };
-
-  // Breadcrumb structured data for better SEO. This defines the hierarchical path
-  // from Home → Trading Signals → Specific Signal. Using the www version of
-  // the domain ensures consistency in search engines.
   const breadcrumbData = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -188,7 +194,6 @@ export default function SignalDetailPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
-      {/* Breadcrumb JSON-LD */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
@@ -210,7 +215,6 @@ export default function SignalDetailPage() {
         <p className="mt-2">{excerpt}</p>
       </header>
 
-      {/* Entry / Target / Stoploss (Vàng / Xanh / Đỏ) */}
       <div className="grid md:grid-cols-3 gap-4 mb-6">
         <div className="p-4 border rounded-xl bg-white">
           <div className="text-gray-500 text-sm">Entry</div>
@@ -226,21 +230,14 @@ export default function SignalDetailPage() {
         </div>
       </div>
 
-      {/* 🔎 NEW: Methodology (ngắn gọn, tăng chữ, đặt dưới 3 ô) */}
       <div className="mb-8 p-4 rounded-xl bg-white border">
         <h2 className="text-lg font-semibold mb-2">Methodology (Summary)</h2>
         <p className="text-sm text-gray-700">
-          Signals are derived from 1H–4H structure (trend, higher highs/lows),
-          liquidity cues (EQH/EQL, FVG), confluence with 20/50/200 EMA, and
-          momentum via RSI/MACD. Targets are tiered (TP1/TP2/TP3) at prior
-          swings, measured moves, and Fibonacci levels; stops sit at structural
-          invalidation. Typical risk is 0.25–1.0% per trade. After TP1, we move
-          to break-even and trail below 1H swing lows/highs to protect capital.
-          These insights are informational and not financial advice.
+          Signals are derived from 1H–4H structure, liquidity cues,
+          confluence with EMA, and momentum via RSI/MACD. Targets are tiered at prior swings; stops sit at structural invalidation. Risk per trade is typically 0.25–1.0%.
         </p>
       </div>
 
-      {/* Chart + Ảnh chú thích */}
       <div className="grid md:grid-cols-3 gap-6 mb-10">
         <div className="md:col-span-2 border rounded-xl overflow-hidden bg-white">
           <TVChart symbol={tvSymbol} height={520} />
@@ -260,7 +257,6 @@ export default function SignalDetailPage() {
         </div>
       </div>
 
-      {/* Nội dung: ưu tiên intro/sections; fallback content nếu không có */}
       {intro || marketContext || technicalAnalysis || riskStrategy || faq || disclaimer ? (
         <>
           {intro && (
@@ -299,7 +295,7 @@ export default function SignalDetailPage() {
                 ))}
               </div>
             </section>
-          )}
+          ))}
           {disclaimer && (
             <section
               className="mt-6 p-4 bg-yellow-100 text-yellow-900 text-sm rounded"
@@ -318,47 +314,10 @@ export default function SignalDetailPage() {
         </div>
       )}
 
-      {/* Back link */}
       <div className="mt-10 flex items-center gap-4 text-sky-600">
         <Link href="/signals" className="hover:underline">
           ← Back to all signals
         </Link>
-      </div>
-
-      {/* ⬇️ Internal links xuống cuối trang */}
-      <div className="mt-8 pt-6 border-t">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Link
-            href="/exchanges"
-            className="block p-4 rounded-xl border bg-white dark:bg-gray-800 hover:shadow-md transition"
-          >
-            <div className="text-sm text-gray-500">Exchange</div>
-            <div className="text-lg font-semibold">Compare Top Exchanges</div>
-            <p className="text-sm text-gray-600 mt-1">
-              Fees • liquidity • listing quality.
-            </p>
-          </Link>
-          <Link
-            href="/wallets"
-            className="block p-4 rounded-xl border bg-white dark:bg-gray-800 hover:shadow-md transition"
-          >
-            <div className="text-sm text-gray-500">Wallets</div>
-            <div className="text-lg font-semibold">Best Crypto Wallets</div>
-            <p className="text-sm text-gray-600 mt-1">
-              Hardware & software custody options.
-            </p>
-          </Link>
-          <Link
-            href="/staking"
-            className="block p-4 rounded-xl border bg-white dark:bg-gray-800 hover:shadow-md transition"
-          >
-            <div className="text-sm text-gray-500">Staking</div>
-            <div className="text-lg font-semibold">Staking Yields & Risks</div>
-            <p className="text-sm text-gray-600 mt-1">
-              APY tracking & validator slashing risk.
-            </p>
-          </Link>
-        </div>
       </div>
     </div>
   );
