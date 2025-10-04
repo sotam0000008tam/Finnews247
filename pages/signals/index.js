@@ -50,6 +50,18 @@ export default function SignalsPage() {
         title="Trading Signals | FinNews"
         description="Latest crypto trading signals with entry, target, and stoploss."
         canonical="https://www.finnews247.com/signals"
+        // Cập nhật Open Graph để social share đúng URL trang này
+        openGraph={{
+          title: "Trading Signals | FinNews",
+          description:
+            "Latest crypto trading signals with entry, target, and stoploss.",
+          url: "https://www.finnews247.com/signals",
+          images: [
+            {
+              url: "https://www.finnews247.com/logo.png",
+            },
+          ],
+        }}
       />
 
       {/* FAQ Schema SEO */}
@@ -119,7 +131,7 @@ export default function SignalsPage() {
         <TopStaking />
       </div>
 
-      {/* 🔎 NEW: Methodology (ngay trên FAQ, tăng chữ/SEO) */}
+      {/* Methodology Summary */}
       <div className="mt-8 p-4 rounded-xl bg-white border">
         <h2 className="text-lg font-semibold mb-2">Methodology</h2>
         <p className="text-sm text-gray-700">
@@ -138,12 +150,12 @@ export default function SignalsPage() {
       {/* FAQ cho SEO + UX */}
       <SignalFAQ />
 
-      {/* Disclaimer (giữ nguyên copy) */}
+      {/* Disclaimer */}
       <div className="mt-6 p-3 bg-yellow-100 text-yellow-900 text-sm rounded">
         This content is for informational purposes only and not financial advice.
       </div>
 
-      {/* ⬇️ Internal links xuống cuối trang */}
+      {/* Internal links */}
       <div className="mt-8 pt-6 border-t">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Link

@@ -6,7 +6,7 @@ import PostCard from "../../components/PostCard";
 import { NextSeo } from "next-seo";
 
 /**
- * Best Crypto Apps listing page
+ * Best Crypto Apps listing page.
  * Reads posts from data/bestapps.json and displays them with pagination.
  */
 export default function BestCryptoApps({ posts, totalPages, currentPage }) {
@@ -16,17 +16,24 @@ export default function BestCryptoApps({ posts, totalPages, currentPage }) {
       <NextSeo
         title="Best Crypto Apps & Wallets | FinNews"
         description="Discover top crypto apps for trading, portfolio management, tax reporting and more."
-        canonical="https://www.finnews247.com/best-crypto-apps-wallets"
+        canonical="https://www.finnews247.com/best-crypto-apps"
         openGraph={{
           title: "Best Crypto Apps & Wallets | FinNews",
           description:
             "Find the best apps to buy, trade and manage cryptocurrencies with in-depth reviews and comparisons.",
-          url: "https://www.finnews247.com/best-crypto-apps-wallets",
+          url: "https://www.finnews247.com/best-crypto-apps",
+          images: [
+            {
+              url: "https://www.finnews247.com/logo.png",
+            },
+          ],
         }}
       />
 
       <div>
-        <h1 className="text-3xl font-semibold mb-6">Best Crypto Apps & Wallets</h1>
+        <h1 className="text-3xl font-semibold mb-6">
+          Best Crypto Apps & Wallets
+        </h1>
 
         <div className="grid md:grid-cols-2 gap-6">
           {posts.map((p) => (
@@ -43,8 +50,8 @@ export default function BestCryptoApps({ posts, totalPages, currentPage }) {
                   key={pageNum}
                   href={
                     pageNum === 1
-                      ? "/best-crypto-apps-wallets"
-                      : `/best-crypto-apps-wallets?page=${pageNum}`
+                      ? "/best-crypto-apps"
+                      : `/best-crypto-apps?page=${pageNum}`
                   }
                   className={`px-3 py-1 rounded ${
                     pageNum === currentPage

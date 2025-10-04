@@ -7,7 +7,11 @@ import signals from "../../data/signals.json";
 
 function resolveImage(src) {
   if (!src) return null;
-  if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("/")) {
+  if (
+    src.startsWith("http://") ||
+    src.startsWith("https://") ||
+    src.startsWith("/")
+  ) {
     return src;
   }
   return `/images/${src}`;
@@ -89,8 +93,10 @@ export default function SignalDetailPage() {
   const router = useRouter();
   const { id } = router.query;
 
+  // Tìm tín hiệu theo id trong signals.json
   const data = signals.find((s) => String(s.id) === String(id));
 
+  // Nếu không tìm thấy, hiển thị trang 404 đơn giản
   if (!data) {
     return (
       <div className="container mx-auto px-4 py-10">
@@ -142,8 +148,7 @@ export default function SignalDetailPage() {
   };
 
   // Breadcrumb structured data for better SEO. This defines the hierarchical path
-  // from Home → Trading Signals → Specific Signal. Using the www version of
-  // the domain ensures consistency in search engines.
+  // from Home → Trading Signals → Specific Signal.
   const breadcrumbData = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -175,6 +180,23 @@ export default function SignalDetailPage() {
         title={pageTitle}
         description={pageDesc}
         canonical={`https://www.finnews247.com/signals/${id}`}
+        // Cập nhật Open Graph: URL và ảnh dựa theo slug hiện tại
+        openGraph={{
+          title: pageTitle,
+          description: pageDesc,
+          url: `https://www.finnews247.com/signals/${id}`,
+          images: imgUrl
+            ? [
+                {
+                  url: imgUrl,
+                },
+              ]
+            : [
+                {
+                  url: "https://www.finnews247.com/logo.png",
+                },
+              ],
+        }}
       />
       <script
         type="application/ld+json"
@@ -202,7 +224,7 @@ export default function SignalDetailPage() {
         <p className="mt-2">{excerpt}</p>
       </header>
 
-      {/* Entry / Target / Stoploss (Vàng / Xanh / Đỏ) */}
+      {/* Entry / Target / Stoploss */}
       <div className="grid md:grid-cols-3 gap-4 mb-6">
         <div className="p-4 border rounded-xl bg-white">
           <div className="text-gray-500 text-sm">Entry</div>
@@ -218,7 +240,7 @@ export default function SignalDetailPage() {
         </div>
       </div>
 
-      {/* 🔎 NEW: Methodology (ngắn gọn, tăng chữ, đặt dưới 3 ô) */}
+      {/* Methodology Summary */}
       <div className="mb-8 p-4 rounded-xl bg-white border">
         <h2 className="text-lg font-semibold mb-2">Methodology (Summary)</h2>
         <p className="text-sm text-gray-700">
@@ -232,7 +254,7 @@ export default function SignalDetailPage() {
         </p>
       </div>
 
-      {/* Chart + Ảnh chú thích */}
+      {/* Chart + Image */}
       <div className="grid md:grid-cols-3 gap-6 mb-10">
         <div className="md:col-span-2 border rounded-xl overflow-hidden bg-white">
           <TVChart symbol={tvSymbol} height={520} />
@@ -252,8 +274,13 @@ export default function SignalDetailPage() {
         </div>
       </div>
 
-      {/* Nội dung: ưu tiên intro/sections; fallback content nếu không có */}
-      {intro || marketContext || technicalAnalysis || riskStrategy || faq || disclaimer ? (
+      {/* Nội dung chi tiết */}
+      {intro ||
+      marketContext ||
+      technicalAnalysis ||
+      riskStrategy ||
+      faq ||
+      disclaimer ? (
         <>
           {intro && (
             <section
@@ -291,7 +318,7 @@ export default function SignalDetailPage() {
                 ))}
               </div>
             </section>
-          )}
+          ))}
           {disclaimer && (
             <section
               className="mt-6 p-4 bg-yellow-100 text-yellow-900 text-sm rounded"
@@ -317,7 +344,7 @@ export default function SignalDetailPage() {
         </Link>
       </div>
 
-      {/* ⬇️ Internal links xuống cuối trang */}
+      {/* Internal links */}
       <div className="mt-8 pt-6 border-t">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Link
@@ -345,7 +372,9 @@ export default function SignalDetailPage() {
             className="block p-4 rounded-xl border bg-white dark:bg-gray-800 hover:shadow-md transition"
           >
             <div className="text-sm text-gray-500">Staking</div>
-            <div className="text-lg font-semibold">Staking Yields & Risks</div>
+            <div className="text-lg font-semibold">
+              Staking Yields & Risks
+            </div>
             <p className="text-sm text-gray-600 mt-1">
               APY tracking & validator slashing risk.
             </p>
