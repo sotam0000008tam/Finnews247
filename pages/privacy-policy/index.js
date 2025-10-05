@@ -1,4 +1,4 @@
-/** Page-level safety redirect for legacy /privacy-policy route */
+// pages/privacy-policy/index.js
 export async function getServerSideProps() {
   return { redirect: { destination: '/privacy', permanent: true } };
 }

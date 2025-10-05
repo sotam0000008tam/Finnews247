@@ -1,11 +1,7 @@
 import { NextSeo } from "next-seo";
 
 /**
- * Contact page provides multiple ways for readers and partners to reach the
- * FinNews247 team. We separate contacts by purpose (general support,
- * advertising/partnerships, editorial inquiries) and encourage users to
- * provide details so we can respond effectively. A note on response
- * times emphasises our commitment to service.
+ * Contact page – giữ đúng cấu trúc gốc, đã có canonical www.
  */
 export default function Contact() {
   return (
@@ -37,20 +33,16 @@ export default function Contact() {
       <h2 className="text-2xl font-semibold mt-4">General Support</h2>
       <p>
         For questions about navigating the site, accessing signals or
-        reporting technical issues, email our support team at{' '}<a
-          href="mailto:support@finnews247.com"
-          className="text-sky-600 hover:underline"
-        >
+        reporting technical issues, email our support team at{" "}
+        <a href="mailto:support@finnews247.com" className="text-sky-600 hover:underline">
           support@finnews247.com
         </a>. We typically respond within 24–48 hours.
       </p>
       <h2 className="text-2xl font-semibold mt-4">Advertising & Partnerships</h2>
       <p>
         Interested in advertising on FinNews247 or forming a content
-        partnership? Contact our business development team at{' '}<a
-          href="mailto:ads@finnews247.com"
-          className="text-sky-600 hover:underline"
-        >
+        partnership? Contact our business development team at{" "}
+        <a href="mailto:ads@finnews247.com" className="text-sky-600 hover:underline">
           ads@finnews247.com
         </a>. Please include information about your project and marketing
         goals so we can tailor a proposal.
@@ -58,10 +50,8 @@ export default function Contact() {
       <h2 className="text-2xl font-semibold mt-4">Editorial Inquiries</h2>
       <p>
         If you have a tip, press release or would like to contribute a guest
-        post, contact our editorial team at{' '}<a
-          href="mailto:editor@finnews247.com"
-          className="text-sky-600 hover:underline"
-        >
+        post, contact our editorial team at{" "}
+        <a href="mailto:editor@finnews247.com" className="text-sky-600 hover:underline">
           editor@finnews247.com
         </a>. We welcome well‑researched articles on trading strategies,
         market analysis and blockchain technology.

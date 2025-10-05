@@ -37,11 +37,7 @@ export default function Guides({ posts, totalPages, currentPage }) {
               return (
                 <Link
                   key={pageNum}
-                  href={
-                    pageNum === 1
-                      ? "/guides"
-                      : `/guides?page=${pageNum}`
-                  }
+                  href={pageNum === 1 ? "/guides" : `/guides?page=${pageNum}`}
                   className={`px-3 py-1 rounded ${
                     pageNum === currentPage
                       ? "bg-sky-600 text-white"

@@ -1,10 +1,7 @@
 import { NextSeo } from "next-seo";
 
 /**
- * Privacy Policy page details how FinNews247 collects, uses and protects
- * personal data. This policy covers analytics, cookies, advertising and
- * user rights. It reflects our focus on crypto and trading signals while
- * adhering to standard web privacy practices required by ad networks.
+ * Privacy Policy – giữ nguyên route /privacy-policy để không phá cấu trúc.
  */
 export default function PrivacyPolicy() {
   return (
@@ -45,9 +42,7 @@ export default function PrivacyPolicy() {
         experience.
       </p>
       <h2 className="text-2xl font-semibold mt-4">How We Use Your Information</h2>
-      <p>
-        We use the information we collect to:
-      </p>
+      <p>We use the information we collect to:</p>
       <ul className="list-disc list-inside ml-4 space-y-1">
         <li>Provide and personalise our services, including delivering trading signals and content.</li>
         <li>Analyse site usage to enhance performance and user experience.</li>
@@ -86,13 +81,19 @@ export default function PrivacyPolicy() {
         following the unsubscribe instructions included in those emails. You
         may also disable cookies in your browser settings. For more
         information about Google’s advertising practices and how to opt out,
-        visit <a href="https://policies.google.com/technologies/ads" className="text-sky-600 hover:underline">Google Ads Settings</a>.
+        visit{" "}
+        <a href="https://policies.google.com/technologies/ads" className="text-sky-600 hover:underline">
+          Google Ads Settings
+        </a>.
       </p>
       <h2 className="text-2xl font-semibold mt-4">Contact Us</h2>
       <p>
         If you have any questions about this privacy policy or wish to
         request access to, correction or deletion of your personal data,
-        please contact us at{' '}<a href="mailto:privacy@finnews247.com" className="text-sky-600 hover:underline">privacy@finnews247.com</a>.
+        please contact us at{" "}
+        <a href="mailto:privacy@finnews247.com" className="text-sky-600 hover:underline">
+          privacy@finnews247.com
+        </a>.
       </p>
       <p>
         We may update this policy from time to time to reflect changes in

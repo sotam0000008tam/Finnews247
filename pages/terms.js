@@ -1,11 +1,7 @@
 import { NextSeo } from "next-seo";
 
 /**
- * Terms & Conditions page outlines the legal agreement between FinNews247
- * and its users. It clarifies that content is for informational purposes
- * only, describes user responsibilities, liability limitations and
- * intellectual property rights. This page is important for compliance
- * with advertising networks and to set expectations for readers.
+ * Terms – giữ nguyên nội dung gốc, chỉ bổ sung canonical & sửa OG URL sang www.
  */
 export default function Terms() {
   return (
@@ -13,11 +9,12 @@ export default function Terms() {
       <NextSeo
         title="Terms & Conditions | FinNews247"
         description="Review the terms and conditions for using FinNews247. Understand your responsibilities and our disclaimer regarding crypto trading signals and content."
+        canonical="https://www.finnews247.com/terms"
         openGraph={{
           title: "Terms & Conditions | FinNews247",
           description:
             "FinNews247 terms of service for accessing crypto trading signals, market insights and educational content.",
-          url: "https://finnews247.com/terms",
+          url: "https://www.finnews247.com/terms",
         }}
         additionalMetaTags={[
           {
@@ -98,7 +95,7 @@ export default function Terms() {
       </p>
       <h2 className="text-2xl font-semibold mt-4">Contact</h2>
       <p>
-        If you have any questions about these Terms, please contact us at
+        If you have any questions about these Terms, please contact us at{" "}
         <a href="mailto:legal@finnews247.com" className="text-sky-600 hover:underline">legal@finnews247.com</a>.
       </p>
     </div>

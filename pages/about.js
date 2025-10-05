@@ -1,11 +1,7 @@
 import { NextSeo } from "next-seo";
 
 /**
- * About page provides a comprehensive overview of FinNews247.  We explain
- * our mission as a niche publication focused on crypto trading signals
- * and market coverage, introduce the team behind the content, and
- * outline the values that guide our reporting.  A disclaimer reminds
- * readers that nothing on the site constitutes financial advice.
+ * About page – giữ nguyên nội dung gốc, chỉ bổ sung canonical & sửa OG URL sang www.
  */
 export default function About() {
   return (
@@ -13,13 +9,16 @@ export default function About() {
       <NextSeo
         title="About FinNews247 | Crypto Trading Signals & Market Insights"
         description="Learn about FinNews247 – a niche platform delivering accurate crypto trading signals, market analysis and educational resources. Read about our mission, team and values."
+        canonical="https://www.finnews247.com/about"
         openGraph={{
           title: "About FinNews247 | Crypto Trading Signals & Market Insights",
           description:
             "FinNews247 is a niche publication dedicated to crypto trading signals and market news. Discover our mission, team and guiding principles.",
-          url: "https://finnews247.com/about",
+          url: "https://www.finnews247.com/about",
         }}
-        additionalMetaTags={[{ name: "keywords", content: "about finnews247, crypto trading signals, fintech news team, mission" }]}
+        additionalMetaTags={[
+          { name: "keywords", content: "about finnews247, crypto trading signals, fintech news team, mission" },
+        ]}
       />
       <h1 className="text-3xl font-bold">About FinNews247</h1>
       <p>
