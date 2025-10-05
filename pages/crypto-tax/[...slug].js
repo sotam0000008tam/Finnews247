@@ -4,4 +4,4 @@ export async function getServerSideProps({ params }) {
     redirect: { destination: tail ? `/tax/${tail}` : '/tax', permanent: true },
   };
 }
-export default function CryptoTaxRedirect() { return null; }
+export default function CryptoTaxRedirect(){ return null; }

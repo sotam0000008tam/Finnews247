@@ -11,6 +11,10 @@ const nextConfig = {
       // Normalize legacy 'crypto-insurance' -> 'insurance'
       { source: '/crypto-insurance', destination: '/insurance', permanent: true },
       { source: '/crypto-insurance/:slug*', destination: '/insurance/:slug*', permanent: true },
+
+      // Normalize 'exchanges' -> 'crypto-exchanges'
+      { source: '/exchanges', destination: '/crypto-exchanges', permanent: true },
+      { source: '/exchanges/:slug*', destination: '/crypto-exchanges/:slug*', permanent: true },
     ];
   },
 };

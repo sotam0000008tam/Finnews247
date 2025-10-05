@@ -4,4 +4,4 @@ export async function getServerSideProps({ params }) {
     redirect: { destination: tail ? `/insurance/${tail}` : '/insurance', permanent: true },
   };
 }
-export default function CryptoInsuranceRedirect() { return null; }
+export default function CryptoInsuranceRedirect(){ return null; }
