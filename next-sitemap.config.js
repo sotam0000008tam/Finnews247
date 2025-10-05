@@ -23,290 +23,69 @@ module.exports = {
     };
   },
 
-  additionalPaths: async (config) => {
-    let paths = [];
+  additionalPaths: async () => {
+    // Collect extra sitemap paths from our data files.  Some slugs may be
+    // repeated across different sections of the code or multiple files.  We
+    // ensure each URL appears only once by deduplicating before returning.
+    const paths = [];
 
-    // ✅ Lấy news slug từ data/news.json
-    try {
-      const newsData = JSON.parse(
-        fs.readFileSync(path.join(__dirname, "data/news.json"))
-      );
-      newsData.forEach((item) => {
-        if (item.slug) {
-          // News posts live at root level: /slug
-          paths.push({ loc: `/${item.slug}` });
-        }
-      });
-    } catch (err) {
-      console.error("❌ Không load được news.json:", err);
-    }
+    // Helper to read JSON and push unique locations with a base path.
+    const addSlugs = (filename, prefix, key = "slug") => {
+      try {
+        const data = JSON.parse(
+          fs.readFileSync(path.join(__dirname, `data/${filename}`), "utf-8")
+        );
+        data.forEach((item) => {
+          const val = item[key];
+          if (val) {
+            paths.push({ loc: `${prefix}${val}` });
+          }
+        });
+      } catch (err) {
+        console.error(`❌ Cannot load ${filename}:`, err);
+      }
+    };
 
-    // ✅ Lấy signals id từ data/signals.json
+    // News posts live at root level using slug
+    addSlugs("news.json", "/");
+
+    // Trading signals use id field rather than slug
     try {
       const signalsData = JSON.parse(
-        fs.readFileSync(path.join(__dirname, "data/signals.json"))
+        fs.readFileSync(path.join(__dirname, "data/signals.json"), "utf-8")
       );
       signalsData.forEach((item) => {
-        if (item.id) {
-          paths.push({ loc: `/signals/${item.id}` });
-        }
+        if (item.id) paths.push({ loc: `/signals/${item.id}` });
       });
     } catch (err) {
-      console.error("❌ Không load được signals.json:", err);
+      console.error("❌ Cannot load signals.json:", err);
     }
 
-    // ✅ Add Fidelity Crypto slugs from data/fidelity.json
-    try {
-      const fidelityData = JSON.parse(
-        fs.readFileSync(path.join(__dirname, "data/fidelity.json"))
-      );
-      fidelityData.forEach((item) => {
-        if (item.slug) {
-          paths.push({ loc: `/fidelity-crypto/${item.slug}` });
-        }
-      });
-    } catch (err) {
-      console.error("❌ Cannot load fidelity.json:", err);
-    }
+    // Fidelity Crypto posts
+    addSlugs("fidelity.json", "/fidelity-crypto/");
+    // Sec Coin posts
+    addSlugs("seccoin.json", "/sec-coin/");
+    // Best Crypto Apps and Wallets
+    addSlugs("bestapps.json", "/best-crypto-apps/");
+    // Guides (one loop only)
+    addSlugs("guides.json", "/guides/");
+    // General tax content
+    addSlugs("tax.json", "/tax/");
+    // Insurance content
+    addSlugs("insurance.json", "/insurance/");
+    // Crypto exchanges
+    addSlugs("cryptoexchanges.json", "/crypto-exchanges/");
+    // Altcoins posts
+    addSlugs("altcoins.json", "/altcoins/");
+    // Crypto tax (some tax articles have a separate section)
+    addSlugs("tax.json", "/crypto-tax/");
+    // Crypto insurance (some insurance articles have a separate section)
+    addSlugs("insurance.json", "/crypto-insurance/");
 
-    // ✅ Add Sec Coin slugs from data/seccoin.json
-    try {
-      const secData = JSON.parse(
-        fs.readFileSync(path.join(__dirname, "data/seccoin.json"))
-      );
-      secData.forEach((item) => {
-        if (item.slug) {
-          paths.push({ loc: `/sec-coin/${item.slug}` });
-        }
-      });
-    } catch (err) {
-      console.error("❌ Cannot load seccoin.json:", err);
-    }
-
-    // ✅ Add Best Crypto Apps slugs from data/bestapps.json
-    try {
-      const appsData = JSON.parse(
-        fs.readFileSync(path.join(__dirname, "data/bestapps.json"))
-      );
-      appsData.forEach((item) => {
-        if (item.slug) {
-          paths.push({ loc: `/best-crypto-apps/${item.slug}` });
-        }
-      });
-    } catch (err) {
-      console.error("❌ Cannot load bestapps.json:", err);
-    }
-
-    // ✅ Add Guides slugs from data/guides.json
-    try {
-      const guidesData = JSON.parse(
-        fs.readFileSync(path.join(__dirname, "data/guides.json"))
-      );
-      guidesData.forEach((item) => {
-        if (item.slug) {
-          paths.push({ loc: `/guides/${item.slug}` });
-        }
-      });
-    } catch (err) {
-      console.error("❌ Cannot load guides.json:", err);
-    }
-
-    // ✅ Add Tax slugs from data/tax.json
-    try {
-      const taxData = JSON.parse(
-        fs.readFileSync(path.join(__dirname, "data/tax.json"))
-      );
-      taxData.forEach((item) => {
-        if (item.slug) {
-          paths.push({ loc: `/tax/${item.slug}` });
-        }
-      });
-    } catch (err) {
-      console.error("❌ Cannot load tax.json:", err);
-    }
-
-    // ✅ Add Insurance slugs from data/insurance.json
-    try {
-      const insData = JSON.parse(
-        fs.readFileSync(path.join(__dirname, "data/insurance.json"))
-      );
-      insData.forEach((item) => {
-        if (item.slug) {
-          paths.push({ loc: `/insurance/${item.slug}` });
-        }
-      });
-    } catch (err) {
-      console.error("❌ Cannot load insurance.json:", err);
-    }
-
-    // ✅ Add Crypto Exchanges slugs from data/cryptoexchanges.json
-    try {
-      const exData = JSON.parse(
-        fs.readFileSync(path.join(__dirname, "data/cryptoexchanges.json"))
-      );
-      exData.forEach((item) => {
-        if (item.slug) {
-          paths.push({ loc: `/crypto-exchanges/${item.slug}` });
-        }
-      });
-    } catch (err) {
-      console.error("❌ Cannot load cryptoexchanges.json:", err);
-    }
-
-    // ✅ Add Altcoins slugs from data/altcoins.json
-    try {
-      const altData = JSON.parse(
-        fs.readFileSync(path.join(__dirname, "data/altcoins.json"))
-      );
-      altData.forEach((item) => {
-        if (item.slug) {
-          paths.push({ loc: `/altcoins/${item.slug}` });
-        }
-      });
-    } catch (err) {
-      console.error("❌ Cannot load altcoins.json:", err);
-    }
-
-    // ✅ Add Guides slugs from data/guides.json
-    try {
-      const guidesData = JSON.parse(
-        fs.readFileSync(path.join(__dirname, "data/guides.json"))
-      );
-      guidesData.forEach((item) => {
-        if (item.slug) {
-          paths.push({ loc: `/guides/${item.slug}` });
-        }
-      });
-    } catch (err) {
-      console.error("❌ Cannot load guides.json:", err);
-    }
-
-    // ✅ Add Crypto Tax slugs from data/tax.json
-    try {
-      const taxData = JSON.parse(
-        fs.readFileSync(path.join(__dirname, "data/tax.json"))
-      );
-      taxData.forEach((item) => {
-        if (item.slug) {
-          paths.push({ loc: `/tax/${item.slug}` });
-        }
-      });
-    } catch (err) {
-      console.error("❌ Cannot load tax.json:", err);
-    }
-
-    // ✅ Add Crypto Insurance slugs from data/insurance.json
-    try {
-      const insuranceData = JSON.parse(
-        fs.readFileSync(path.join(__dirname, "data/insurance.json"))
-      );
-      insuranceData.forEach((item) => {
-        if (item.slug) {
-          paths.push({ loc: `/insurance/${item.slug}` });
-        }
-      });
-    } catch (err) {
-      console.error("❌ Cannot load insurance.json:", err);
-    }
-
-    // ✅ Add Crypto Exchanges slugs from data/cryptoexchanges.json
-    try {
-      const exchangesData = JSON.parse(
-        fs.readFileSync(path.join(__dirname, "data/cryptoexchanges.json"))
-      );
-      exchangesData.forEach((item) => {
-        if (item.slug) {
-          paths.push({ loc: `/crypto-exchanges/${item.slug}` });
-        }
-      });
-    } catch (err) {
-      console.error("❌ Cannot load cryptoexchanges.json:", err);
-    }
-
-    // ✅ Add Altcoins slugs from data/altcoins.json
-    try {
-      const altcoinsData = JSON.parse(
-        fs.readFileSync(path.join(__dirname, "data/altcoins.json"))
-      );
-      altcoinsData.forEach((item) => {
-        if (item.slug) {
-          paths.push({ loc: `/altcoins/${item.slug}` });
-        }
-      });
-    } catch (err) {
-      console.error("❌ Cannot load altcoins.json:", err);
-    }
-
-    // ✅ Add Guides slugs from data/guides.json
-    try {
-      const guidesData = JSON.parse(
-        fs.readFileSync(path.join(__dirname, "data/guides.json"))
-      );
-      guidesData.forEach((item) => {
-        if (item.slug) {
-          paths.push({ loc: `/guides/${item.slug}` });
-        }
-      });
-    } catch (err) {
-      console.error("❌ Cannot load guides.json:", err);
-    }
-
-    // ✅ Add Crypto Tax slugs from data/tax.json
-    try {
-      const taxData = JSON.parse(
-        fs.readFileSync(path.join(__dirname, "data/tax.json"))
-      );
-      taxData.forEach((item) => {
-        if (item.slug) {
-          paths.push({ loc: `/crypto-tax/${item.slug}` });
-        }
-      });
-    } catch (err) {
-      console.error("❌ Cannot load tax.json:", err);
-    }
-
-    // ✅ Add Crypto Insurance slugs from data/insurance.json
-    try {
-      const insuranceData = JSON.parse(
-        fs.readFileSync(path.join(__dirname, "data/insurance.json"))
-      );
-      insuranceData.forEach((item) => {
-        if (item.slug) {
-          paths.push({ loc: `/crypto-insurance/${item.slug}` });
-        }
-      });
-    } catch (err) {
-      console.error("❌ Cannot load insurance.json:", err);
-    }
-
-    // ✅ Add Crypto Exchanges slugs from data/cryptoexchanges.json
-    try {
-      const exchangesData = JSON.parse(
-        fs.readFileSync(path.join(__dirname, "data/cryptoexchanges.json"))
-      );
-      exchangesData.forEach((item) => {
-        if (item.slug) {
-          paths.push({ loc: `/crypto-exchanges/${item.slug}` });
-        }
-      });
-    } catch (err) {
-      console.error("❌ Cannot load cryptoexchanges.json:", err);
-    }
-
-    // ✅ Add Altcoins slugs from data/altcoins.json
-    try {
-      const altcoinsData = JSON.parse(
-        fs.readFileSync(path.join(__dirname, "data/altcoins.json"))
-      );
-      altcoinsData.forEach((item) => {
-        if (item.slug) {
-          paths.push({ loc: `/altcoins/${item.slug}` });
-        }
-      });
-    } catch (err) {
-      console.error("❌ Cannot load altcoins.json:", err);
-    }
-
-    return paths;
+    // After collecting all paths, remove duplicates.  This prevents the same URL
+    // appearing multiple times in the generated sitemap (for example, when
+    // multiple sections inadvertently add the same slug).
+    const uniqueLocs = Array.from(new Set(paths.map((p) => p.loc)));
+    return uniqueLocs.map((loc) => ({ loc }));
   },
 };
