@@ -4,11 +4,11 @@ const path = require('path');
 
 const siteUrl = 'https://www.finnews247.com';
 
-// ---------- Helpers ----------
 function safeReadJson(file) {
   try { return JSON.parse(fs.readFileSync(file, 'utf8')); }
   catch { return []; }
 }
+
 function addFromJson(urls, jsonFile, basePath) {
   const p = path.join(process.cwd(), 'data', jsonFile);
   if (!fs.existsSync(p)) return;
@@ -21,7 +21,7 @@ function addFromJson(urls, jsonFile, basePath) {
     urls.add(loc.startsWith('/') ? loc : `/${loc}`);
   }
 }
-/** Quét thư mục nội dung (nếu bạn lưu bài bằng file thay vì JSON) */
+
 function addFromDir(urls, dirRel, basePath) {
   const dir = path.join(process.cwd(), dirRel);
   if (!fs.existsSync(dir)) return;
@@ -44,14 +44,10 @@ module.exports = {
   changefreq: 'daily',
   priority: 0.7,
 
-  // ❌ Không đưa khu vực quản trị vào sitemap
+  // Keep sitemap clean (no admin area, no legacy privacy-policy)
   exclude: [
     '/admin', '/admin/*',
-    // Nếu bạn từng có nhánh cũ thì có thể giữ exclude bổ sung:
-    // '/exchanges', '/exchanges/*',
-    // '/crypto-tax', '/crypto-tax/*',
-    // '/crypto-insurance', '/crypto-insurance/*',
-    // '/privacy-policy', '/privacy-policy/*',
+    '/privacy-policy', '/privacy-policy/*',
   ],
 
   robotsTxtOptions: {
@@ -68,8 +64,6 @@ module.exports = {
     lastmod: new Date().toISOString(),
   }),
 
-  // ✅ Sinh một tập URL canonical duy nhất (khử trùng lặp bằng Set)
-  //    KHÔNG sinh trang phân trang (?page=2...) để tránh rác sitemap.
   additionalPaths: async () => {
     const urls = new Set([
       '/', '/about', '/contact', '/privacy', '/terms',
@@ -78,11 +72,11 @@ module.exports = {
       '/best-crypto-apps',
       '/tax', '/insurance',
       '/signals',
-      '/guides',            // index Guides
+      '/guides',
       '/fidelity-crypto',
     ]);
 
-    // ---- JSON-driven sections (đảm bảo các file JSON này tồn tại trong /data) ----
+    // JSON-driven categories (ensure these files exist under /data)
     addFromJson(urls, 'tax.json', '/tax');
     addFromJson(urls, 'insurance.json', '/insurance');
     addFromJson(urls, 'cryptoexchanges.json', '/crypto-exchanges');
@@ -90,9 +84,9 @@ module.exports = {
     addFromJson(urls, 'altcoins.json', '/altcoins');
     addFromJson(urls, 'bestapps.json', '/best-crypto-apps');
     addFromJson(urls, 'signals.json', '/signals');
-    addFromJson(urls, 'guides.json', '/guides');          // ✅ Guides
+    addFromJson(urls, 'guides.json', '/guides');
 
-    // ---- Fallback: nếu bạn lưu bài bằng file, tự quét thư mục nội dung ----
+    // Fallback in case you store posts as files
     addFromDir(urls, 'content/tax', '/tax');
     addFromDir(urls, 'content/insurance', '/insurance');
     addFromDir(urls, 'content/crypto-exchanges', '/crypto-exchanges');
@@ -100,11 +94,8 @@ module.exports = {
     addFromDir(urls, 'content/altcoins', '/altcoins');
     addFromDir(urls, 'content/best-crypto-apps', '/best-crypto-apps');
     addFromDir(urls, 'content/signals', '/signals');
-    addFromDir(urls, 'content/guides', '/guides');        // ✅ Guides
+    addFromDir(urls, 'content/guides', '/guides');
 
-    // (Tuỳ kiến trúc, có thể thêm quét 'pages/<section>' nếu bạn viết bài dưới pages/)
-    // addFromDir(urls, 'pages/guides', '/guides');
-
-    return Array.from(urls).map(loc => ({ loc }));
+    return Array.from(urls).map((loc) => ({ loc }));
   },
 };
