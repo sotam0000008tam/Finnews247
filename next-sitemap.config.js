@@ -27,11 +27,12 @@ module.exports = {
   changefreq: 'daily',
   priority: 0.7,
 
-  // Exclude legacy branches from sitemap
+  // Exclude legacy/duplicate branches from sitemap
   exclude: [
     '/crypto-tax', '/crypto-tax/*',
     '/crypto-insurance', '/crypto-insurance/*',
     '/exchanges', '/exchanges/*',
+    '/privacy-policy', '/privacy-policy/*',
   ],
 
   transform: async (config, url) => ({
@@ -41,7 +42,7 @@ module.exports = {
     lastmod: new Date().toISOString(),
   }),
 
-  // Build unique canonical URLs only
+  // Build unique, canonical-only URL set
   additionalPaths: async () => {
     const urls = new Set([
       '/', '/about', '/contact', '/privacy', '/terms',
@@ -52,7 +53,7 @@ module.exports = {
       '/fidelity-crypto',
     ]);
 
-    // JSON-driven sections (adjust file names if different)
+    // JSON-driven sections (adjust file names if they differ)
     addFromJson(urls, 'tax.json', '/tax');
     addFromJson(urls, 'insurance.json', '/insurance');
     addFromJson(urls, 'cryptoexchanges.json', '/crypto-exchanges');

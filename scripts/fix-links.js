@@ -27,6 +27,8 @@ for (const file of files) {
   s = s.replace(/(["'])\/tax\1/g, '$1/__TAX__$1');
   s = s.replace(/\/insurance\//g, '/__INS__/');
   s = s.replace(/(["'])\/insurance\1/g, '$1/__INS__$1');
+  s = s.replace(/\/privacy\//g, '/__PRIV__/');
+  s = s.replace(/(["'])\/privacy\1/g, '$1/__PRIV__$1');
 
   // Replace legacy -> canonical
   s = s.replace(/\/exchanges\//g, '/crypto-exchanges/');
@@ -35,6 +37,7 @@ for (const file of files) {
   s = s.replace(/(["'])\/crypto-tax\1/g, '$1/tax$1');
   s = s.replace(/\/crypto-insurance\//g, '/insurance/');
   s = s.replace(/(["'])\/crypto-insurance\1/g, '$1/insurance$1');
+  s = s.replace(/\/privacy-policy\b/g, '/privacy');
 
   // Restore placeholders
   s = s.replace(/\/__CRYPTO_EXCHANGES__\//g, '/crypto-exchanges/');
@@ -43,6 +46,8 @@ for (const file of files) {
   s = s.replace(/(["'])\/__TAX__\1/g, '$1/tax$1');
   s = s.replace(/\/__INS__\//g, '/insurance/');
   s = s.replace(/(["'])\/__INS__\1/g, '$1/insurance$1');
+  s = s.replace(/\/__PRIV__\//g, '/privacy/');
+  s = s.replace(/(["'])\/__PRIV__\1/g, '$1/privacy$1');
 
   if (s !== orig) { fs.writeFileSync(file, s); changed++; console.log('Updated:', file); }
 }
