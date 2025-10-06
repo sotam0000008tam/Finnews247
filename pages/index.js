@@ -8,7 +8,25 @@ import TopExchanges from "../components/TopExchanges";
 import BestWallets from "../components/BestWallets";
 import TopStaking from "../components/TopStaking";
 import TopMovers from "../components/TopMovers";
-// Note: Fear & Greed widget removed to simplify sidebar and avoid external API delays.
+
+/**
+ * Helper: loại bỏ trường nặng (content/html…) khỏi props để giảm kích thước JSON.
+ */
+const HEAVY_KEYS = new Set([
+  "content",
+  "html",
+  "body",
+  "blocks",
+  "faq",
+  "longText",
+]);
+function shallowProps(obj) {
+  return JSON.parse(
+    JSON.stringify(obj, (key, value) =>
+      HEAVY_KEYS.has(key) ? undefined : value
+    )
+  );
+}
 
 export default function Home({
   altcoinPosts,
@@ -18,7 +36,7 @@ export default function Home({
   newsPosts,
   guidePosts,
 }) {
-  // Structured Data for SEO
+  // dữ liệu có cấu trúc cho SEO
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -29,7 +47,6 @@ export default function Home({
     publisher: {
       "@type": "Organization",
       name: "FinNews247",
-      // Use the www domain consistently for publisher URLs and logo to avoid duplicate origins.
       url: "https://www.finnews247.com/",
       logo: {
         "@type": "ImageObject",
@@ -59,30 +76,20 @@ export default function Home({
           },
         ]}
       />
-
-      {/* JSON-LD Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
-
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-        {/* Sidebar with widgets */}
         <aside className="md:col-span-1 space-y-6">
           <TradingSignalsBoxMini />
           <TopExchanges />
           <BestWallets />
           <TopStaking />
           <TopMovers />
-          {/* FearGreed widget removed */}
         </aside>
-
-        {/* Main Content area */}
         <main className="md:col-span-3 space-y-12">
-          {/* Trading Signals highlight */}
           <TradingSignalsBoxMain />
-
-          {/* Section: Altcoin Analysis (Altcoins + SEC Coin) */}
           <section>
             <h2 className="text-2xl font-semibold mb-4">Altcoin Analysis</h2>
             <div className="grid md:grid-cols-2 gap-6">
@@ -91,48 +98,46 @@ export default function Home({
               ))}
             </div>
           </section>
-
-          {/* Section: Crypto Exchanges Insights (Fidelity + Exchanges) */}
           <section>
-            <h2 className="text-2xl font-semibold mb-4">Crypto Exchanges Insights</h2>
+            <h2 className="text-2xl font-semibold mb-4">
+              Crypto Exchanges Insights
+            </h2>
             <div className="grid md:grid-cols-2 gap-6">
               {exchangePosts.map((p) => (
                 <PostCard key={p.slug} post={p} />
               ))}
             </div>
           </section>
-
-          {/* Section: Crypto Apps & Wallets */}
           <section>
-            <h2 className="text-2xl font-semibold mb-4">Crypto Apps & Wallets</h2>
+            <h2 className="text-2xl font-semibold mb-4">
+              Crypto Apps & Wallets
+            </h2>
             <div className="grid md:grid-cols-2 gap-6">
               {appPosts.map((p) => (
                 <PostCard key={p.slug} post={p} />
               ))}
             </div>
           </section>
-
-          {/* Section: Crypto Insurance & Tax */}
           <section>
-            <h2 className="text-2xl font-semibold mb-4">Crypto Insurance & Tax</h2>
+            <h2 className="text-2xl font-semibold mb-4">
+              Crypto Insurance & Tax
+            </h2>
             <div className="grid md:grid-cols-2 gap-6">
               {insuranceTaxPosts.map((p) => (
                 <PostCard key={p.slug} post={p} />
               ))}
             </div>
           </section>
-
-          {/* Section: Crypto & Market News */}
           <section>
-            <h2 className="text-2xl font-semibold mb-4">Crypto & Market News</h2>
+            <h2 className="text-2xl font-semibold mb-4">
+              Crypto & Market News
+            </h2>
             <div className="grid md:grid-cols-2 gap-6">
               {newsPosts.map((p) => (
                 <PostCard key={p.slug} post={p} />
               ))}
             </div>
           </section>
-
-          {/* Section: Guides & Reviews */}
           <section>
             <h2 className="text-2xl font-semibold mb-4">Guides & Reviews</h2>
             <div className="grid md:grid-cols-2 gap-6">
@@ -149,7 +154,10 @@ export default function Home({
 
 export async function getServerSideProps() {
   const readData = (filename) => {
-    const content = fs.readFileSync(path.join(process.cwd(), "data", filename), "utf-8");
+    const content = fs.readFileSync(
+      path.join(process.cwd(), "data", filename),
+      "utf-8"
+    );
     return JSON.parse(content);
   };
 
@@ -172,16 +180,27 @@ export async function getServerSideProps() {
   const news = readData("news.json");
   const guides = readData("guides.json");
 
-  const sortDesc = (arr) => arr.sort((a, b) => new Date(b.date) - new Date(a.date));
+  const sortDesc = (arr) =>
+    arr.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-  return {
-    props: {
-      altcoinPosts: sortDesc([...altcoins, ...seccoin]).slice(0, SECTION_COUNTS.altcoins),
-      exchangePosts: sortDesc([...fidelity, ...cryptoexchanges]).slice(0, SECTION_COUNTS.exchanges),
-      appPosts: sortDesc([...apps]).slice(0, SECTION_COUNTS.apps),
-      insuranceTaxPosts: sortDesc([...insurance, ...tax]).slice(0, SECTION_COUNTS.insuranceTax),
-      newsPosts: sortDesc([...news]).slice(0, SECTION_COUNTS.news),
-      guidePosts: sortDesc([...guides]).slice(0, SECTION_COUNTS.guides),
-    },
+  const props = {
+    altcoinPosts: sortDesc([...altcoins, ...seccoin]).slice(
+      0,
+      SECTION_COUNTS.altcoins
+    ),
+    exchangePosts: sortDesc([...fidelity, ...cryptoexchanges]).slice(
+      0,
+      SECTION_COUNTS.exchanges
+    ),
+    appPosts: sortDesc([...apps]).slice(0, SECTION_COUNTS.apps),
+    insuranceTaxPosts: sortDesc([...insurance, ...tax]).slice(
+      0,
+      SECTION_COUNTS.insuranceTax
+    ),
+    newsPosts: sortDesc([...news]).slice(0, SECTION_COUNTS.news),
+    guidePosts: sortDesc([...guides]).slice(0, SECTION_COUNTS.guides),
   };
+
+  // Giảm kích thước payload
+  return { props: shallowProps(props) };
 }
