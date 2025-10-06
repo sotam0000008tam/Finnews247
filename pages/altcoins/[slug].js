@@ -3,60 +3,104 @@ import fs from "fs";
 import path from "path";
 import { NextSeo } from "next-seo";
 
-export default function AltcoinPost({ post }) {
+/** Helpers nhỏ gọn (không đổi cấu trúc trang) */
+function stripHtml(html = "") {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, "")
+    .replace(/<style[\s\S]*?<\/style>/gi, "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+function truncate(s = "", n = 160) {
+  if (s.length <= n) return s;
+  // cắt đến khoảng trắng gần nhất cho đẹp
+  const cut = s.slice(0, n);
+  const i = cut.lastIndexOf(" ");
+  return (i > 80 ? cut.slice(0, i) : cut) + "…";
+}
+function extractFirstImage(html = "") {
+  const m = html.match(/<img[^>]+src=["']([^"']+)["']/i);
+  return m ? m[1] : null;
+}
+
+export default function AltcoinDetail({ post }) {
   if (!post) {
     return (
-      <div>
-        <h1 className="text-3xl font-semibold mb-6">404 - Not Found</h1>
-        <p>The article you are looking for does not exist.</p>
+      <div className="container mx-auto px-4 py-6">
+        <h1 className="text-2xl font-bold mb-4">404 - Not Found</h1>
+        <p>Article not found.</p>
       </div>
     );
   }
+
+  // SEO động từ dữ liệu bài viết
+  const title = post.title ? `${post.title} | FinNews247` : "FinNews247";
+  const description =
+    (post.excerpt && post.excerpt.trim()) ||
+    truncate(stripHtml(post.content || post.body || ""), 160);
+  const canonical = `https://www.finnews247.com/altcoins/${post.slug}`;
+  const ogImage = post.ogImage || post.image || extractFirstImage(post.content || post.body || "");
+
   return (
-    <article className="prose lg:prose-xl max-w-none">
+    <div className="container mx-auto px-4 py-6">
       <NextSeo
-        title={`${post.title} | FinNews`}
-        description={post.excerpt}
-        canonical={`https://www.finnews247.com/altcoins/${post.slug}`}
+        title={title}
+        description={description}
+        canonical={canonical}
         openGraph={{
-          title: `${post.title} | FinNews`,
-          description: post.excerpt,
-          // Use the www domain consistently for OG URL
-          url: `https://www.finnews247.com/altcoins/${post.slug}`,
+          title,
+          description,
+          url: canonical,
+          images: ogImage ? [{ url: ogImage }] : undefined,
         }}
       />
-      <h1>{post.title}</h1>
-      <p className="text-sm text-gray-500">{post.date}</p>
-      {post.image && (
-        <img
-          src={post.image}
-          alt={post.title}
-          className="my-4 rounded-lg shadow"
+
+      <article className="prose lg:prose-xl max-w-none">
+        {post.title && <h1>{post.title}</h1>}
+        {(post.date || post.updatedAt) && (
+          <p className="text-sm text-gray-500">
+            {post.date || post.updatedAt}
+          </p>
+        )}
+
+        {post.image && (
+          <img
+            src={post.image}
+            alt={post.title || "Altcoin article"}
+            className="my-4 rounded-lg shadow"
+            loading="lazy"
+          />
+        )}
+
+        <div
+          className={`post-body ${post.category === "SEC Coin" ? "sec-coin-wrapper" : ""}`}
+          // Giữ nguyên render nội dung HTML hiện có
+          dangerouslySetInnerHTML={{ __html: post.content || post.body || "" }}
         />
-      )}
-      <div dangerouslySetInnerHTML={{ __html: post.content }} />
-    </article>
+      </article>
+    </div>
   );
 }
 
 export async function getServerSideProps({ params }) {
-  const raw = fs.readFileSync(
-    path.join(process.cwd(), "data", "altcoins.json"),
-    "utf-8"
-  );
-  const posts = JSON.parse(raw);
-  let { slug } = params;
-  // Provide alias mapping for simplified slugs used in internal links
-  const aliasMap = {
-    "sec-coin-analysis":
-      "sec-coin-analysis-what-investors-need-to-know-in-2025",
-    "sec-coin-price-prediction-2025-and-beyond":
-      "sec-coin-price-prediction-for-2025-and-beyond",
-    "sec-coin-vs-xrp": "sec-coin-vs-xrp-key-differences-for-investors",
+  // Đọc đúng các nguồn dữ liệu altcoins (gồm cả seccoin nếu bạn gộp)
+  const readJson = (name) => {
+    try {
+      const p = path.join(process.cwd(), "data", name);
+      if (!fs.existsSync(p)) return [];
+      return JSON.parse(fs.readFileSync(p, "utf-8"));
+    } catch {
+      return [];
+    }
   };
-  if (aliasMap[slug]) {
-    slug = aliasMap[slug];
-  }
-  const post = posts.find((p) => p.slug === slug) || null;
+
+  // Bạn có thể điều chỉnh danh sách này cho khớp project của mình
+  const altcoins = readJson("altcoins.json");
+  const seccoin = readJson("seccoin.json"); // nếu không dùng, vẫn an toàn (mảng rỗng)
+
+  const all = [...altcoins, ...seccoin];
+  const post = all.find((p) => p?.slug === params.slug) || null;
+
   return { props: { post } };
 }
