@@ -1,42 +1,67 @@
-import { useEffect, useState } from "react";
+// components/TopMovers.jsx
+import Link from "next/link";
 
-export default function TopMovers() {
-  const [gainers, setGainers] = useState([]);
-  const [losers, setLosers] = useState([]);
+export default function TopMovers({ gainers = [], losers = [] }) {
+  const hasGainers = Array.isArray(gainers) && gainers.length > 0;
+  const hasLosers = Array.isArray(losers) && losers.length > 0;
 
-  useEffect(() => {
-    async function fetchData() {
-      const res = await fetch(
-        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&price_change_percentage=24h"
-      );
-      const data = await res.json();
-      const sorted = [...data].sort(
-        (a, b) => b.price_change_percentage_24h - a.price_change_percentage_24h
-      );
-      setGainers(sorted.slice(0, 5));
-      setLosers(sorted.slice(-5).reverse());
-    }
-    fetchData();
-  }, []);
+  // Không có dữ liệu → ẩn hoàn toàn widget
+  if (!hasGainers && !hasLosers) return null;
+
+  const Row = ({ item }) => {
+    const sym = item.symbol || item.ticker || item.pair || item.name || "-";
+    const price = item.price || item.last || item.close;
+    const pctVal = item.change24h ?? item.change ?? item.pct;
+    const pctStr =
+      typeof pctVal === "number" ? `${pctVal.toFixed(2)}%` : (pctVal || "");
+    const isUp = typeof pctVal === "number" ? pctVal >= 0 : pctStr?.startsWith("+");
+
+    return (
+      <div className="flex items-center justify-between py-2">
+        <span className="font-medium">{sym}</span>
+        <span className="text-sm text-gray-500">
+          {price !== undefined ? `$${price}` : ""}
+        </span>
+        <span className={`text-sm font-semibold ${isUp ? "text-green-600" : "text-red-600"}`}>
+          {pctStr}
+        </span>
+      </div>
+    );
+  };
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow mt-6">
-      <h2 className="text-lg font-bold mb-2">🚀 Top Gainers (24h)</h2>
-      <ul className="text-sm mb-4 space-y-1">
-        {gainers.map((c) => (
-          <li key={c.id}>
-            {c.symbol.toUpperCase()} +{c.price_change_percentage_24h?.toFixed(2)}%
-          </li>
-        ))}
-      </ul>
-      <h2 className="text-lg font-bold mb-2">📉 Top Losers (24h)</h2>
-      <ul className="text-sm space-y-1">
-        {losers.map((c) => (
-          <li key={c.id}>
-            {c.symbol.toUpperCase()} {c.price_change_percentage_24h?.toFixed(2)}%
-          </li>
-        ))}
-      </ul>
-    </div>
+    <section>
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="text-lg font-semibold">Top Movers (24h)</h2>
+        <Link href="/market" className="text-sm text-sky-600 hover:underline">
+          Market →
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        {hasGainers && (
+          <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-3">
+            <div className="font-semibold mb-2">Top Gainers</div>
+            {gainers.slice(0, 5).map((it, i) => (
+              <Row key={`g-${i}`} item={it} />
+            ))}
+          </div>
+        )}
+        {hasLosers && (
+          <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-3">
+            <div className="font-semibold mb-2">Top Losers</div>
+            {losers.slice(0, 5).map((it, i) => (
+              <Row key={`l-${i}`} item={it} />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {(!hasGainers || !hasLosers) && (
+        <div className="mt-3 text-xs text-gray-500">
+          Một phần dữ liệu market chưa khả dụng.
+        </div>
+      )}
+    </section>
   );
 }
