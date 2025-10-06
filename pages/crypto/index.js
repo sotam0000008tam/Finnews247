@@ -6,28 +6,30 @@ import PostCard from "../../components/PostCard";
 import { NextSeo } from "next-seo";
 
 export default function Crypto({ posts, totalPages, currentPage }) {
-  // 🔹 SEO động cho phân trang
-  const base = "https://www.finnews247.com/crypto";
   const isFirst = currentPage === 1;
-  const title = `Crypto News | FinNews247${isFirst ? "" : ` – Page ${currentPage}`}`;
-  const description = `Latest cryptocurrency news, Bitcoin, Ethereum and altcoin updates with market insights${isFirst ? "" : ` – Page ${currentPage} of ${totalPages}`}.`;
-  const canonical = isFirst ? base : `${base}?page=${currentPage}`;
-
-  const prevUrl =
-    currentPage > 2 ? `${base}?page=${currentPage - 1}` : currentPage === 2 ? base : null;
-  const nextUrl = currentPage < totalPages ? `${base}?page=${currentPage + 1}` : null;
+  const pageSuffix = isFirst ? "" : ` – Page ${currentPage}`;
+  const baseUrl = "https://www.finnews247.com/crypto";
+  const canonical = isFirst ? baseUrl : `${baseUrl}?page=${currentPage}`;
+  const prevHref =
+    currentPage > 1 ? (currentPage === 2 ? baseUrl : `${baseUrl}?page=${currentPage - 1}`) : null;
+  const nextHref = currentPage < totalPages ? `${baseUrl}?page=${currentPage + 1}` : null;
 
   return (
     <>
       <NextSeo
-        title={title}
-        description={description}
+        title={`Crypto News | FinNews247${pageSuffix}`}
+        description={`Latest cryptocurrency news, Bitcoin, Ethereum, and altcoin updates with market insights${pageSuffix}.`}
         canonical={canonical}
-        openGraph={{ title, description, url: canonical }}
+        openGraph={{
+          title: `Crypto News | FinNews247${pageSuffix}`,
+          description: `Stay updated with real-time cryptocurrency market trends, Bitcoin, Ethereum, DeFi and NFTs${pageSuffix}.`,
+          url: canonical,
+          images: [{ url: "https://www.finnews247.com/images/crypto-banner.jpg" }],
+        }}
         additionalLinkTags={[
-          ...(prevUrl ? [{ rel: "prev", href: prevUrl }] : []),
-          ...(nextUrl ? [{ rel: "next", href: nextUrl }] : []),
-        ]}
+          prevHref ? { rel: "prev", href: prevHref } : null,
+          nextHref ? { rel: "next", href: nextHref } : null,
+        ].filter(Boolean)}
       />
 
       <div>
@@ -65,17 +67,13 @@ export default function Crypto({ posts, totalPages, currentPage }) {
 }
 
 export async function getServerSideProps({ query }) {
-  const raw = fs.readFileSync(
-    path.join(process.cwd(), "data", "news.json"),
-    "utf-8"
-  );
-  const all = JSON.parse(raw).filter((p) => p.category === "Crypto");
+  const raw = fs.readFileSync(path.join(process.cwd(), "data", "news.json"), "utf-8");
+  const all = JSON.parse(raw).filter((p) => p.category === "Crypto"); // giữ logic gốc
   all.sort((a, b) => new Date(b.date) - new Date(a.date));
 
   const perPage = 30;
   const page = Math.max(1, parseInt(query.page || "1", 10));
   const totalPages = Math.max(1, Math.ceil(all.length / perPage));
-
   const start = (page - 1) * perPage;
   const pagePosts = all.slice(start, start + perPage);
 

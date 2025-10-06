@@ -10,6 +10,11 @@ const nextConfig = {
       { source: '/exchanges', destination: '/crypto-exchanges', permanent: true },
       { source: '/crypto-tax/:slug*', destination: '/tax/:slug*', permanent: true },
       { source: '/crypto-insurance/:slug*', destination: '/insurance/:slug*', permanent: true },
+      {
+        source: '/news/:slug',
+        destination: '/:slug',
+        permanent: true,
+      },
     ];
   },
 };
