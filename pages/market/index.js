@@ -6,20 +6,34 @@ import PostCard from "../../components/PostCard";
 import { NextSeo } from "next-seo";
 
 export default function Market({ posts, totalPages, currentPage }) {
+  // 🔹 SEO động cho phân trang
+  const base = "https://www.finnews247.com/market";
+  const isFirst = currentPage === 1;
+  const title = `Crypto & Market News | FinNews247${isFirst ? "" : ` – Page ${currentPage}`}`;
+  const description = `News and analysis on crypto and global markets (Bitcoin, Ethereum, stocks, forex)${isFirst ? "" : ` – Page ${currentPage} of ${totalPages}`}.`;
+  const canonical = isFirst ? base : `${base}?page=${currentPage}`;
+
+  const prevUrl =
+    currentPage > 2 ? `${base}?page=${currentPage - 1}` : currentPage === 2 ? base : null;
+  const nextUrl = currentPage < totalPages ? `${base}?page=${currentPage + 1}` : null;
+
   return (
     <>
-      {/* ✅ SEO cho Crypto & Market */}
+      {/* ✅ SEO động, KHÔNG đổi cấu trúc trang */}
       <NextSeo
-        title="Crypto & Market News | FinNews247"
-        description="Latest news and analysis on cryptocurrencies and global markets. Stay updated on Bitcoin, Ethereum, stocks, forex, and more."
-        canonical="https://www.finnews247.com/market"
+        title={title}
+        description={description}
+        canonical={canonical}
         openGraph={{
-          title: "Crypto & Market News | FinNews247",
-          description:
-            "Comprehensive updates on crypto and financial markets: Bitcoin, Ethereum, stocks, forex, and commodities.",
-          url: "https://www.finnews247.com/market",
+          title,
+          description,
+          url: canonical,
           images: [{ url: "https://www.finnews247.com/images/market-banner.jpg" }],
         }}
+        additionalLinkTags={[
+          ...(prevUrl ? [{ rel: "prev", href: prevUrl }] : []),
+          ...(nextUrl ? [{ rel: "next", href: nextUrl }] : []),
+        ]}
       />
 
       <div>
@@ -61,7 +75,7 @@ export async function getServerSideProps({ query }) {
     path.join(process.cwd(), "data", "news.json"),
     "utf-8"
   );
-  const all = JSON.parse(raw); // ❌ bỏ filter category để lấy hết
+  const all = JSON.parse(raw); // vẫn lấy tất cả như code gốc
   all.sort((a, b) => new Date(b.date) - new Date(a.date));
 
   const perPage = 30;

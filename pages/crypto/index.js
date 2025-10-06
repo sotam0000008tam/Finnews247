@@ -6,20 +6,34 @@ import PostCard from "../../components/PostCard";
 import { NextSeo } from "next-seo";
 
 export default function Crypto({ posts, totalPages, currentPage }) {
+  // 🔹 SEO động cho phân trang
+  const base = "https://www.finnews247.com/crypto";
+  const isFirst = currentPage === 1;
+  const title = `Crypto News | FinNews247${isFirst ? "" : ` – Page ${currentPage}`}`;
+  const description = `Latest cryptocurrency news, Bitcoin, Ethereum and altcoin updates with market insights${isFirst ? "" : ` – Page ${currentPage} of ${totalPages}`}.`;
+  const canonical = isFirst ? base : `${base}?page=${currentPage}`;
+
+  const prevUrl =
+    currentPage > 2 ? `${base}?page=${currentPage - 1}` : currentPage === 2 ? base : null;
+  const nextUrl = currentPage < totalPages ? `${base}?page=${currentPage + 1}` : null;
+
   return (
     <>
-      {/* ✅ SEO */}
+      {/* ✅ SEO động, KHÔNG đổi cấu trúc trang */}
       <NextSeo
-        title="Crypto News | FinNews"
-        description="Latest cryptocurrency news, Bitcoin, Ethereum, and altcoin updates with market insights."
-        canonical="https://www.finnews247.com/crypto"
+        title={title}
+        description={description}
+        canonical={canonical}
         openGraph={{
-          title: "Crypto News | FinNews",
-          description:
-            "Stay updated with real-time cryptocurrency market trends, Bitcoin, Ethereum, DeFi and NFTs.",
-          url: "https://www.finnews247.com/crypto",
+          title,
+          description,
+          url: canonical,
           images: [{ url: "https://www.finnews247.com/images/crypto-banner.jpg" }],
         }}
+        additionalLinkTags={[
+          ...(prevUrl ? [{ rel: "prev", href: prevUrl }] : []),
+          ...(nextUrl ? [{ rel: "next", href: nextUrl }] : []),
+        ]}
       />
 
       <div>
