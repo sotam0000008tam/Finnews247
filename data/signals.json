@@ -561,5 +561,358 @@
     { "q": "What would invalidate the setup?", "a": "A decisive break below 86.16 would negate the bullish thesis." }
   ],
     "disclaimer": "<p>Medium-term investment idea. Not financial advice.</p>"
+  },
+  {
+    "id": "xvg-long-20251003-1141",
+    "pair": "XVG/USDT",
+    "type": "Long",
+    "entry": "0.007836",
+    "target": "\"detail\"",
+    "stoploss": "0.004647",
+    "date": "2025-10-03 11:41",
+    "image": "signal29.png",
+    "excerpt": "Long XVG at 0.007836, target \"detail\", stoploss 0.004647.",
+    "intro": "<h1>XVG/USDT Long Signal – October 3, 2025</h1><p>XVG shows range expansion after compression. Setup: go long at <b>0.007836</b>, profit-taking into {{TARGETS_DESC}}; protected by a stop at <b>0.004647</b>. Momentum stays constructive.</p><aside class=\"mt-4 p-3 border-l-4 border-red-400 bg-red-50 text-sm\"><strong>Event:</strong> Major prints (CPI/NFP/FOMC) can gap price; hedge or flatten accordingly.</aside>",
+    "marketContext": "<h2>Market Context</h2><p>Risk appetite is rising. Rotation into RWAs/stablecoins keeps XVG in focus.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><p>Reclaim-and-hold above resistance improves odds for carry into targets \"detail\". EMAs slope upward.</p><h3>Key Levels</h3><ul><li>Entry: 0.007836</li><li>Target: \"detail\"</li><li>Stoploss: 0.004647</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Risk <b>0.8%–1.2%</b> per trade. Take partial profits at the first objective and trail stops.</p>",
+    "faq": [
+      {
+        "q": "Why long {{PAIR_BASE}}?",
+        "a": "Structure and momentum favor continuation while above 0.007836."
+      }
+    ],
+    "disclaimer": "<p>Educational use only. Not financial advice.</p>"
+  },
+  {
+    "id": "aster-long-20251003-1422",
+    "pair": "ASTER/USDT",
+    "type": "Long",
+    "entry": "1.9465",
+    "target": "\"detail\"",
+    "stoploss": "1.4697",
+    "date": "2025-10-03 14:22",
+    "image": "signal30.png",
+    "excerpt": "Long ASTER at 1.9465, target \"detail\", stoploss 1.4697.",
+    "intro": "<h1>ASTER/USDT Long — October 3, 2025</h1><p>go long at <b>1.9465</b>; targets \"detail\". Stop: <b>1.4697</b>.</p><aside class=\"mt-4 p-3 border-l-4 border-emerald-400 bg-emerald-50 text-sm\"><strong>Event:</strong> Major prints (CPI/NFP/FOMC) can gap price; hedge or flatten accordingly.</aside>",
+    "marketContext": "<h2>Market Context</h2><p>Risk tone: balanced. ASTER in focus.</p>",
+    "technicalAnalysis": "<h2>Technical</h2><ul><li>Reclaim & hold.</li><li>EMAs up.</li><li>Path: targets \"detail\".</li></ul><h3>Key Levels</h3><ul><li>Entry: 1.9465</li><li>Target: \"detail\"</li><li>Stoploss: 1.4697</li></ul>",
+    "riskStrategy": "<h2>Risk</h2><p>Risk <b>0.3%–0.6%</b>. Partial at TP1. Trail.</p>",
+    "faq": [
+      {
+        "q": "Why long?",
+        "a": "Above support near 1.9465."
+      }
+    ],
+    "disclaimer": "<p>Info only. Not advice.</p>"
+  },
+  {
+    "id": "in-long-20251004-0147",
+    "pair": "IN/USDT.P",
+    "type": "Long",
+    "entry": "0.11909",
+    "target": "\"detail\"",
+    "stoploss": "0.06107",
+    "date": "2025-10-04 01:47",
+    "image": "signal31.png",
+    "excerpt": "Long IN at 0.11909, target \"detail\", stoploss 0.06107.",
+    "intro": "<h1>IN/USDT.P Long — October 4, 2025</h1><p>4H 20/50 EMA aligned. Value above reclaimed node. Execute go long <b>0.11909</b>; stop <b>0.06107</b>.</p><aside class=\"mt-4 p-3 border-l-4 border-red-400 bg-red-50 text-sm\"><strong>Execution:</strong> Prefer <b>limit orders</b>. Confirm a <b>1H close</b> on retests before adding size.</aside>",
+    "marketContext": "<h2>Market Context</h2><p>Funding flat; OI stable. No anomaly in term structure.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><p>Acceptance above prior VAH. VWAP reclaimed. Momentum constructive; path to targets \"detail\" open.</p><h3>Key Levels</h3><ul><li>Entry: 0.11909</li><li>Target: \"detail\"</li><li>Stoploss: 0.06107</li></ul>",
+    "riskStrategy": "<h2>Risk</h2><p>Size by volatility. Use OCO; avoid adding into adverse excursion.</p>",
+    "faq": [
+      {
+        "q": "Trigger?",
+        "a": "Body close beyond trigger + retest hold."
+      }
+    ],
+    "disclaimer": "<p>Market commentary. No advice.</p>"
+  },
+   {
+    "id": "cake-long-20251004-0251",
+    "pair": "CAKE/USDT",
+    "type": "Long",
+    "entry": "3.5894",
+    "target": "\"detail\"",
+    "stoploss": "2.4585",
+    "date": "2025-10-04 02:51",
+    "image": "signal32.png",
+    "excerpt": "Long CAKE at 3.5894, target \"detail\", stoploss 2.4585.",
+    "intro": "<h1>CAKE/USDT Long — October 4, 2025</h1><p>DXY stable, UST 10Y easing, real yields drifting lower. ETF flows mixed. Base case: go long <b>3.5894</b>, targets \"detail\"; protected by a stop at <b>2.4585</b>.</p><aside class=\"mt-4 p-3 border-l-4 border-rose-400 bg-rose-50 text-sm\"><strong>Risk:</strong> Risk <b>0.8%–1.2%</b>. Switch to a <b>trailing stop</b> after TP1.</aside>",
+    "marketContext": "<h2>Macro Context</h2><p>DXY stable; UST 10Y easing; tightening odds fade. Risk tone risk‑on in pockets.</p>",
+    "technicalAnalysis": "<h2>Technical</h2><p>Macro tailwinds + reclaim-and-hold keep CAKE biased to targets \"detail\".</p><h3>Key Levels</h3><ul><li>Entry: 3.5894</li><li>Target: \"detail\"</li><li>Stoploss: 2.4585</li></ul>",
+    "riskStrategy": "<h2>Risk</h2><p>Respect event risk (CPI/NFP/FOMC). Reduce size into macro prints.</p>",
+    "faq": [
+      {
+        "q": "Macro support?",
+        "a": "{{DXY}}, {{YLD}}, and {{ETFM}} align with the bias."
+      }
+    ],
+    "disclaimer": "<p>Macro commentary. Not financial advice.</p>"
+  },
+{
+    "id": "bonk-long-20251004-0429",
+    "pair": "BONK/USDT",
+    "type": "Long",
+    "entry": "0.00002155",
+    "target": "\"detail\"",
+    "stoploss": "0.00001135",
+    "date": "2025-10-04 04:29",
+    "image": "signal33.png",
+    "excerpt": "Long BONK at 0.00002155, target \"detail\", stoploss 0.00001135.",
+    "intro": "<h1>BONK/USDT Long Signal – October 4, 2025</h1><p>BONK shows impulse with shallow pullbacks. We look to go long at <b>0.00002155</b>, profit-taking into {{TARGETS_DESC}}; protected by a stop at <b>0.00001135</b>. Momentum stays constructive.</p><aside class=\"mt-4 p-3 border-l-4 border-amber-400 bg-amber-50 text-sm\"><strong>Event:</strong> Major prints (CPI/NFP/FOMC) can gap price; hedge or flatten accordingly.</aside>",
+    "marketContext": "<h2>Market Context</h2><p>Risk appetite is balanced. Rotation into perp‑centric flows keeps BONK in focus.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><p>Reclaim-and-hold above resistance improves odds for carry into targets \"detail\". EMAs slope upward.</p><h3>Key Levels</h3><ul><li>Entry: 0.00002155</li><li>Target: \"detail\"</li><li>Stoploss: 0.00001135</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Risk <b>0.25%–0.75%</b> per trade. Take partial profits at the first objective and trail stops.</p>",
+    "faq": [
+      {
+        "q": "Why long {{PAIR_BASE}}?",
+        "a": "Structure and momentum favor continuation while above 0.00002155."
+      }
+    ],
+    "disclaimer": "<p>Educational use only. Not financial advice.</p>"
+  },
+{
+    "id": "pepe-long-20251004-0453",
+    "pair": "PEPE/USDT",
+    "type": "Long",
+    "entry": "0.000010147",
+    "target": "\"detail\"",
+    "stoploss": "0.00000589",
+    "date": "2025-10-04 04:53",
+    "image": "signal34.png",
+    "excerpt": "Long PEPE at 0.00001015, target \"detail\", stoploss 0.00000589.",
+    "intro": "<h1>PEPE/USDT Long — October 4, 2025</h1><p>go long at <b>0.00001015</b>; targets \"detail\". Stop: <b>0.00000589</b>.</p><aside class=\"mt-4 p-3 border-l-4 border-cyan-400 bg-cyan-50 text-sm\"><strong>Execution:</strong> Prefer <b>limit orders</b>. Confirm a <b>1H close</b> on retests before adding size.</aside>",
+    "marketContext": "<h2>Market Context</h2><p>Risk tone: rising. PEPE in focus.</p>",
+    "technicalAnalysis": "<h2>Technical</h2><ul><li>Reclaim & hold.</li><li>EMAs up.</li><li>Path: targets \"detail\".</li></ul><h3>Key Levels</h3><ul><li>Entry: 0.00001015</li><li>Target: \"detail\"</li><li>Stoploss: 0.00000589</li></ul>",
+    "riskStrategy": "<h2>Risk</h2><p>Risk <b>1R max</b>. Partial at TP1. Trail.</p>",
+    "faq": [
+      {
+        "q": "Why long?",
+        "a": "Above support near 0.00001015."
+      }
+    ],
+    "disclaimer": "<p>Info only. Not advice.</p>"
+  },
+  {
+    "id": "moodeng-long-20251004-0533",
+    "pair": "MOODENG/USDT.P",
+    "type": "Long",
+    "entry": "0.16844",
+    "target": "\"detail\"",
+    "stoploss": "0.11830",
+    "date": "2025-10-04 05:33",
+    "image": "signal35.png",
+    "excerpt": "Long MOODENG at 0.16844, target \"detail\", stoploss 0.1183.",
+    "intro": "<h1>MOODENG/USDT.P Long — October 4, 2025</h1><p>4H 20/50 EMA aligned. Value above reclaimed node. Execute go long <b>0.16844</b>; stop <b>0.1183</b>.</p><aside class=\"mt-4 p-3 border-l-4 border-blue-400 bg-blue-50 text-sm\"><strong>Risk:</strong> Risk <b>1R max</b>. Switch to a <b>trailing stop</b> after TP1.</aside>",
+    "marketContext": "<h2>Market Context</h2><p>Funding flat; OI stable. No anomaly in term structure.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><p>Acceptance above prior VAH. VWAP reclaimed. Momentum constructive; path to targets \"detail\" open.</p><h3>Key Levels</h3><ul><li>Entry: 0.16844</li><li>Target: \"detail\"</li><li>Stoploss: 0.1183</li></ul>",
+    "riskStrategy": "<h2>Risk</h2><p>Size by volatility. Use OCO; avoid adding into adverse excursion.</p>",
+    "faq": [
+      {
+        "q": "Trigger?",
+        "a": "Body close beyond trigger + retest hold."
+      }
+    ],
+    "disclaimer": "<p>Market commentary. No advice.</p>"
+  },
+{
+    "id": "open-long-20251005-0147",
+    "pair": "OPEN/USDT.P",
+    "type": "Long",
+    "entry": "0.5585",
+    "target": "\"detail\"",
+    "stoploss": "0.4006",
+    "date": "2025-10-05 01:47",
+    "image": "signal36.png",
+    "excerpt": "Long OPEN at 0.5585, target \"detail\", stoploss 0.4006.",
+    "intro": "<h1>OPEN/USDT.P Long — October 5, 2025</h1><p>DXY bid returns, UST 10Y pushing higher, real yields ticking up. ETF net-inflows persist. Base case: go long <b>0.5585</b>, targets \"detail\"; protected by a stop at <b>0.4006</b>.</p><aside class=\"mt-4 p-3 border-l-4 border-yellow-400 bg-yellow-50 text-sm\"><strong>Event:</strong> Major prints (CPI/NFP/FOMC) can gap price; hedge or flatten accordingly.</aside>",
+    "marketContext": "<h2>Macro Context</h2><p>DXY bid returns; UST 10Y pushing higher; tightening odds fade. Risk tone fragile but improving.</p>",
+    "technicalAnalysis": "<h2>Technical</h2><p>Macro tailwinds + reclaim-and-hold keep OPEN biased to targets \"detail\".</p><h3>Key Levels</h3><ul><li>Entry: 0.5585</li><li>Target: \"detail\"</li><li>Stoploss: 0.4006</li></ul>",
+    "riskStrategy": "<h2>Risk</h2><p>Respect event risk (CPI/NFP/FOMC). Reduce size into macro prints.</p>",
+    "faq": [
+      {
+        "q": "Macro support?",
+        "a": "{{DXY}}, {{YLD}}, and {{ETFM}} align with the bias."
+      }
+    ],
+    "disclaimer": "<p>Macro commentary. Not financial advice.</p>"
+  },
+{
+    "id": "hana-long-20251005-0304",
+    "pair": "HANA/USDT.P",
+    "type": "Long",
+    "entry": "0.05954",
+    "target": "\"detail\"",
+    "stoploss": "0.03485",
+    "date": "2025-10-05 03:04",
+    "image": "signal37.png",
+    "excerpt": "Long HANA at 0.05954, target \"detail\", stoploss 0.03485.",
+    "intro": "<h1>HANA/USDT.P Long Signal – October 5, 2025</h1><p>HANA shows accumulation over prior supply. Base case: go long at <b>0.05954</b>, profit-taking into {{TARGETS_DESC}}; protected by a stop at <b>0.03485</b>. Momentum stays constructive.</p><aside class=\"mt-4 p-3 border-l-4 border-rose-400 bg-rose-50 text-sm\"><strong>Execution:</strong> Prefer <b>limit orders</b>. Confirm a <b>1H close</b> on retests before adding size.</aside>",
+    "marketContext": "<h2>Market Context</h2><p>Risk appetite is risk‑on in pockets. Rotation into perp‑centric flows keeps HANA in focus.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><p>Reclaim-and-hold above resistance improves odds for carry into targets \"detail\". EMAs slope upward.</p><h3>Key Levels</h3><ul><li>Entry: 0.05954</li><li>Target: \"detail\"</li><li>Stoploss: 0.03485</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Risk <b>0.3%–0.6%</b> per trade. Take partial profits at the first objective and trail stops.</p>",
+    "faq": [
+      {
+        "q": "Why long {{PAIR_BASE}}?",
+        "a": "Structure and momentum favor continuation while above 0.05954."
+      }
+    ],
+    "disclaimer": "<p>Educational use only. Not financial advice.</p>"
+  },
+{
+    "id": "skate-long-20251005-0418",
+    "pair": "SKATE/USDT.P",
+    "type": "Long",
+    "entry": "0.05452",
+    "target": "\"detail\"",
+    "stoploss": "0.02967",
+    "date": "2025-10-05 04:18",
+    "image": "signal38.png",
+    "excerpt": "Long SKATE at 0.05452, target \"detail\", stoploss 0.02967.",
+    "intro": "<h1>SKATE/USDT.P Long — October 5, 2025</h1><p>go long at <b>0.05452</b>; targets \"detail\". Stop: <b>0.02967</b>.</p><aside class=\"mt-4 p-3 border-l-4 border-cyan-400 bg-cyan-50 text-sm\"><strong>Event:</strong> Major prints (CPI/NFP/FOMC) can gap price; hedge or flatten accordingly.</aside>",
+    "marketContext": "<h2>Market Context</h2><p>Risk tone: rising. SKATE in focus.</p>",
+    "technicalAnalysis": "<h2>Technical</h2><ul><li>Reclaim & hold.</li><li>EMAs up.</li><li>Path: targets \"detail\".</li></ul><h3>Key Levels</h3><ul><li>Entry: 0.05452</li><li>Target: \"detail\"</li><li>Stoploss: 0.02967</li></ul>",
+    "riskStrategy": "<h2>Risk</h2><p>Risk <b>0.3%–0.6%</b>. Partial at TP1. Trail.</p>",
+    "faq": [
+      {
+        "q": "Why long?",
+        "a": "Above support near 0.05452."
+      }
+    ],
+    "disclaimer": "<p>Info only. Not advice.</p>"
+  },
+{
+    "id": "eden-long-20251005-0511",
+    "pair": "EDEN/USDT",
+    "type": "Long",
+    "entry": "0.3987",
+    "target": "\"detail\"",
+    "stoploss": "0.3196",
+    "date": "2025-10-05 05:11",
+    "image": "signal39.png",
+    "excerpt": "Long EDEN at 0.3987, target \"detail\", stoploss 0.3196.",
+    "intro": "<h1>EDEN/USDT Long — October 5, 2025</h1><p>4H 20/50 EMA aligned. Value above reclaimed node. Execute go long <b>0.3987</b>; stop <b>0.3196</b>.</p><aside class=\"mt-4 p-3 border-l-4 border-stone-400 bg-stone-50 text-sm\"><strong>Execution:</strong> Prefer <b>limit orders</b>. Confirm a <b>1H close</b> on retests before adding size.</aside>",
+    "marketContext": "<h2>Market Context</h2><p>Funding flat; OI stable. No anomaly in term structure.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><p>Acceptance above prior VAH. VWAP reclaimed. Momentum constructive; path to targets \"detail\" open.</p><h3>Key Levels</h3><ul><li>Entry: 0.3987</li><li>Target: \"detail\"</li><li>Stoploss: 0.3196</li></ul>",
+    "riskStrategy": "<h2>Risk</h2><p>Size by volatility. Use OCO; avoid adding into adverse excursion.</p>",
+    "faq": [
+      {
+        "q": "Trigger?",
+        "a": "Body close beyond trigger + retest hold."
+      }
+    ],
+    "disclaimer": "<p>Market commentary. No advice.</p>"
+  },
+{
+    "id": "take-long-20251005-0552",
+    "pair": "TAKE/USDT.P",
+    "type": "Long",
+    "entry": "0.20399",
+    "target": "\"detail\"",
+    "stoploss": "0.13462",
+    "date": "2025-10-05 05:52",
+    "image": "signal40.png",
+    "excerpt": "Long TAKE at 0.20399, target \"detail\", stoploss 0.13462.",
+    "intro": "<h1>TAKE/USDT Long — October 5, 2025</h1><p>DXY stable, UST 10Y easing, real yields drifting lower. ETF flows mixed. Base case: go long <b>0.20399</b>, targets \"detail\"; protected by a stop at <b>0.13462</b>.</p><aside class=\"mt-4 p-3 border-l-4 border-orange-400 bg-orange-50 text-sm\"><strong>Risk:</strong> Risk <b>0.3%–0.6%</b>. Switch to a <b>trailing stop</b> after TP1.</aside>",
+    "marketContext": "<h2>Macro Context</h2><p>DXY stable; UST 10Y easing; dovish tilt in pricing. Risk tone rising.</p>",
+    "technicalAnalysis": "<h2>Technical</h2><p>Macro tailwinds + reclaim-and-hold keep TAKE biased to targets \"detail\".</p><h3>Key Levels</h3><ul><li>Entry: 0.20399</li><li>Target: \"detail\"</li><li>Stoploss: 0.13462</li></ul>",
+    "riskStrategy": "<h2>Risk</h2><p>Respect event risk (CPI/NFP/FOMC). Reduce size into macro prints.</p>",
+    "faq": [
+      {
+        "q": "Macro support?",
+        "a": "{{DXY}}, {{YLD}}, and {{ETFM}} align with the bias."
+      }
+    ],
+    "disclaimer": "<p>Macro commentary. Not financial advice.</p>"
+  },
+  {
+    "id": "obol-long-20251005-1247",
+    "pair": "OBOL/USDT.P",
+    "type": "Long",
+    "entry": "0.12608",
+    "target": "\"detail\"",
+    "stoploss": "0.09411",
+    "date": "2025-10-05 12:47",
+    "image": "signal41.png",
+    "excerpt": "Long OBOL at 0.12608, target \"detail\", stoploss 0.09411.",
+    "intro": "<h1>OBOL/USDT.P Long Signal – October 5, 2025</h1><p>OBOL shows range expansion after compression. Setup: go long at <b>0.12608</b>, profit-taking into {{TARGETS_DESC}}; protected by a stop at <b>0.09411</b>. Momentum stays constructive.</p><aside class=\"mt-4 p-3 border-l-4 border-cyan-400 bg-cyan-50 text-sm\"><strong>Event:</strong> Major prints (CPI/NFP/FOMC) can gap price; hedge or flatten accordingly.</aside>",
+    "marketContext": "<h2>Market Context</h2><p>Risk appetite is fragile but improving. Rotation into DeFi rotation keeps OBOL in focus.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><p>Reclaim-and-hold above resistance improves odds for carry into targets \"detail\". EMAs slope upward.</p><h3>Key Levels</h3><ul><li>Entry: 0.12608</li><li>Target: \"detail\"</li><li>Stoploss: 0.09411</li></ul>",
+    "riskStrategy": "<h2>Risk Management</h2><p>Risk <b>0.8%–1.2%</b> per trade. Take partial profits at the first objective and trail stops.</p>",
+    "faq": [
+      {
+        "q": "Why long {{PAIR_BASE}}?",
+        "a": "Structure and momentum favor continuation while above 0.12608."
+      }
+    ],
+    "disclaimer": "<p>Educational use only. Not financial advice.</p>"
+  },
+{
+    "id": "skate-long-20251005-1625",
+    "pair": "SKATE/USDT.P",
+    "type": "Long",
+    "entry": "0.05667",
+    "target": "\"detail\"",
+    "stoploss": "0.02967",
+    "date": "2025-10-05 16:25",
+    "image": "signal42.png",
+    "excerpt": "Long SKATE at 0.05667, target \"detail\", stoploss 0.02967.",
+    "intro": "<h1>SKATE/USDT.P Long — October 5, 2025</h1><p>go long at <b>0.05667</b>; targets \"detail\". Stop: <b>0.02967</b>.</p><aside class=\"mt-4 p-3 border-l-4 border-indigo-400 bg-indigo-50 text-sm\"><strong>Execution:</strong> Prefer <b>limit orders</b>. Confirm a <b>1H close</b> on retests before adding size.</aside>",
+    "marketContext": "<h2>Market Context</h2><p>Risk tone: risk‑on in pockets. SKATE in focus.</p>",
+    "technicalAnalysis": "<h2>Technical</h2><ul><li>Reclaim & hold.</li><li>EMAs up.</li><li>Path: targets \"detail\".</li></ul><h3>Key Levels</h3><ul><li>Entry: 0.05667</li><li>Target: \"detail\"</li><li>Stoploss: 0.02967</li></ul>",
+    "riskStrategy": "<h2>Risk</h2><p>Risk <b>0.25%–0.75%</b>. Partial at TP1. Trail.</p>",
+    "faq": [
+      {
+        "q": "Why long?",
+        "a": "Above support near 0.05667."
+      }
+    ],
+    "disclaimer": "<p>Info only. Not advice.</p>"
+  },
+   {
+    "id": "in-long-20251006-0226",
+    "pair": "IN/USDT.P",
+    "type": "Long",
+    "entry": "0.14222",
+    "target": "\"detail\"",
+    "stoploss": "0.07045",
+    "date": "2025-10-06 02:26",
+    "image": "signal43.png",
+    "excerpt": "Long IN at 0.14222, target \"detail\", stoploss 0.07045.",
+    "intro": "<h1>IN/USDT.P Long — October 6, 2025</h1><p>4H 20/50 EMA aligned. Value above reclaimed node. Execute go long <b>0.14222</b>; stop <b>0.07045</b>.</p><aside class=\"mt-4 p-3 border-l-4 border-teal-400 bg-teal-50 text-sm\"><strong>Risk:</strong> Risk <b>0.8%–1.2%</b>. Switch to a <b>trailing stop</b> after TP1.</aside>",
+    "marketContext": "<h2>Market Context</h2><p>Funding flat; OI stable. No anomaly in term structure.</p>",
+    "technicalAnalysis": "<h2>Technical Analysis</h2><p>Acceptance above prior VAH. VWAP reclaimed. Momentum constructive; path to targets \"detail\" open.</p><h3>Key Levels</h3><ul><li>Entry: 0.14222</li><li>Target: \"detail\"</li><li>Stoploss: 0.07045</li></ul>",
+    "riskStrategy": "<h2>Risk</h2><p>Size by volatility. Use OCO; avoid adding into adverse excursion.</p>",
+    "faq": [
+      {
+        "q": "Trigger?",
+        "a": "Body close beyond trigger + retest hold."
+      }
+    ],
+    "disclaimer": "<p>Market commentary. No advice.</p>"
+  },
+{
+    "id": "phb-long-20251006-0748",
+    "pair": "PHB/USDT",
+    "type": "Long",
+    "entry": "0.5711",
+    "target": "\"detail\"",
+    "stoploss": "0.3558",
+    "date": "2025-10-06 07:48",
+    "image": "signal44.png",
+    "excerpt": "Long PHB at 0.5711, target \"detail\", stoploss 0.3558.",
+    "intro": "<h1>PHB/USDT Long — October 6, 2025</h1><p>DXY bid returns, UST 10Y pushing higher, real yields ticking up. ETF net-inflows persist. Base case: go long <b>0.5711</b>, targets \"detail\"; protected by a stop at <b>0.3558</b>.</p><aside class=\"mt-4 p-3 border-l-4 border-amber-400 bg-amber-50 text-sm\"><strong>Event:</strong> Major prints (CPI/NFP/FOMC) can gap price; hedge or flatten accordingly.</aside>",
+    "marketContext": "<h2>Macro Context</h2><p>DXY bid returns; UST 10Y pushing higher; dovish tilt in pricing. Risk tone risk‑on in pockets.</p>",
+    "technicalAnalysis": "<h2>Technical</h2><p>Macro tailwinds + reclaim-and-hold keep PHB biased to targets \"detail\".</p><h3>Key Levels</h3><ul><li>Entry: 0.5711</li><li>Target: \"detail\"</li><li>Stoploss: 0.3558</li></ul>",
+    "riskStrategy": "<h2>Risk</h2><p>Respect event risk (CPI/NFP/FOMC). Reduce size into macro prints.</p>",
+    "faq": [
+      {
+        "q": "Macro support?",
+        "a": "{{DXY}}, {{YLD}}, and {{ETFM}} align with the bias."
+      }
+    ],
+    "disclaimer": "<p>Macro commentary. Not financial advice.</p>"
   }
+
 ]
