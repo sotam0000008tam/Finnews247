@@ -19,7 +19,6 @@ export default function Crypto({ posts, totalPages, currentPage }) {
 
   return (
     <>
-      {/* ✅ SEO động, KHÔNG đổi cấu trúc trang */}
       <NextSeo
         title={title}
         description={description}

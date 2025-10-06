@@ -3,12 +3,6 @@ import fs from "fs";
 import path from "path";
 import { NextSeo } from "next-seo";
 
-/**
- * Giữ nguyên cấu trúc gốc (SSR đọc data/news.json).
- * Chỉ bổ sung SEO động để loại bỏ trùng title/description.
- */
-
-// Helpers
 function stripHtml(html = "") {
   return String(html).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 }
@@ -31,7 +25,6 @@ export default function Post({ post }) {
     );
   }
 
-  // SEO động
   const title = post.title ? `${post.title} | FinNews247` : "FinNews247";
   const description =
     (post.excerpt && post.excerpt.trim()) ||
@@ -66,7 +59,6 @@ export default function Post({ post }) {
         />
       )}
 
-      {/* ✅ Thêm wrapper phân biệt SEC Coin giữ nguyên */}
       <div
         className={`post-body ${
           post.category === "SEC Coin" ? "sec-coin-wrapper" : ""

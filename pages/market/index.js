@@ -6,7 +6,6 @@ import PostCard from "../../components/PostCard";
 import { NextSeo } from "next-seo";
 
 export default function Market({ posts, totalPages, currentPage }) {
-  // 🔹 SEO động cho phân trang
   const base = "https://www.finnews247.com/market";
   const isFirst = currentPage === 1;
   const title = `Crypto & Market News | FinNews247${isFirst ? "" : ` – Page ${currentPage}`}`;
@@ -19,7 +18,6 @@ export default function Market({ posts, totalPages, currentPage }) {
 
   return (
     <>
-      {/* ✅ SEO động, KHÔNG đổi cấu trúc trang */}
       <NextSeo
         title={title}
         description={description}
@@ -75,7 +73,7 @@ export async function getServerSideProps({ query }) {
     path.join(process.cwd(), "data", "news.json"),
     "utf-8"
   );
-  const all = JSON.parse(raw); // vẫn lấy tất cả như code gốc
+  const all = JSON.parse(raw); // lấy toàn bộ như hiện tại
   all.sort((a, b) => new Date(b.date) - new Date(a.date));
 
   const perPage = 30;
