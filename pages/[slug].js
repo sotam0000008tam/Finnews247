@@ -3,17 +3,15 @@ import fs from "fs";
 import path from "path";
 import { NextSeo } from "next-seo";
 
-function stripHtml(html = "") {
-  return String(html).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
-}
-function truncate(s = "", n = 160) {
-  const t = s.trim();
-  return t.length <= n ? t : t.slice(0, n - 1).trimEnd() + "…";
-}
-function firstImageFromContent(html = "") {
+// Helpers nhỏ: mô tả fallback + ảnh OG
+const stripHtml = (html = "") =>
+  String(html).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+const truncate = (s = "", n = 160) =>
+  s.length <= n ? s : s.slice(0, n - 1).trimEnd() + "…";
+const firstImageFromContent = (html = "") => {
   const m = html.match(/<img[^>]+src=["']([^"']+)["']/i);
   return m ? m[1] : undefined;
-}
+};
 
 export default function Post({ post }) {
   if (!post) {
@@ -47,7 +45,6 @@ export default function Post({ post }) {
           images: ogImage ? [{ url: ogImage }] : undefined,
         }}
       />
-
       <h1>{post.title}</h1>
       <p className="text-sm text-gray-500">{post.date}</p>
 
@@ -76,6 +73,5 @@ export async function getServerSideProps({ params }) {
   );
   const posts = JSON.parse(raw);
   const post = posts.find((p) => p.slug === params.slug) || null;
-
   return { props: { post } };
 }

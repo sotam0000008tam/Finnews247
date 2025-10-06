@@ -11,7 +11,6 @@ export default function Market({ posts, totalPages, currentPage }) {
   const title = `Crypto & Market News | FinNews247${isFirst ? "" : ` – Page ${currentPage}`}`;
   const description = `News and analysis on crypto and global markets (Bitcoin, Ethereum, stocks, forex)${isFirst ? "" : ` – Page ${currentPage} of ${totalPages}`}.`;
   const canonical = isFirst ? base : `${base}?page=${currentPage}`;
-
   const prevUrl =
     currentPage > 2 ? `${base}?page=${currentPage - 1}` : currentPage === 2 ? base : null;
   const nextUrl = currentPage < totalPages ? `${base}?page=${currentPage + 1}` : null;
@@ -22,12 +21,7 @@ export default function Market({ posts, totalPages, currentPage }) {
         title={title}
         description={description}
         canonical={canonical}
-        openGraph={{
-          title,
-          description,
-          url: canonical,
-          images: [{ url: "https://www.finnews247.com/images/market-banner.jpg" }],
-        }}
+        openGraph={{ title, description, url: canonical }}
         additionalLinkTags={[
           ...(prevUrl ? [{ rel: "prev", href: prevUrl }] : []),
           ...(nextUrl ? [{ rel: "next", href: nextUrl }] : []),
