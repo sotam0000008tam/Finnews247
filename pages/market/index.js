@@ -11,6 +11,7 @@ export default function Market({ posts, totalPages, currentPage }) {
   const title = `Crypto & Market News | FinNews247${isFirst ? "" : ` – Page ${currentPage}`}`;
   const description = `News and analysis on crypto and global markets (Bitcoin, Ethereum, stocks, forex)${isFirst ? "" : ` – Page ${currentPage} of ${totalPages}`}.`;
   const canonical = isFirst ? base : `${base}?page=${currentPage}`;
+
   const prevUrl =
     currentPage > 2 ? `${base}?page=${currentPage - 1}` : currentPage === 2 ? base : null;
   const nextUrl = currentPage < totalPages ? `${base}?page=${currentPage + 1}` : null;
@@ -67,7 +68,7 @@ export async function getServerSideProps({ query }) {
     path.join(process.cwd(), "data", "news.json"),
     "utf-8"
   );
-  const all = JSON.parse(raw); // lấy toàn bộ như hiện tại
+  const all = JSON.parse(raw); // vẫn giữ logic gốc: lấy tất cả
   all.sort((a, b) => new Date(b.date) - new Date(a.date));
 
   const perPage = 30;

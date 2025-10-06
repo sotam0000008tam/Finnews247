@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { NextSeo } from "next-seo";
 
-// Helpers nhỏ: mô tả fallback + ảnh OG
+// Helpers nhỏ gọn
 const stripHtml = (html = "") =>
   String(html).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 const truncate = (s = "", n = 160) =>
@@ -23,6 +23,7 @@ export default function Post({ post }) {
     );
   }
 
+  // 🔹 SEO động theo dữ liệu bài
   const title = post.title ? `${post.title} | FinNews247` : "FinNews247";
   const description =
     (post.excerpt && post.excerpt.trim()) ||
@@ -45,6 +46,7 @@ export default function Post({ post }) {
           images: ogImage ? [{ url: ogImage }] : undefined,
         }}
       />
+
       <h1>{post.title}</h1>
       <p className="text-sm text-gray-500">{post.date}</p>
 
@@ -73,5 +75,6 @@ export async function getServerSideProps({ params }) {
   );
   const posts = JSON.parse(raw);
   const post = posts.find((p) => p.slug === params.slug) || null;
+
   return { props: { post } };
 }

@@ -12,6 +12,7 @@ export default function Crypto({ posts, totalPages, currentPage }) {
   const title = `Crypto News | FinNews247${isFirst ? "" : ` – Page ${currentPage}`}`;
   const description = `Latest cryptocurrency news, Bitcoin, Ethereum and altcoin updates with market insights${isFirst ? "" : ` – Page ${currentPage} of ${totalPages}`}.`;
   const canonical = isFirst ? base : `${base}?page=${currentPage}`;
+
   const prevUrl =
     currentPage > 2 ? `${base}?page=${currentPage - 1}` : currentPage === 2 ? base : null;
   const nextUrl = currentPage < totalPages ? `${base}?page=${currentPage + 1}` : null;
