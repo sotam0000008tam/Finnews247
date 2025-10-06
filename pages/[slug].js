@@ -4,13 +4,11 @@ import path from "path";
 import { NextSeo } from "next-seo";
 
 /**
- * Giữ nguyên cấu trúc gốc:
- * - SSR đọc data/news.json
- * - UI/HTML y hệt (h1, date, image, post-body, sec-coin-wrapper)
- * Chỉ bổ sung SEO động để loại bỏ tiêu đề/mô tả trùng lặp.
+ * Giữ nguyên cấu trúc gốc (SSR đọc data/news.json).
+ * Chỉ bổ sung SEO động để loại bỏ trùng title/description.
  */
 
-// Helpers nội bộ nhỏ gọn (không thay đổi kiến trúc dự án)
+// Helpers
 function stripHtml(html = "") {
   return String(html).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 }
@@ -33,14 +31,15 @@ export default function Post({ post }) {
     );
   }
 
-  // 🔹 SEO động (không đổi route/sitemap)
-  const canonical = `https://www.finnews247.com/${post.slug}`;
-  const title = post.title ? `${post.title} | FinNews` : "FinNews";
+  // SEO động
+  const title = post.title ? `${post.title} | FinNews247` : "FinNews247";
   const description =
     (post.excerpt && post.excerpt.trim()) ||
     truncate(stripHtml(post.content || ""), 160) ||
-    "Timely crypto insights and trading signals by FinNews.";
-  const ogImage = post.ogImage || post.image || firstImageFromContent(post.content || "");
+    "Timely crypto insights and trading signals by FinNews247.";
+  const canonical = `https://www.finnews247.com/${post.slug}`;
+  const ogImage =
+    post.ogImage || post.image || firstImageFromContent(post.content || "");
 
   return (
     <article className="prose lg:prose-xl max-w-none">
@@ -55,6 +54,7 @@ export default function Post({ post }) {
           images: ogImage ? [{ url: ogImage }] : undefined,
         }}
       />
+
       <h1>{post.title}</h1>
       <p className="text-sm text-gray-500">{post.date}</p>
 
@@ -66,7 +66,7 @@ export default function Post({ post }) {
         />
       )}
 
-      {/* ✅ Wrapper đặc thù SEC Coin giữ nguyên như code gốc */}
+      {/* ✅ Thêm wrapper phân biệt SEC Coin giữ nguyên */}
       <div
         className={`post-body ${
           post.category === "SEC Coin" ? "sec-coin-wrapper" : ""

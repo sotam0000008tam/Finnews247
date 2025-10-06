@@ -25,16 +25,15 @@ export default function NewsDetail() {
   const { slug } = router.query;
   const item = news.find((n) => n.slug === slug);
 
-  // Nếu chưa tìm được bài (slug chưa sẵn sàng), vẫn render skeleton ngắn
   if (!item) return <p className="p-6">News not found.</p>;
 
-  // 🔹 SEO động, luôn có fallback để không rơi về mô tả mặc định
   const url = `https://www.finnews247.com/news/${item.slug || slug}`;
   const title = item.title ? `${item.title} | FinNews247` : "FinNews247";
   const desc =
     (item.excerpt && item.excerpt.trim()) ||
     truncate(stripHtml(item.content || ""), 160);
-  const ogImage = item.ogImage || item.image || firstImageFromContent(item.content || "");
+  const ogImage =
+    item.ogImage || item.image || firstImageFromContent(item.content || "");
 
   return (
     <div className="container mx-auto px-4 py-6">
@@ -53,10 +52,10 @@ export default function NewsDetail() {
       <h1 className="text-2xl font-bold mb-4">{item.title}</h1>
       <p className="text-gray-600 mb-6">{item.date}</p>
 
-      {/* Giữ cách render gốc (text). Nếu content là HTML, có thể đổi sang dangerouslySetInnerHTML sau. */}
+      {/* Nếu item.content là HTML, có thể đổi sang dangerouslySetInnerHTML */}
       <p className="mb-6">{item.content}</p>
 
-      {/* ✅ Box Trading Signals */}
+      {/* Latest Trading Signals */}
       <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-4 mb-8">
         <h2 className="text-xl font-bold mb-3">📊 Latest Trading Signals</h2>
         <ul className="space-y-3">
