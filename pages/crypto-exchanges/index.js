@@ -14,7 +14,7 @@ export default function CryptoExchanges({ posts }) {
     <>
       {/* SEO for Crypto Exchanges */}
       <NextSeo
-        title="Best Crypto Exchanges 2025 – Compare Fees, Security, Features | FinNews"
+        title="Best Crypto Exchanges 2025 – Compare Fees, Security, Features | FinNews247"
         description="Compare the best crypto exchanges of 2025 on fees, security and features. Includes in-depth reviews of Fidelity Crypto, Coinbase and more."
         canonical="https://www.finnews247.com/crypto-exchanges"
         openGraph={{

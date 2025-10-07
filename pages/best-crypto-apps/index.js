@@ -14,11 +14,11 @@ export default function BestCryptoApps({ posts, totalPages, currentPage }) {
   return (
     <>
       <NextSeo
-        title="Best Crypto Apps 2025 | FinNews"
+        title="Best Crypto Apps 2025 | FinNews247"
         description="Top crypto apps for trading, tracking, staking and security. Compare features, fees and usability to choose the right app for you."
         canonical="https://www.finnews247.com/best-crypto-apps"
         openGraph={{
-          title: "Best Crypto Apps 2025 | FinNews",
+          title: "Best Crypto Apps 2025 | FinNews247",
           description:
             "Top crypto apps for trading, tracking, staking and security. Compare features, fees and usability.",
           url: "https://www.finnews247.com/best-crypto-apps",

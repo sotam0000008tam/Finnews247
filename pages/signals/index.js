@@ -42,11 +42,11 @@ export default function SignalsPage() {
   return (
     <div className="container mx-auto px-4 py-6">
       <NextSeo
-        title="Trading Signals | FinNews"
+        title="Trading Signals | FinNews247"
         description="Latest crypto trading signals with entry, target, and stoploss."
         canonical="https://www.finnews247.com/signals"
         openGraph={{
-          title: "Trading Signals | FinNews",
+          title: "Trading Signals | FinNews247",
           description:
             "Latest crypto trading signals with entry, target, and stoploss.",
           url: "https://www.finnews247.com/signals",

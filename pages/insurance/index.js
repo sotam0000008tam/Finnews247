@@ -15,11 +15,11 @@ export default function InsuranceAndTax({ posts, totalPages, currentPage }) {
   return (
     <>
       <NextSeo
-        title="Crypto Insurance & Tax | FinNews"
+        title="Crypto Insurance & Tax | FinNews247"
         description="Crypto insurance providers, coverage and risks — plus practical crypto tax guides and reporting tips."
         canonical="https://www.finnews247.com/insurance"
         openGraph={{
-          title: "Crypto Insurance & Tax | FinNews",
+          title: "Crypto Insurance & Tax | FinNews247",
           description:
             "Insurance providers, coverage and risks — plus practical tax guides and reporting tips.",
           url: "https://www.finnews247.com/insurance",

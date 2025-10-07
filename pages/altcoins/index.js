@@ -13,7 +13,7 @@ export default function Altcoins({ posts }) {
   return (
     <>
       <NextSeo
-        title="Altcoins 2025 – Guides, Analysis & Price Predictions | FinNews"
+        title="Altcoins 2025 – Guides, Analysis & Price Predictions | FinNews247"
         description="Guides, analysis and price predictions for altcoins in 2025, including Sec Coin and other emerging projects."
         canonical="https://www.finnews247.com/altcoins"
         openGraph={{
