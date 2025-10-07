@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { NextSeo } from "next-seo";
 
-// helpers gọn nhẹ, không cần lib ngoài
+// helpers gọn nhẹ
 function stripHtml(html) {
   return html ? html.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim() : "";
 }
@@ -27,7 +27,6 @@ export default function Post({ post }) {
     );
   }
 
-  // ✅ SEO động theo dữ liệu bài
   const canonical = `https://www.finnews247.com/${post.slug}`;
   const title = `${post.title} | FinNews247`;
   const description =

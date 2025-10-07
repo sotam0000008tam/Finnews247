@@ -16,16 +16,18 @@ export default function InsuranceTaxDetail({ post }) {
     );
   }
 
+  const url = `https://www.finnews247.com/insurance/${post.slug}`;
+
   return (
     <article className="prose lg:prose-xl max-w-none">
       <NextSeo
         title={`${post.title} | FinNews247`}
         description={post.excerpt}
-        canonical={`https://www.finnews247.com/insurance/${post.slug}`}
+        canonical={url}
         openGraph={{
           title: `${post.title} | FinNews247`,
           description: post.excerpt,
-          url: `https://www.finnews247.com/insurance/${post.slug}`,
+          url: url,
         }}
       />
 
@@ -58,7 +60,7 @@ export async function getServerSideProps({ params }) {
   const insurance = read("insurance.json");
   const tax = read("tax.json");
 
-  // gộp insurance + tax
+  // Gộp insurance + tax để mở được cả hai nhóm bài dưới hub /insurance
   const posts = [...insurance, ...tax];
   const post = posts.find((p) => p.slug === params.slug) || null;
 

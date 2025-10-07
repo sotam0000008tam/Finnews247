@@ -1,52 +1,44 @@
-// pages/guides/[slug].js
 import fs from "fs";
 import path from "path";
-import { NextSeo } from "next-seo";
+import ArticleSeo from "../../components/ArticleSeo";
 
-/**
- * Dynamic page for Guides posts.
- */
-export default function GuidePost({ post }) {
+export default function GuideDetail({ post }) {
   if (!post) {
     return (
-      <div>
-        <h1 className="text-3xl font-semibold mb-6">404 - Not Found</h1>
-        <p>The article you are looking for does not exist.</p>
+      <div className="p-6">
+        <h1 className="text-3xl font-semibold mb-4">404 - Not Found</h1>
+        <p>Guide not found.</p>
       </div>
     );
   }
+
   return (
     <article className="prose lg:prose-xl max-w-none">
-      <NextSeo
-        title={`${post.title} | FinNews`}
-        description={post.excerpt}
-        canonical={`https://www.finnews247.com/guides/${post.slug}`}
-        openGraph={{
-          title: `${post.title} | FinNews`,
-          description: post.excerpt,
-          url: `https://www.finnews247.com/guides/${post.slug}`,
-        }}
-      />
+      <ArticleSeo post={post} path={`/guides/${post.slug}`} />
       <h1>{post.title}</h1>
-      <p className="text-sm text-gray-500">{post.date}</p>
+      {post.date && <p className="text-sm text-gray-500">{post.date}</p>}
       {post.image && (
-        <img
-          src={post.image}
-          alt={post.title}
-          className="my-4 rounded-lg shadow"
-        />
+        <img src={post.image} alt={post.title} className="my-4 rounded-lg shadow" />
       )}
-      <div dangerouslySetInnerHTML={{ __html: post.content }} />
+      <div
+        className="post-body"
+        dangerouslySetInnerHTML={{ __html: post.content }}
+      />
     </article>
   );
 }
 
-export async function getServerSideProps({ params }) {
-  const raw = fs.readFileSync(
-    path.join(process.cwd(), "data", "guides.json"),
-    "utf-8"
-  );
+export async function getStaticPaths() {
+  const raw = fs.readFileSync(path.join(process.cwd(), "data", "guides.json"), "utf-8");
   const posts = JSON.parse(raw);
-  const post = posts.find((p) => p.slug === params.slug) || null;
-  return { props: { post } };
+  const paths = posts.map(p => ({ params: { slug: p.slug } }));
+  return { paths, fallback: "blocking" };
+}
+
+export async function getStaticProps({ params }) {
+  const raw = fs.readFileSync(path.join(process.cwd(), "data", "guides.json"), "utf-8");
+  const posts = JSON.parse(raw);
+  const post = posts.find(p => p.slug === params.slug) || null;
+  if (!post) return { notFound: true, revalidate: 60 };
+  return { props: { post }, revalidate: 600 };
 }

@@ -1,20 +1,14 @@
-// pages/api/market-prices.js
-// Mục tiêu: giảm chi phí serverless bằng Cache-Control (CDN cache) + timeout + xử lý lỗi an toàn.
-// Không thay đổi cấu trúc trả về (giữ keys price, change là string), chỉ bổ sung priceNum/changeNum.
-
+// pages/api/prices.js
 export default async function handler(req, res) {
-  // Chỉ cho GET để CDN cache tốt
   if (req.method !== "GET") {
     res.setHeader("Allow", "GET");
     return res.status(405).json({ error: "Method Not Allowed" });
   }
 
-  // ---- TIMEOUT cho các request ra ngoài (tránh treo function) ----
   const TIMEOUT_MS = 4000;
   const abortCtrl = new AbortController();
-  const to = setTimeout(() => abortCtrl.abort(), TIMEOUT_MS);
+  const timer = setTimeout(() => abortCtrl.abort(), TIMEOUT_MS);
 
-  // ---- Gọi song song 2 nguồn ----
   const cgUrl =
     "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,binancecoin,solana,dogecoin&order=market_cap_desc&sparkline=false";
   const yhUrl =
@@ -26,9 +20,8 @@ export default async function handler(req, res) {
       fetch(yhUrl, { signal: abortCtrl.signal }),
     ]);
 
-    clearTimeout(to);
+    clearTimeout(timer);
 
-    // ---- Chuẩn hoá dữ liệu Crypto (CoinGecko) ----
     let cryptos = [];
     if (cgRes.status === "fulfilled" && cgRes.value.ok) {
       const cryptoData = await cgRes.value.json();
@@ -40,7 +33,7 @@ export default async function handler(req, res) {
           price: Number.isFinite(priceNum) ? priceNum.toLocaleString() : "",
           change: Number.isFinite(changeNum) ? changeNum.toFixed(2) : "",
           currency: "USD",
-          // số thuần để UI muốn tự format
+          // numeric fields (nếu UI cần)
           priceNum: Number.isFinite(priceNum) ? priceNum : null,
           changeNum: Number.isFinite(changeNum) ? changeNum : null,
           source: "coingecko",
@@ -48,7 +41,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // ---- Chuẩn hoá dữ liệu Stocks (Yahoo Finance) ----
     let stocks = [];
     if (yhRes.status === "fulfilled" && yhRes.value.ok) {
       const stockJson = await yhRes.value.json();
@@ -61,6 +53,7 @@ export default async function handler(req, res) {
           price: Number.isFinite(priceNum) ? priceNum.toLocaleString() : "",
           change: Number.isFinite(changeNum) ? changeNum.toFixed(2) : "",
           currency: s.currency || "USD",
+          // numeric fields
           priceNum: Number.isFinite(priceNum) ? priceNum : null,
           changeNum: Number.isFinite(changeNum) ? changeNum : null,
           source: "yahoo",
@@ -70,18 +63,17 @@ export default async function handler(req, res) {
 
     const payload = [...cryptos, ...stocks];
 
-    // ---- CACHE CONTROL cho CDN: cache 5 phút, SWR 24h ----
-    // Giúp nhiều người truy cập chỉ tính 1 invocation (hit từ CDN).
+    // ✅ Cache ở edge/CDN: 5 phút, cho phép phục vụ dữ liệu cũ 60s trong lúc revalidate
     res.setHeader(
       "Cache-Control",
-      "public, s-maxage=300, stale-while-revalidate=86400"
+      "public, s-maxage=300, stale-while-revalidate=60"
     );
-    // Tránh bị chặn cache do cookies
+    // tránh vô tình set cookie từ upstream
     res.removeHeader?.("Set-Cookie");
 
     return res.status(200).json(payload);
   } catch (e) {
-    // Timeout/Network error → trả rỗng, cache ngắn để retry sớm
+    // fallback: cache ngắn 60s để hạn chế spam API khi upstream down
     res.setHeader("Cache-Control", "public, s-maxage=60");
     return res.status(200).json([]);
   }

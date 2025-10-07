@@ -1,73 +1,55 @@
-// pages/crypto-exchanges/[slug].js
 import fs from "fs";
 import path from "path";
-import { NextSeo } from "next-seo";
+import ArticleSeo from "../../components/ArticleSeo";
 
-export default function CryptoExchangesPost({ post }) {
+function readJson(file) {
+  try {
+    const raw = fs.readFileSync(path.join(process.cwd(), "data", file), "utf-8");
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+}
+
+export default function ExchangeDetail({ post }) {
   if (!post) {
     return (
-      <div>
-        <h1 className="text-3xl font-semibold mb-6">404 - Not Found</h1>
-        <p>The article you are looking for does not exist.</p>
+      <div className="p-6">
+        <h1 className="text-3xl font-semibold mb-4">404 - Not Found</h1>
+        <p>Exchange review not found.</p>
       </div>
     );
   }
-  const url = `https://www.finnews247.com/crypto-exchanges/${post.slug}`;
+
   return (
     <article className="prose lg:prose-xl max-w-none">
-      <NextSeo
-        title={`${post.title} | FinNews`}
-        description={post.excerpt}
-        canonical={url}
-        openGraph={{
-          title: `${post.title} | FinNews`,
-          description: post.excerpt,
-          url,
-        }}
-      />
+      <ArticleSeo post={post} path={`/crypto-exchanges/${post.slug}`} />
       <h1>{post.title}</h1>
-      <p className="text-sm text-gray-500">{post.date}</p>
+      {post.date && <p className="text-sm text-gray-500">{post.date}</p>}
       {post.image && (
-        <img
-          src={post.image}
-          alt={post.title}
-          className="my-4 rounded-lg shadow"
-        />
+        <img src={post.image} alt={post.title} className="my-4 rounded-lg shadow" />
       )}
-      <div dangerouslySetInnerHTML={{ __html: post.content }} />
+      <div
+        className="post-body"
+        dangerouslySetInnerHTML={{ __html: post.content }}
+      />
     </article>
   );
 }
 
-export async function getServerSideProps({ params }) {
-  const safeRead = (f) => {
-    try {
-      const raw = fs.readFileSync(path.join(process.cwd(), "data", f), "utf-8");
-      const arr = JSON.parse(raw);
-      return Array.isArray(arr) ? arr : [];
-    } catch {
-      return [];
-    }
-  };
+export async function getStaticPaths() {
+  const a = readJson("cryptoexchanges.json");
+  const b = readJson("fidelity.json");
+  const all = [...a, ...b];
+  const paths = all.map(p => ({ params: { slug: p.slug } }));
+  return { paths, fallback: "blocking" };
+}
 
-  let { slug } = params;
-  const aliasMap = {
-    "fidelity-crypto-review": "fidelity-crypto-review-fees-security-features",
-    "fidelity-vs-coinbase":
-      "fidelity-crypto-vs-coinbase-which-is-better-for-us-investors",
-    "fidelity-crypto-guide":
-      "how-to-buy-bitcoin-with-fidelity-crypto-step-by-step",
-  };
-  if (aliasMap[slug]) {
-    slug = aliasMap[slug];
-  }
-
-  // 🔧 Đọc CẢ HAI nguồn để trang chi tiết mở được bài Fidelity
-  const pool = [
-    ...safeRead("cryptoexchanges.json"),
-    ...safeRead("fidelity.json"),
-  ];
-  const post = pool.find((p) => p.slug === slug) || null;
-
-  return { props: { post } };
+export async function getStaticProps({ params }) {
+  const a = readJson("cryptoexchanges.json");
+  const b = readJson("fidelity.json");
+  const all = [...a, ...b];
+  const post = all.find(p => p.slug === params.slug) || null;
+  if (!post) return { notFound: true, revalidate: 60 };
+  return { props: { post }, revalidate: 600 };
 }
