@@ -1,6 +1,4 @@
 // pages/index.js
-import fs from "fs";
-import path from "path";
 import PostCard from "../components/PostCard";
 import { NextSeo } from "next-seo";
 import TradingSignalsBoxMain from "../components/TradingSignalsBoxMain";
@@ -9,6 +7,7 @@ import TopExchanges from "../components/TopExchanges";
 import BestWallets from "../components/BestWallets";
 import TopStaking from "../components/TopStaking";
 import TopMovers from "../components/TopMovers";
+import { readJsonSafe, sortDescByDate, shallowPosts } from "../lib/data";
 
 export default function Home({
   altcoinPosts,
@@ -29,10 +28,7 @@ export default function Home({
       "@type": "Organization",
       name: "FinNews247",
       url: "https://www.finnews247.com/",
-      logo: {
-        "@type": "ImageObject",
-        url: "https://www.finnews247.com/logo.png",
-      },
+      logo: { "@type": "ImageObject", url: "https://www.finnews247.com/logo.png" },
     },
   };
 
@@ -49,16 +45,8 @@ export default function Home({
           url: "https://www.finnews247.com/",
           images: [{ url: "https://www.finnews247.com/logo.png" }],
         }}
-        additionalMetaTags={[
-          {
-            name: "keywords",
-            content:
-              "crypto trading signals, bitcoin signals, ethereum signals, entry target stoploss, crypto analysis, finnews247",
-          },
-        ]}
       />
 
-      {/* JSON-LD Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -71,71 +59,53 @@ export default function Home({
           <TopExchanges />
           <BestWallets />
           <TopStaking />
-          {/* TopMovers: tự ẩn nếu không có dữ liệu market */}
+          {/* TopMovers tự ẩn nếu chưa có dữ liệu market */}
           <TopMovers />
         </aside>
 
-        {/* Main Content */}
+        {/* Main */}
         <main className="md:col-span-3 space-y-12">
           <TradingSignalsBoxMain />
 
-          {/* Altcoin Analysis */}
           <section>
             <h2 className="text-2xl font-semibold mb-4">Altcoin Analysis</h2>
             <div className="grid md:grid-cols-2 gap-6">
-              {altcoinPosts.map((p) => (
-                <PostCard key={p.slug} post={p} />
-              ))}
+              {altcoinPosts.map((p) => <PostCard key={p.slug} post={p} />)}
             </div>
           </section>
 
-          {/* Crypto Exchanges Insights */}
           <section>
             <h2 className="text-2xl font-semibold mb-4">Crypto Exchanges Insights</h2>
             <div className="grid md:grid-cols-2 gap-6">
-              {exchangePosts.map((p) => (
-                <PostCard key={p.slug} post={p} />
-              ))}
+              {exchangePosts.map((p) => <PostCard key={p.slug} post={p} />)}
             </div>
           </section>
 
-          {/* Crypto Apps & Wallets */}
           <section>
             <h2 className="text-2xl font-semibold mb-4">Crypto Apps & Wallets</h2>
             <div className="grid md:grid-cols-2 gap-6">
-              {appPosts.map((p) => (
-                <PostCard key={p.slug} post={p} />
-              ))}
+              {appPosts.map((p) => <PostCard key={p.slug} post={p} />)}
             </div>
           </section>
 
-          {/* Crypto Insurance & Tax */}
           <section>
             <h2 className="text-2xl font-semibold mb-4">Crypto Insurance & Tax</h2>
             <div className="grid md:grid-cols-2 gap-6">
-              {insuranceTaxPosts.map((p) => (
-                <PostCard key={p.slug} post={p} />
-              ))}
+              {insuranceTaxPosts.map((p) => <PostCard key={p.slug} post={p} />)}
             </div>
           </section>
 
-          {/* Crypto & Market News */}
           <section>
             <h2 className="text-2xl font-semibold mb-4">Crypto & Market News</h2>
             <div className="grid md:grid-cols-2 gap-6">
-              {newsPosts.map((p) => (
-                <PostCard key={p.slug} post={p} />
-              ))}
+              {newsPosts.map((p) => <PostCard key={p.slug} post={p} />)}
             </div>
           </section>
 
-          {/* Guides & Reviews */}
           <section>
             <h2 className="text-2xl font-semibold mb-4">Guides & Reviews</h2>
             <div className="grid md:grid-cols-2 gap-6">
-              {guidePosts.map((p) => (
-                <PostCard key={p.slug} post={p} />
-              ))}
+              {guidePosts.map((p) => <PostCard key={p.slug} post={p} />)}
             </div>
           </section>
         </main>
@@ -144,13 +114,8 @@ export default function Home({
   );
 }
 
-export async function getServerSideProps() {
-  const readData = (filename) => {
-    const p = path.join(process.cwd(), "data", filename);
-    if (!fs.existsSync(p)) return [];
-    return JSON.parse(fs.readFileSync(p, "utf-8"));
-  };
-
+/** SSG + ISR: build tĩnh và tái tạo định kỳ → giảm serverless request */
+export async function getStaticProps() {
   const SECTION_COUNTS = {
     altcoins: 8,
     exchanges: 8,
@@ -160,30 +125,32 @@ export async function getServerSideProps() {
     guides: 6,
   };
 
-  const altcoins = readData("altcoins.json");
-  const seccoin = readData("seccoin.json");
-  const fidelity = readData("fidelity.json");
-  const cryptoexchanges = readData("cryptoexchanges.json");
-  const apps = readData("bestapps.json");
-  const insurance = readData("insurance.json");
-  const tax = readData("tax.json");
-  const news = readData("news.json");
-  const guides = readData("guides.json");
+  const altcoins = readJsonSafe("altcoins.json");
+  const seccoin = readJsonSafe("seccoin.json");
+  const fidelity = readJsonSafe("fidelity.json");
+  const cryptoexchanges = readJsonSafe("cryptoexchanges.json");
+  const apps = readJsonSafe("bestapps.json");
+  const insurance = readJsonSafe("insurance.json");
+  const tax = readJsonSafe("tax.json");
+  const news = readJsonSafe("news.json");
+  const guides = readJsonSafe("guides.json");
 
-  const sortDesc = (arr) =>
-    arr.sort(
-      (a, b) =>
-        new Date(b.date || b.updatedAt || 0) - new Date(a.date || a.updatedAt || 0)
-    );
+  const altcoinPosts = shallowPosts(
+    sortDescByDate([...altcoins, ...seccoin]).slice(0, SECTION_COUNTS.altcoins)
+  );
+  const exchangePosts = shallowPosts(
+    sortDescByDate([...fidelity, ...cryptoexchanges]).slice(0, SECTION_COUNTS.exchanges)
+  );
+  const appPosts = shallowPosts(sortDescByDate([...apps]).slice(0, SECTION_COUNTS.apps));
+  const insuranceTaxPosts = shallowPosts(
+    sortDescByDate([...insurance, ...tax]).slice(0, SECTION_COUNTS.insuranceTax)
+  );
+  const newsPosts = shallowPosts(sortDescByDate([...news]).slice(0, SECTION_COUNTS.news));
+  const guidePosts = shallowPosts(sortDescByDate([...guides]).slice(0, SECTION_COUNTS.guides));
 
   return {
-    props: {
-      altcoinPosts: sortDesc([...altcoins, ...seccoin]).slice(0, SECTION_COUNTS.altcoins),
-      exchangePosts: sortDesc([...fidelity, ...cryptoexchanges]).slice(0, SECTION_COUNTS.exchanges),
-      appPosts: sortDesc([...apps]).slice(0, SECTION_COUNTS.apps),
-      insuranceTaxPosts: sortDesc([...insurance, ...tax]).slice(0, SECTION_COUNTS.insuranceTax),
-      newsPosts: sortDesc([...news]).slice(0, SECTION_COUNTS.news),
-      guidePosts: sortDesc([...guides]).slice(0, SECTION_COUNTS.guides),
-    },
+    props: { altcoinPosts, exchangePosts, appPosts, insuranceTaxPosts, newsPosts, guidePosts },
+    /** ISR: tái tạo mỗi 15 phút (tùy bạn), không đổi URL/cấu trúc */
+    revalidate: 900,
   };
 }
