@@ -1,6 +1,17 @@
+# robots.txt for FinNews247
+
 User-agent: *
 Allow: /
 Disallow: /admin/
+Disallow: /api/
 Allow: /ads.txt
 
-Sitemap: https://www.finnews247.com/sitemap-0.xml
+# Google ads-related crawlers
+User-agent: AdsBot-Google
+Allow: /ads.txt
+
+User-agent: Mediapartners-Google
+Allow: /ads.txt
+
+# Sitemap index (ổn định hơn so với sitemap-0.xml)
+Sitemap: https://www.finnews247.com/sitemap.xml
