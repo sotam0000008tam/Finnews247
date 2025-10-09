@@ -2,8 +2,8 @@ name: 🚀 Deploy Finnews247 to Windows VPS
 
 on:
   push:
-    branches:
-      - main  # đổi nếu bạn dùng nhánh khác
+    branches: [ "main" ]
+  workflow_dispatch: {}   # << thêm dòng này để có nút Run workflow
 
 jobs:
   deploy:
