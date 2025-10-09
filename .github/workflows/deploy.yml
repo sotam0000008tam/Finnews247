@@ -1,4 +1,4 @@
-name: 🚀 Deploy Finnews247 to Windows VPS
+name: "🚀 Deploy Finnews247 to Windows VPS"
 
 on:
   push:
@@ -20,24 +20,17 @@ jobs:
         run: |
           if not exist "C:\apps\finnews247" mkdir "C:\apps\finnews247"
 
-           - name: 🔁 Sync code to app folder (robocopy)
+      - name: 🔁 Sync code to app folder (robocopy, treat 0..3 as success)
         shell: powershell
         run: |
           robocopy "${{ github.workspace }}" "C:\apps\finnews247" /MIR /XD .git .github node_modules .next 1>$null
           $code = $LASTEXITCODE
-          if ($code -le 3) {
-            Write-Host "Robocopy exit code $code (OK)."
-            exit 0
-          } else {
-            Write-Error "Robocopy failed with exit code $code"
-            exit $code
-          }
-
+          if ($code -le 3) { Write-Host "Robocopy exit code $code (OK)"; exit 0 } else { Write-Error "Robocopy failed with $code"; exit $code }
 
       - name: 🟢 Use Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: "22"
 
       - name: 📦 Install deps
         shell: cmd
@@ -51,7 +44,7 @@ jobs:
         run: |
           npm run build
 
-      - name: 🔄 Restart service (absolute path)
+      - name: 🔄 Restart service (absolute nssm path)
         shell: cmd
         run: |
           "C:\ProgramData\chocolatey\bin\nssm.exe" stop finnews247
