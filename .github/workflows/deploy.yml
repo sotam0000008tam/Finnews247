@@ -1,0 +1,40 @@
+name: 🚀 Deploy Finnews247 to Windows VPS
+
+on:
+  push:
+    branches:
+      - main  # đổi nếu bạn dùng nhánh khác
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: 🧹 Reset & dọn code cũ (thư mục app trên VPS)
+        run: |
+          cd C:\apps\finnews247
+          git reset --hard
+          git clean -fd
+
+      - name: 📥 Lấy code mới
+        run: |
+          cd C:\apps\finnews247
+          git fetch origin main
+          git checkout main
+          git pull origin main
+
+      - name: 📦 Cài dependencies (prod)
+        run: |
+          cd C:\apps\finnews247
+          npm install --production
+
+      - name: 🏗️ Build
+        run: |
+          cd C:\apps\finnews247
+          npm run build
+
+      - name: 🔄 Restart service
+        run: |
+          nssm stop finnews247
+          timeout /t 5 /nobreak
+          nssm start finnews247
