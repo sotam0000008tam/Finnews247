@@ -20,11 +20,19 @@ jobs:
         run: |
           if not exist "C:\apps\finnews247" mkdir "C:\apps\finnews247"
 
-      - name: 🔁 Sync code to app folder (robocopy)
+           - name: 🔁 Sync code to app folder (robocopy)
         shell: powershell
         run: |
           robocopy "${{ github.workspace }}" "C:\apps\finnews247" /MIR /XD .git .github node_modules .next 1>$null
-          if ($LASTEXITCODE -gt 3) { exit $LASTEXITCODE }
+          $code = $LASTEXITCODE
+          if ($code -le 3) {
+            Write-Host "Robocopy exit code $code (OK)."
+            exit 0
+          } else {
+            Write-Error "Robocopy failed with exit code $code"
+            exit $code
+          }
+
 
       - name: 🟢 Use Node
         uses: actions/setup-node@v4
