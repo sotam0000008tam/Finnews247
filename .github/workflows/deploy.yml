@@ -8,6 +8,9 @@ on:
 jobs:
   deploy:
     runs-on: self-hosted
+    defaults:
+      run:
+        shell: cmd
 
     steps:
       - name: 📥 Checkout source
@@ -16,17 +19,21 @@ jobs:
           fetch-depth: 0
 
       - name: 🪟 Ensure target folder exists
-        shell: cmd
         run: |
           if not exist "C:\apps\finnews247" mkdir "C:\apps\finnews247"
 
-      - name: 🔁 Sync code to app folder (robocopy; 0..3 = success)
-        shell: cmd
+      - name: 🔁 Sync code to app folder (robocopy; treat 0..3 as success)
+        continue-on-error: true
         run: |
           robocopy "%GITHUB_WORKSPACE%" "C:\apps\finnews247" /MIR /XD .git .github node_modules .next
           set RC=%ERRORLEVEL%
           echo Robocopy exit code = %RC%
           if %RC% LSS 4 (exit /b 0) else (exit /b %RC%)
+
+      - name: 👀 Verify files synced
+        run: |
+          dir /b "C:\apps\finnews247"
+          if not exist "C:\apps\finnews247\package.json" (echo package.json not found & exit /b 1)
 
       - name: 🟢 Use Node
         uses: actions/setup-node@v4
@@ -34,19 +41,16 @@ jobs:
           node-version: "22"
 
       - name: 📦 Install deps
-        shell: cmd
         working-directory: C:\apps\finnews247
         run: |
           npm ci || npm install --production
 
       - name: 🏗️ Build
-        shell: cmd
         working-directory: C:\apps\finnews247
         run: |
           npm run build
 
       - name: 🔄 Restart service (absolute nssm path)
-        shell: cmd
         run: |
           "C:\ProgramData\chocolatey\bin\nssm.exe" stop finnews247
           timeout /t 5 /nobreak
