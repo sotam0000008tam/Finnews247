@@ -13,22 +13,29 @@ jobs:
         shell: powershell
 
     steps:
-      - name: 📥 Checkout source
+      - name: 📥 Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: ⛔ Stop service (best effort)
+        run: |
+          $nssm = "C:\ProgramData\chocolatey\bin\nssm.exe"
+          if (Test-Path $nssm) { & $nssm stop finnews247 } else { Write-Host "nssm not found, continue" }
 
       - name: 🪟 Ensure target folder exists
         run: |
           if (-not (Test-Path "C:\apps\finnews247")) { New-Item -ItemType Directory -Path "C:\apps\finnews247" | Out-Null }
 
-      - name: 🧹 Clean target (giữ logs nếu có)
+      - name: 🧹 Clean target (keep logs)
         run: |
           $target = "C:\apps\finnews247"
           $keep = @("logs")
-          Get-ChildItem $target -Force | Where-Object { $keep -notcontains $_.Name } | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+          if (Test-Path $target) {
+            Get-ChildItem $target -Force | Where-Object { $keep -notcontains $_.Name } | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+          }
 
-      - name: 🔁 Copy source → target (không dùng robocopy)
+      - name: 📂 Copy source → target (no robocopy)
         run: |
           $src = "$env:GITHUB_WORKSPACE"
           $dst = "C:\apps\finnews247"
@@ -38,21 +45,20 @@ jobs:
           }
           Write-Host "Copy done."
 
-      - name: 👀 Verify files synced
+      - name: 🔎 Verify files
         run: |
-          if (-not (Test-Path "C:\apps\finnews247\package.json")) { Write-Error "package.json not found" }
+          if (-not (Test-Path "C:\apps\finnews247\package.json")) { throw "package.json not found in C:\apps\finnews247" }
           Get-ChildItem -Path "C:\apps\finnews247" | Select-Object Name,Length,Mode | Format-Table
 
-      - name: 🟢 Use Node
+      - name: 🟢 Use Node 22
         uses: actions/setup-node@v4
         with:
           node-version: "22"
 
-      - name: 📦 Install ALL deps (dev + prod)
+      - name: 📦 Install dependencies (dev + prod)
         working-directory: C:\apps\finnews247
         run: |
-          npm ci 2>$null
-          if ($LASTEXITCODE -ne 0) { npm install }  # KHÔNG dùng --production để build Next
+          if (Test-Path "package-lock.json") { npm ci } else { npm install }
 
       - name: 🏗️ Build
         working-directory: C:\apps\finnews247
@@ -61,8 +67,7 @@ jobs:
           npm -v
           npm run build
 
-      - name: 🔄 Restart service (absolute nssm path)
+      - name: ▶️ Start service
         run: |
-          & "C:\ProgramData\chocolatey\bin\nssm.exe" stop finnews247
-          Start-Sleep -Seconds 5
-          & "C:\ProgramData\chocolatey\bin\nssm.exe" start finnews247
+          $nssm = "C:\ProgramData\chocolatey\bin\nssm.exe"
+          if (Test-Path $nssm) { & $nssm start finnews247 } else { throw "nssm.exe not found at $nssm" }
