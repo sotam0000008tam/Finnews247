@@ -60,9 +60,11 @@ jobs:
         run: |
           if (Test-Path "package-lock.json") { npm ci } else { npm install }
 
-      - name: 🏗️ Build
+      - name: 🏗️ Build (use cmd to avoid PowerShell NativeCommandError)
+        shell: cmd
         working-directory: C:\apps\finnews247
         run: |
+          set NEXT_TELEMETRY_DISABLED=1
           node -v
           npm -v
           npm run build
