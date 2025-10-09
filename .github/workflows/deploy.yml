@@ -20,10 +20,10 @@ jobs:
         run: |
           if not exist "C:\apps\finnews247" mkdir "C:\apps\finnews247"
 
-           - name: 🔁 Sync code to app folder (robocopy; 0..3 = success)
+      - name: 🔁 Sync code to app folder (robocopy; 0..3 = success)
         shell: cmd
         run: |
-          robocopy "C:\actions-runner2\_work\Finnews247\Finnews247" "C:\apps\finnews247" /MIR /XD .git .github node_modules .next
+          robocopy "%GITHUB_WORKSPACE%" "C:\apps\finnews247" /MIR /XD .git .github node_modules .next
           set RC=%ERRORLEVEL%
           echo Robocopy exit code = %RC%
           if %RC% LSS 4 (exit /b 0) else (exit /b %RC%)
