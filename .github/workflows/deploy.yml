@@ -10,10 +10,10 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: 📥 Checkout source (no local git needed)
+      - name: 📥 Checkout source
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # để build có đủ history nếu cần
+          fetch-depth: 0
 
       - name: 🪟 Ensure target folder exists
         shell: cmd
@@ -29,7 +29,7 @@ jobs:
       - name: 🟢 Use Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'   # hoặc '20' nếu bạn muốn LTS
+          node-version: '22'
 
       - name: 📦 Install deps
         shell: cmd
@@ -43,9 +43,9 @@ jobs:
         run: |
           npm run build
 
-      - name: 🔄 Restart service
+      - name: 🔄 Restart service (absolute path)
         shell: cmd
         run: |
-          nssm stop finnews247
+          "C:\ProgramData\chocolatey\bin\nssm.exe" stop finnews247
           timeout /t 5 /nobreak
-          nssm start finnews247
+          "C:\ProgramData\chocolatey\bin\nssm.exe" start finnews247
