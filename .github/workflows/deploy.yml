@@ -3,37 +3,48 @@ name: 🚀 Deploy Finnews247 to Windows VPS
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch: {}   # << thêm dòng này để có nút Run workflow
+  workflow_dispatch: {}
 
 jobs:
   deploy:
     runs-on: self-hosted
 
     steps:
-      - name: 🧹 Reset & dọn code cũ (thư mục app trên VPS)
-        run: |
-          cd C:\apps\finnews247
-          git reset --hard
-          git clean -fd
+      - name: 📥 Checkout source (no local git needed)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # để build có đủ history nếu cần
 
-      - name: 📥 Lấy code mới
+      - name: 🪟 Ensure target folder exists
+        shell: cmd
         run: |
-          cd C:\apps\finnews247
-          git fetch origin main
-          git checkout main
-          git pull origin main
+          if not exist "C:\apps\finnews247" mkdir "C:\apps\finnews247"
 
-      - name: 📦 Cài dependencies (prod)
+      - name: 🔁 Sync code to app folder (robocopy)
+        shell: powershell
         run: |
-          cd C:\apps\finnews247
-          npm install --production
+          robocopy "${{ github.workspace }}" "C:\apps\finnews247" /MIR /XD .git .github node_modules .next 1>$null
+          if ($LASTEXITCODE -gt 3) { exit $LASTEXITCODE }
+
+      - name: 🟢 Use Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'   # hoặc '20' nếu bạn muốn LTS
+
+      - name: 📦 Install deps
+        shell: cmd
+        working-directory: C:\apps\finnews247
+        run: |
+          npm ci || npm install --production
 
       - name: 🏗️ Build
+        shell: cmd
+        working-directory: C:\apps\finnews247
         run: |
-          cd C:\apps\finnews247
           npm run build
 
       - name: 🔄 Restart service
+        shell: cmd
         run: |
           nssm stop finnews247
           timeout /t 5 /nobreak
