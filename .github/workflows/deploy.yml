@@ -69,30 +69,9 @@ jobs:
           npm -v
           npm run build
 
-      - name: 🔄 Restart service (robust via SC; handles PAUSED & port 3000)
+           - name: 🔄 Restart scheduled task
         shell: cmd
         run: |
-          rem --- Stop service
-          sc.exe stop finnews247
-
-          rem --- Đợi tối đa ~60s tới khi STOPPED
-          for /l %%i in (1,1,30) do (
-            sc.exe query finnews247 | find "STOPPED" >nul && goto :stopped
-            timeout /t 2 >nul
-          )
-          :stopped
-
-          rem --- Giải phóng port 3000 nếu còn bị chiếm
-          for /f "tokens=5" %%p in ('netstat -ano ^| find ":3000" ^| find "LISTENING"') do taskkill /PID %%p /F
-
-          rem --- Start service
-          sc.exe start finnews247
-
-          rem --- Đợi RUNNING; nếu thấy PAUSED thì continue
-          for /l %%i in (1,1,30) do (
-            sc.exe query finnews247 | find "RUNNING" >nul && goto :running
-            sc.exe query finnews247 | find "PAUSED" >nul && sc.exe continue finnews247
-            timeout /t 2 >nul
-          )
-          :running
-          sc.exe query finnews247
+          schtasks /End /TN "finnews247"
+          timeout /t 3 /nobreak
+          schtasks /Run /TN "finnews247"
