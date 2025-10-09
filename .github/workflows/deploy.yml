@@ -18,11 +18,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: ⛔ Stop service (best effort)
-        run: |
-          $nssm = "C:\ProgramData\chocolatey\bin\nssm.exe"
-          if (Test-Path $nssm) { & $nssm stop finnews247 } else { Write-Host "nssm not found, continue" }
-
       - name: 🪟 Ensure target folder exists
         run: |
           if (-not (Test-Path "C:\apps\finnews247")) { New-Item -ItemType Directory -Path "C:\apps\finnews247" | Out-Null }
@@ -35,7 +30,7 @@ jobs:
             Get-ChildItem $target -Force | Where-Object { $keep -notcontains $_.Name } | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
           }
 
-      - name: 📂 Copy source → target (no robocopy)
+      - name: 📂 Copy source → target
         run: |
           $src = "$env:GITHUB_WORKSPACE"
           $dst = "C:\apps\finnews247"
@@ -43,11 +38,10 @@ jobs:
           Get-ChildItem -Path $src -Force | Where-Object { $exclude -notcontains $_.Name } | ForEach-Object {
             Copy-Item -Path $_.FullName -Destination (Join-Path $dst $_.Name) -Recurse -Force -ErrorAction Stop
           }
-          Write-Host "Copy done."
 
       - name: 🔎 Verify files
         run: |
-          if (-not (Test-Path "C:\apps\finnews247\package.json")) { throw "package.json not found in C:\apps\finnews247" }
+          if (-not (Test-Path "C:\apps\finnews247\package.json")) { throw "package.json not found" }
           Get-ChildItem -Path "C:\apps\finnews247" | Select-Object Name,Length,Mode | Format-Table
 
       - name: 🟢 Use Node 22
@@ -55,21 +49,19 @@ jobs:
         with:
           node-version: "22"
 
-      - name: 📦 Install dependencies (dev + prod)
+      - name: 📦 Install deps (dev + prod)
         working-directory: C:\apps\finnews247
         run: |
           if (Test-Path "package-lock.json") { npm ci } else { npm install }
 
-      - name: 🏗️ Build (use cmd to avoid PowerShell NativeCommandError)
+      - name: 🏗️ Build (use cmd to avoid PS NativeCommandError)
         shell: cmd
         working-directory: C:\apps\finnews247
         run: |
           set NEXT_TELEMETRY_DISABLED=1
-          node -v
-          npm -v
           npm run build
 
-           - name: 🔄 Restart scheduled task
+      - name: 🔄 Restart scheduled task
         shell: cmd
         run: |
           schtasks /End /TN "finnews247"
