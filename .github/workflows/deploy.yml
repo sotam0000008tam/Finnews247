@@ -22,7 +22,7 @@ jobs:
         run: |
           if (-not (Test-Path "C:\apps\finnews247")) { New-Item -ItemType Directory -Path "C:\apps\finnews247" | Out-Null }
 
-      - name: 🧹 Clean target (giữ nguyên thư mục logs nếu có)
+      - name: 🧹 Clean target (giữ logs nếu có)
         run: |
           $target = "C:\apps\finnews247"
           $keep = @("logs")
@@ -40,9 +40,7 @@ jobs:
 
       - name: 👀 Verify files synced
         run: |
-          if (-not (Test-Path "C:\apps\finnews247\package.json")) {
-            Write-Error "package.json not found in C:\apps\finnews247"
-          }
+          if (-not (Test-Path "C:\apps\finnews247\package.json")) { Write-Error "package.json not found" }
           Get-ChildItem -Path "C:\apps\finnews247" | Select-Object Name,Length,Mode | Format-Table
 
       - name: 🟢 Use Node
@@ -50,11 +48,11 @@ jobs:
         with:
           node-version: "22"
 
-      - name: 📦 Install deps
+      - name: 📦 Install ALL deps (dev + prod)
         working-directory: C:\apps\finnews247
         run: |
           npm ci 2>$null
-          if ($LASTEXITCODE -ne 0) { npm install --production }
+          if ($LASTEXITCODE -ne 0) { npm install }  # KHÔNG dùng --production để build Next
 
       - name: 🏗️ Build
         working-directory: C:\apps\finnews247
