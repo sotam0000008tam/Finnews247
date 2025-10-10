@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Bật nén HTTP cho response
+  compress: true,
+
+  // GIỮ NGUYÊN: danh sách redirects của bạn
   async redirects() {
     return [
       { source: '/fidelity-crypto', destination: '/crypto-exchanges', permanent: true },
@@ -10,12 +14,9 @@ const nextConfig = {
       { source: '/exchanges', destination: '/crypto-exchanges', permanent: true },
       { source: '/crypto-tax/:slug*', destination: '/tax/:slug*', permanent: true },
       { source: '/crypto-insurance/:slug*', destination: '/insurance/:slug*', permanent: true },
-      {
-        source: '/news/:slug',
-        destination: '/:slug',
-        permanent: true,
-      },
-       // ========= 25 redirect cũ: /signals/:id -> /signals/:slug (giữ nguyên) =========
+      { source: '/news/:slug', destination: '/:slug', permanent: true },
+
+      // ========= 25 redirect cũ: /signals/:id -> /signals/:slug (giữ nguyên) =========
       { source: '/signals/1',  destination: '/signals/btc-long-250912',           permanent: true },
       { source: '/signals/2',  destination: '/signals/eth-short-250912',          permanent: true },
       { source: '/signals/3',  destination: '/signals/sol-long-250912',           permanent: true },
@@ -63,132 +64,43 @@ const nextConfig = {
         destination: '/trading-signals-sep25-2025-crypto-market-report',
         permanent: true,
       },
-{
-  source: '/sec-coin/altcoin-analysis-31',
-  destination: '/sec-coin/ethereum-altcoin-trends-sep24',
-  permanent: true,
-},
-{
-  source: '/sec-coin/altcoin-analysis-32',
-  destination: '/sec-coin/altcoin-market-pulse-sep25',
-  permanent: true,
-},
-{
-  source: '/sec-coin/altcoin-analysis-33',
-  destination: '/sec-coin/crypto-highlights-sep26',
-  permanent: true,
-},
-{
-  source: '/sec-coin/Altcoin%20Analysis',
-  destination: '/altcoins',
-  permanent: true,
-},
-{
-  source: '/insurance/smart-contract-insurance',
-  destination: '/insurance/smart-contract-insurance-how-it-works',
-  permanent: true,
-},
-{
-  source: '/fidelity-crypto/understanding-fidelity-s-new-crypto-trading-platform-for-2025',
-  destination: '/fidelity-crypto/fidelity-crypto-platform-2025-features-outlook',
-  permanent: true,
-},
-{
-  source: '/guides/trading-vs-investing-in-crypto-key-differences',
-  destination: '/guides/how-to-evaluate-new-altcoins-before-investing',
-  permanent: true,
-},
-{
-  source: '/guides/kraken-vs-kucoin-exchange-fee-features-showdown',
-  destination: '/guides/how-to-diversify-your-crypto-portfolio',
-  permanent: true,
-},
-{
-  source: '/insurance/custodial-risk-insurance',
-  destination: '/insurance/custodial-risk-insurance-explained',
-  permanent: true,
-},
-{
-  source: '/news/ecb-hints-policy-tightening-rising-inflation',
-  destination: '/ecb-hints-at-policy-tightening-amid-rising-inflation',
-  permanent: true,
-},
-{
-  source: '/news/meta-unveils-new-ar-headset',
-  destination: '/meta-unveils-new-ar-headset-targeting-business-users',
-  permanent: true,
-},
-{
-  source: '/trading-signals-2025-09-18-latest-crypto-news-update',
-  destination: '/trading-signals-sep18-2025-market-update',
-  permanent: true,
-},
-{
-  source: '/news/figure-ipo-raises-787m',
-  destination: '/blockchain-lender-figure-raises-787-5-million-in-landmark-u-s-ipo',
-  permanent: true,
-},
-{
-  source: '/news/gold-prices-climb-as-investors-seek-safety',
-  destination: '/gold-prices-climb-as-investors-seek-safety',
-  permanent: true,
-},
-{
-  source: '/news/eurozone-industrial-output-rebounds',
-  destination: '/eurozone-industrial-output-rebounds-supported-by-exports',
-  permanent: true,
-},
-{
-  source: '/news/asia-markets-close-mixed',
-  destination: '/asia-pacific-markets-close-mixed-ahead-of-u-s-cpi-data',
-  permanent: true,
-},
-{
-  source: '/news/china-reports-slower-export-growth-august',
-  destination: '/china-reports-slower-export-growth-in-august',
-  permanent: true,
-},
-{
-  source: '/news/apple-stock-hits-record-high',
-  destination: '/apple-hits-record-high-on-ai-chip-hype',
-  permanent: true,
-},
-{
-  source: '/news/oil-prices-hold-78',
-  destination: '/oil-prices-hold-steady-at-78-amid-supply-balances',
-  permanent: true,
-},
-{
-  source: '/news/apple-hits-record-market-cap',
-  destination: '/apple-stock-hits-record-high-on-ai-integration-success',
-  permanent: true,
-},
-{
-  source: '/economy',
-  destination: '/market',
-  permanent: true,
-},
-{
-  source: '/stocks',
-  destination: '/market',
-  permanent: true,
-},
-{
-  source: '/news/nasdaq-hits-record-high-tech-rally-continues',
-  destination: '/nasdaq-hits-record-high-as-tech-rally-continues',
-  permanent: true,
-},
-{
-  source: '/insurance-for-nfts',
-  destination: '/insurance/insurance-for-nfts',
-  permanent: true,
-},
+
+      { source: '/sec-coin/altcoin-analysis-31', destination: '/sec-coin/ethereum-altcoin-trends-sep24', permanent: true },
+      { source: '/sec-coin/altcoin-analysis-32', destination: '/sec-coin/altcoin-market-pulse-sep25', permanent: true },
+      { source: '/sec-coin/altcoin-analysis-33', destination: '/sec-coin/crypto-highlights-sep26', permanent: true },
+      { source: '/sec-coin/Altcoin%20Analysis', destination: '/altcoins', permanent: true },
+
+      { source: '/insurance/smart-contract-insurance', destination: '/insurance/smart-contract-insurance-how-it-works', permanent: true },
+      {
+        source: '/fidelity-crypto/understanding-fidelity-s-new-crypto-trading-platform-for-2025',
+        destination: '/fidelity-crypto/fidelity-crypto-platform-2025-features-outlook',
+        permanent: true,
+      },
+      { source: '/guides/trading-vs-investing-in-crypto-key-differences', destination: '/guides/how-to-evaluate-new-altcoins-before-investing', permanent: true },
+      { source: '/guides/kraken-vs-kucoin-exchange-fee-features-showdown', destination: '/guides/how-to-diversify-your-crypto-portfolio', permanent: true },
+      { source: '/insurance/custodial-risk-insurance', destination: '/insurance/custodial-risk-insurance-explained', permanent: true },
+
+      { source: '/news/ecb-hints-policy-tightening-rising-inflation', destination: '/ecb-hints-at-policy-tightening-amid-rising-inflation', permanent: true },
+      { source: '/news/meta-unveils-new-ar-headset', destination: '/meta-unveils-new-ar-headset-targeting-business-users', permanent: true },
+      { source: '/trading-signals-2025-09-18-latest-crypto-news-update', destination: '/trading-signals-sep18-2025-market-update', permanent: true },
+      { source: '/news/figure-ipo-raises-787m', destination: '/blockchain-lender-figure-raises-787-5-million-in-landmark-u-s-ipo', permanent: true },
+      { source: '/news/gold-prices-climb-as-investors-seek-safety', destination: '/gold-prices-climb-as-investors-seek-safety', permanent: true },
+      { source: '/news/eurozone-industrial-output-rebounds', destination: '/eurozone-industrial-output-rebounds-supported-by-exports', permanent: true },
+      { source: '/news/asia-markets-close-mixed', destination: '/asia-pacific-markets-close-mixed-ahead-of-u-s-cpi-data', permanent: true },
+      { source: '/news/china-reports-slower-export-growth-august', destination: '/china-reports-slower-export-growth-in-august', permanent: true },
+      { source: '/news/apple-stock-hits-record-high', destination: '/apple-hits-record-high-on-ai-chip-hype', permanent: true },
+      { source: '/news/oil-prices-hold-78', destination: '/oil-prices-hold-steady-at-78-amid-supply-balances', permanent: true },
+      { source: '/news/apple-hits-record-market-cap', destination: '/apple-stock-hits-record-high-on-ai-integration-success', permanent: true },
+
+      { source: '/economy', destination: '/market', permanent: true },
+      { source: '/stocks', destination: '/market', permanent: true },
+
+      { source: '/news/nasdaq-hits-record-high-tech-rally-continues', destination: '/nasdaq-hits-record-high-as-tech-rally-continues', permanent: true },
+      { source: '/insurance-for-nfts', destination: '/insurance/insurance-for-nfts', permanent: true },
     ];
   },
-};
 
-module.exports = nextConfig;
-module.exports = {
+  // Thêm header cache cho static & ảnh
   async headers() {
     return [
       {
@@ -196,10 +108,15 @@ module.exports = {
         headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
       },
       {
+        source: '/_next/image',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+      },
+      {
         source: '/images/:path*',
-        // Nếu tên file KHÔNG hash, dùng 1-7 ngày + must-revalidate để an toàn
-        headers: [{ key: 'Cache-Control', value: 'public, max-age=604800, must-revalidate' }],
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=604800, stale-while-revalidate=86400' }],
       },
     ];
   },
 };
+
+module.exports = nextConfig;
