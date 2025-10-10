@@ -21,16 +21,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Print shell (debug)
-        run: |
-          Write-Host "PowerShell version:"
-          $PSVersionTable.PSVersion
-
       - name: Ensure target folders
         run: |
-          $dst = 'C:\apps\finnews247'
-          New-Item -ItemType Directory -Force -Path $dst | Out-Null
-          New-Item -ItemType Directory -Force -Path "$dst\logs" | Out-Null
+          New-Item -ItemType Directory -Force -Path C:\apps\finnews247 | Out-Null
+          New-Item -ItemType Directory -Force -Path C:\apps\finnews247\logs | Out-Null
 
       - name: Stop scheduled task if running
         continue-on-error: true
@@ -38,30 +32,24 @@ jobs:
 
       - name: Clean target (keep logs)
         run: |
-          $dst = 'C:\apps\finnews247'
-          Get-ChildItem $dst -Force | Where-Object { $_.Name -ne 'logs' } |
+          Get-ChildItem C:\apps\finnews247 -Force | Where-Object { $_.Name -ne 'logs' } |
             Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-          New-Item -ItemType Directory -Force -Path "$dst\public" | Out-Null
-          $img = Join-Path $dst 'public\images'
-          if (Test-Path $img) {
-            $itm = Get-Item $img -Force
-            if ($itm.Attributes -band [IO.FileAttributes]::ReparsePoint) { cmd /c rmdir "$img" }
+          New-Item -ItemType Directory -Force -Path C:\apps\finnews247\public | Out-Null
+          if (Test-Path C:\apps\finnews247\public\images) {
+            $itm = Get-Item C:\apps\finnews247\public\images -Force
+            if ($itm.Attributes -band [IO.FileAttributes]::ReparsePoint) { cmd /c rmdir C:\apps\finnews247\public\images }
           }
 
-      - name: Copy repo to target (robocopy)
+      - name: Copy repo -> C:\apps\finnews247
         run: |
-          $src = "${env:GITHUB_WORKSPACE}"
-          $dst = 'C:\apps\finnews247'
-          robocopy "$src" "$dst" /MIR /XD .git .github node_modules .next logs | Out-Null
-          $rc = $LASTEXITCODE
-          if ($rc -ge 8) { throw "Robocopy failed with exit code $rc" }
+          robocopy "${{ github.workspace }}" "C:\apps\finnews247" /MIR /XD .git .github node_modules .next logs | Out-Null
+          if ($LASTEXITCODE -ge 8) { throw "Robocopy failed with exit code $LASTEXITCODE" }
 
-      - name: Strip UTF-8 BOM in JSON (avoid 500)
+      - name: Strip UTF-8 BOM in JSON (fix lỗi ï»¿)
         run: |
-          $dst = 'C:\apps\finnews247'
           $enc = New-Object System.Text.UTF8Encoding($false)
-          if (Test-Path "$dst\data") {
-            Get-ChildItem "$dst\data" -Filter *.json -Recurse -ErrorAction SilentlyContinue | ForEach-Object {
+          if (Test-Path "C:\apps\finnews247\data") {
+            Get-ChildItem "C:\apps\finnews247\data" -Filter *.json -Recurse -EA SilentlyContinue | ForEach-Object {
               $content = Get-Content $_.FullName -Raw
               [System.IO.File]::WriteAllText($_.FullName, $content, $enc)
             }
@@ -72,17 +60,16 @@ jobs:
         with:
           node-version: '22.20.0'
 
-      - name: Install dependencies
-        working-directory: 'C:\apps\finnews247'
+      - name: Install deps
+        working-directory: C:\apps\finnews247
         run: npm ci || npm install
 
-      - name: Build Next.js
-        working-directory: 'C:\apps\finnews247'
+      - name: Build
+        working-directory: C:\apps\finnews247
         run: npm run build
 
       - name: Create start script
         run: |
-          $dst = 'C:\apps\finnews247'
           $lines = @(
             '@echo off'
             'cd /d C:\apps\finnews247'
@@ -90,23 +77,19 @@ jobs:
             'set "PORT=80"'
             '"C:\Program Files\nodejs\node.exe" node_modules\next\dist\bin\next start -p %PORT% >> "C:\apps\finnews247\logs\out.log" 2>> "C:\apps\finnews247\logs\err.log"'
           )
-          Set-Content -Path "$dst\start_finnews247.cmd" -Value $lines -Encoding ASCII
+          Set-Content -Path C:\apps\finnews247\start_finnews247.cmd -Value $lines -Encoding ASCII
 
       - name: Register/Update scheduled task
         run: schtasks /Create /TN "finnews247" /TR "C:\apps\finnews247\start_finnews247.cmd" /SC ONSTART /RU SYSTEM /RL HIGHEST /F
 
-      - name: Start app
+      - name: Start app + health check
         run: |
           schtasks /Run /TN "finnews247"
           Start-Sleep -Seconds 6
-
-      - name: Health check
-        run: |
           $ok = $true
           try {
-            $r1 = Invoke-WebRequest -Uri 'http://127.0.0.1/' -UseBasicParsing -TimeoutSec 15
-            $r2 = Invoke-WebRequest -Uri 'http://127.0.0.1/logo.png' -UseBasicParsing -TimeoutSec 15
-            if ($r1.StatusCode -ne 200 -or $r2.StatusCode -ne 200) { $ok = $false }
+            (Invoke-WebRequest -Uri 'http://127.0.0.1/' -UseBasicParsing -TimeoutSec 15) | Out-Null
+            (Invoke-WebRequest -Uri 'http://127.0.0.1/logo.png' -UseBasicParsing -TimeoutSec 15) | Out-Null
           } catch { $ok = $false }
           if (-not $ok) { throw "Health check failed." }
           Write-Host "OK"
