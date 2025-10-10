@@ -188,3 +188,18 @@ const nextConfig = {
 };
 
 module.exports = nextConfig;
+module.exports = {
+  async headers() {
+    return [
+      {
+        source: '/_next/static/:path*',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+      },
+      {
+        source: '/images/:path*',
+        // Nếu tên file KHÔNG hash, dùng 1-7 ngày + must-revalidate để an toàn
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=604800, must-revalidate' }],
+      },
+    ];
+  },
+};
