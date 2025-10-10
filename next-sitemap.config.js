@@ -35,7 +35,7 @@ function toISO(d) {
 module.exports = {
   siteUrl: SITE,
   trailingSlash: false,
-  generateRobotsTxt: true,
+  generateRobotsTxt: false,
   generateIndexSitemap: true,
   changefreq: 'daily',
   priority: 0.7,
