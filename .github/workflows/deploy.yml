@@ -13,27 +13,27 @@ jobs:
   deploy:
     runs-on: self-hosted
     timeout-minutes: 40
-    defaults:
-      run:
-        shell: powershell
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Ensure target folders
+        shell: powershell
         run: |
           $dst = 'C:\apps\finnews247'
           New-Item -ItemType Directory -Force -Path $dst | Out-Null
           New-Item -ItemType Directory -Force -Path "$dst\logs" | Out-Null
 
       - name: Stop scheduled task if running
+        shell: powershell
         run: |
           $task = 'finnews247'
           schtasks /Query /TN $task *> $null
           if ($LASTEXITCODE -eq 0) { schtasks /End /TN $task *> $null }
 
       - name: Clean target (keep logs)
+        shell: powershell
         run: |
           $dst = 'C:\apps\finnews247'
           Get-ChildItem $dst -Force | Where-Object { $_.Name -ne 'logs' } |
@@ -46,14 +46,17 @@ jobs:
           }
 
       - name: Copy repo to target (robocopy)
+        shell: powershell
         run: |
-          $src = "$env:GITHUB_WORKSPACE"
+          $ErrorActionPreference = 'Stop'
+          $src = $env:GITHUB_WORKSPACE
           $dst = 'C:\apps\finnews247'
-          robocopy "$src" "$dst" /MIR /XD .git .github node_modules .next logs > $null
+          robocopy "$src" "$dst" /MIR /XD .git .github node_modules .next logs | Out-Null
           $rc = $LASTEXITCODE
-          if ($rc -ge 8) { exit $rc }
+          if ($rc -ge 8) { throw "Robocopy failed with exit code $rc" }
 
       - name: Strip UTF-8 BOM in JSON (fix 500/BOM)
+        shell: powershell
         run: |
           $dst = 'C:\apps\finnews247'
           $enc = New-Object System.Text.UTF8Encoding($false)
@@ -70,14 +73,17 @@ jobs:
           node-version: '22.20.0'
 
       - name: Install dependencies
+        shell: powershell
         working-directory: 'C:\apps\finnews247'
         run: npm ci || npm install
 
       - name: Build Next.js
+        shell: powershell
         working-directory: 'C:\apps\finnews247'
         run: npm run build
 
       - name: Create start script
+        shell: powershell
         run: |
           $dst = 'C:\apps\finnews247'
           $lines = @(
@@ -90,14 +96,17 @@ jobs:
           Set-Content -Path "$dst\start_finnews247.cmd" -Value $lines -Encoding ASCII
 
       - name: Register/Update scheduled task
+        shell: powershell
         run: schtasks /Create /TN "finnews247" /TR "C:\apps\finnews247\start_finnews247.cmd" /SC ONSTART /RU SYSTEM /RL HIGHEST /F
 
       - name: Start app
+        shell: powershell
         run: |
           schtasks /Run /TN "finnews247"
           Start-Sleep -Seconds 6
 
       - name: Health check
+        shell: powershell
         run: |
           $ok = $true
           try {
