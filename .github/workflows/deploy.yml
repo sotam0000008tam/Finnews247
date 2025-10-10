@@ -3,7 +3,7 @@ name: "🚀 Deploy Finnews247 to Windows VPS"
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch: {}
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -20,42 +20,45 @@ jobs:
 
       - name: 🪟 Ensure target folder exists
         run: |
-          if (-not (Test-Path "C:\apps\finnews247")) { New-Item -ItemType Directory -Path "C:\apps\finnews247" | Out-Null }
+          if (-not (Test-Path 'C:\apps\finnews247')) {
+            New-Item -ItemType Directory -Path 'C:\apps\finnews247' | Out-Null
+          }
 
-          - name: 🧹 Clean target (keep logs & public)
+      - name: 🧹 Clean target (keep logs & public)
         run: |
-          $target = "C:\apps\finnews247"
-          $keep = @("logs","public")
+          $target = 'C:\apps\finnews247'
+          $keep = @('logs','public')
           if (Test-Path $target) {
             Get-ChildItem $target -Force |
               Where-Object { $keep -notcontains $_.Name } |
               Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
           }
 
-
       - name: 📂 Copy source → target
         run: |
           $src = "$env:GITHUB_WORKSPACE"
-          $dst = "C:\apps\finnews247"
-          $exclude = @(".git",".github","node_modules",".next")
-          Get-ChildItem -Path $src -Force | Where-Object { $exclude -notcontains $_.Name } | ForEach-Object {
-            Copy-Item -Path $_.FullName -Destination (Join-Path $dst $_.Name) -Recurse -Force -ErrorAction Stop
-          }
+          $dst = 'C:\apps\finnews247'
+          $exclude = @('.git','.github','node_modules','.next')
+          Get-ChildItem -Path $src -Force |
+            Where-Object { $exclude -notcontains $_.Name } |
+            ForEach-Object {
+              Copy-Item -Path $_.FullName -Destination (Join-Path $dst $_.Name) -Recurse -Force -ErrorAction Stop
+            }
 
       - name: 🔎 Verify files
         run: |
-          if (-not (Test-Path "C:\apps\finnews247\package.json")) { throw "package.json not found" }
-          Get-ChildItem -Path "C:\apps\finnews247" | Select-Object Name,Length,Mode | Format-Table
+          if (-not (Test-Path 'C:\apps\finnews247\package.json')) { throw 'package.json not found' }
+          Get-ChildItem -Path 'C:\apps\finnews247' | Select-Object Name,Length,Mode | Format-Table
 
       - name: 🟢 Use Node 22
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: '22'
 
       - name: 📦 Install deps (dev + prod)
         working-directory: C:\apps\finnews247
         run: |
-          if (Test-Path "package-lock.json") { npm ci } else { npm install }
+          if (Test-Path 'package-lock.json') { npm ci } else { npm install }
 
       - name: 🏗️ Build (use cmd to avoid PS NativeCommandError)
         shell: cmd
