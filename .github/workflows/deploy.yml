@@ -40,20 +40,18 @@ jobs:
             if ($itm.Attributes -band [IO.FileAttributes]::ReparsePoint) { cmd /c rmdir C:\apps\finnews247\public\images }
           }
 
-      - name: Copy repo -> C:\apps\finnews247
+           - name: Copy repo -> C:\apps\finnews247
         run: |
-          robocopy "${{ github.workspace }}" "C:\apps\finnews247" /MIR /XD .git .github node_modules .next logs | Out-Null
-          if ($LASTEXITCODE -ge 8) { throw "Robocopy failed with exit code $LASTEXITCODE" }
-
-      - name: Strip UTF-8 BOM in JSON (fix lỗi ï»¿)
-        run: |
-          $enc = New-Object System.Text.UTF8Encoding($false)
-          if (Test-Path "C:\apps\finnews247\data") {
-            Get-ChildItem "C:\apps\finnews247\data" -Filter *.json -Recurse -EA SilentlyContinue | ForEach-Object {
-              $content = Get-Content $_.FullName -Raw
-              [System.IO.File]::WriteAllText($_.FullName, $content, $enc)
-            }
+          robocopy "${{ github.workspace }}" "C:\apps\finnews247" /MIR /XD .git .github node_modules .next logs
+          $rc = $LASTEXITCODE
+          if ($rc -le 7) {
+            Write-Host "Robocopy OK (exit code $rc)."
+            exit 0
+          } else {
+            Write-Error "Robocopy FAILED (exit code $rc)."
+            exit $rc
           }
+
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
