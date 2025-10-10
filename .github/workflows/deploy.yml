@@ -22,13 +22,16 @@ jobs:
         run: |
           if (-not (Test-Path "C:\apps\finnews247")) { New-Item -ItemType Directory -Path "C:\apps\finnews247" | Out-Null }
 
-      - name: 🧹 Clean target (keep logs)
+          - name: 🧹 Clean target (keep logs & public)
         run: |
           $target = "C:\apps\finnews247"
-          $keep = @("logs")
+          $keep = @("logs","public")
           if (Test-Path $target) {
-            Get-ChildItem $target -Force | Where-Object { $keep -notcontains $_.Name } | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+            Get-ChildItem $target -Force |
+              Where-Object { $keep -notcontains $_.Name } |
+              Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
           }
+
 
       - name: 📂 Copy source → target
         run: |
