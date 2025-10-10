@@ -54,9 +54,9 @@ jobs:
         working-directory: C:\apps\finnews247
         run: npm run build
 
-      - name: 🔁 Restart site (Scheduled Task)
-        shell: powershell
-        run: |
-          schtasks /End /TN "finnews247" 2>$null
-          timeout /t 2 >nul
-          schtasks /Run /TN "finnews247"
+      -- name: 🛑 Stop scheduled task (cmd)
+  shell: cmd
+  run: |
+    schtasks /End /TN "finnews247" 2>nul
+    timeout /t 2 >nul
+
