@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 40
     defaults:
       run:
-        shell: pwsh
+        shell: powershell
 
     steps:
       - name: Checkout
@@ -45,21 +45,23 @@ jobs:
             if ($itm.Attributes -band [IO.FileAttributes]::ReparsePoint) { cmd /c rmdir "$img" }
           }
 
-      - name: Copy repo to target
+      - name: Copy repo to target (robocopy)
         run: |
           $src = "$env:GITHUB_WORKSPACE"
           $dst = 'C:\apps\finnews247'
-          robocopy $src $dst /MIR /XD .git .github node_modules .next logs > $null
+          robocopy "$src" "$dst" /MIR /XD .git .github node_modules .next logs > $null
           $rc = $LASTEXITCODE
           if ($rc -ge 8) { exit $rc }
 
-      - name: Strip UTF-8 BOM in JSON
+      - name: Strip UTF-8 BOM in JSON (fix 500/BOM)
         run: |
           $dst = 'C:\apps\finnews247'
           $enc = New-Object System.Text.UTF8Encoding($false)
-          Get-ChildItem "$dst\data" -Filter *.json -Recurse -ErrorAction SilentlyContinue | ForEach-Object {
-            $content = Get-Content $_.FullName -Raw
-            [System.IO.File]::WriteAllText($_.FullName, $content, $enc)
+          if (Test-Path "$dst\data") {
+            Get-ChildItem "$dst\data" -Filter *.json -Recurse -ErrorAction SilentlyContinue | ForEach-Object {
+              $content = Get-Content $_.FullName -Raw
+              [System.IO.File]::WriteAllText($_.FullName, $content, $enc)
+            }
           }
 
       - name: Setup Node.js
