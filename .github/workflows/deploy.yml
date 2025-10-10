@@ -34,16 +34,23 @@ jobs:
               Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
           }
 
-      - name: 📂 Copy source → target
+           - name: 📂 Copy source → target (no nested public)
         run: |
           $src = "$env:GITHUB_WORKSPACE"
           $dst = 'C:\apps\finnews247'
-          $exclude = @('.git','.github','node_modules','.next')
+          $exclude = @('.git','.github','node_modules','.next','public')
           Get-ChildItem -Path $src -Force |
             Where-Object { $exclude -notcontains $_.Name } |
             ForEach-Object {
               Copy-Item -Path $_.FullName -Destination (Join-Path $dst $_.Name) -Recurse -Force -ErrorAction Stop
             }
+
+          if (-not (Test-Path "$dst\public")) {
+            New-Item -ItemType Directory -Path "$dst\public" | Out-Null
+          }
+          # Chỉ copy NỘI DUNG bên trong repo/public vào đích
+          Copy-Item -Path (Join-Path $src 'public\*') -Destination "$dst\public" -Recurse -Force -ErrorAction Stop
+
 
       - name: 🔎 Verify files
         run: |
