@@ -1,9 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Bật nén HTTP cho response
+  // Bật nén HTTP
   compress: true,
 
-  // GIỮ NGUYÊN: danh sách redirects của bạn
+  // GIỮ NGUYÊN TOÀN BỘ REDIRECTS CỦA BẠN
   async redirects() {
     return [
       { source: '/fidelity-crypto', destination: '/crypto-exchanges', permanent: true },
@@ -14,7 +14,11 @@ const nextConfig = {
       { source: '/exchanges', destination: '/crypto-exchanges', permanent: true },
       { source: '/crypto-tax/:slug*', destination: '/tax/:slug*', permanent: true },
       { source: '/crypto-insurance/:slug*', destination: '/insurance/:slug*', permanent: true },
-      { source: '/news/:slug', destination: '/:slug', permanent: true },
+      {
+        source: '/news/:slug',
+        destination: '/:slug',
+        permanent: true,
+      },
 
       // ========= 25 redirect cũ: /signals/:id -> /signals/:slug (giữ nguyên) =========
       { source: '/signals/1',  destination: '/signals/btc-long-250912',           permanent: true },
@@ -69,17 +73,11 @@ const nextConfig = {
       { source: '/sec-coin/altcoin-analysis-32', destination: '/sec-coin/altcoin-market-pulse-sep25', permanent: true },
       { source: '/sec-coin/altcoin-analysis-33', destination: '/sec-coin/crypto-highlights-sep26', permanent: true },
       { source: '/sec-coin/Altcoin%20Analysis', destination: '/altcoins', permanent: true },
-
       { source: '/insurance/smart-contract-insurance', destination: '/insurance/smart-contract-insurance-how-it-works', permanent: true },
-      {
-        source: '/fidelity-crypto/understanding-fidelity-s-new-crypto-trading-platform-for-2025',
-        destination: '/fidelity-crypto/fidelity-crypto-platform-2025-features-outlook',
-        permanent: true,
-      },
+      { source: '/fidelity-crypto/understanding-fidelity-s-new-crypto-trading-platform-for-2025', destination: '/fidelity-crypto/fidelity-crypto-platform-2025-features-outlook', permanent: true },
       { source: '/guides/trading-vs-investing-in-crypto-key-differences', destination: '/guides/how-to-evaluate-new-altcoins-before-investing', permanent: true },
       { source: '/guides/kraken-vs-kucoin-exchange-fee-features-showdown', destination: '/guides/how-to-diversify-your-crypto-portfolio', permanent: true },
       { source: '/insurance/custodial-risk-insurance', destination: '/insurance/custodial-risk-insurance-explained', permanent: true },
-
       { source: '/news/ecb-hints-policy-tightening-rising-inflation', destination: '/ecb-hints-at-policy-tightening-amid-rising-inflation', permanent: true },
       { source: '/news/meta-unveils-new-ar-headset', destination: '/meta-unveils-new-ar-headset-targeting-business-users', permanent: true },
       { source: '/trading-signals-2025-09-18-latest-crypto-news-update', destination: '/trading-signals-sep18-2025-market-update', permanent: true },
@@ -91,31 +89,45 @@ const nextConfig = {
       { source: '/news/apple-stock-hits-record-high', destination: '/apple-hits-record-high-on-ai-chip-hype', permanent: true },
       { source: '/news/oil-prices-hold-78', destination: '/oil-prices-hold-steady-at-78-amid-supply-balances', permanent: true },
       { source: '/news/apple-hits-record-market-cap', destination: '/apple-stock-hits-record-high-on-ai-integration-success', permanent: true },
-
       { source: '/economy', destination: '/market', permanent: true },
       { source: '/stocks', destination: '/market', permanent: true },
-
       { source: '/news/nasdaq-hits-record-high-tech-rally-continues', destination: '/nasdaq-hits-record-high-as-tech-rally-continues', permanent: true },
       { source: '/insurance-for-nfts', destination: '/insurance/insurance-for-nfts', permanent: true },
     ];
   },
 
-  // Thêm header cache cho static & ảnh
+  // GIỮ NGUYÊN HEADERS CỦA BẠN
   async headers() {
     return [
       {
         source: '/_next/static/:path*',
-        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
       },
       {
         source: '/_next/image',
-        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+        headers: [
+          // ảnh tối ưu – sẽ dùng TTL từ images.minimumCacheTTL; header ở đây giữ nguyên
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
       },
       {
         source: '/images/:path*',
-        headers: [{ key: 'Cache-Control', value: 'public, max-age=604800, stale-while-revalidate=86400' }],
+        headers: [
+          // ảnh gốc (không băm) -> cache 7 ngày + SWR 1 ngày
+          { key: 'Cache-Control', value: 'public, max-age=604800, stale-while-revalidate=86400' },
+        ],
       },
     ];
+  },
+
+  // TỐI ƯU ẢNH – quan trọng để giảm chậm lần truy cập sau
+  images: {
+    // Cache ảnh tối ưu 30 ngày (có thể tăng lên 31536000 ~ 1 năm nếu muốn)
+    minimumCacheTTL: 2592000, // 30 * 24 * 60 * 60
+    // Bật định dạng mới để giảm dung lượng ảnh
+    formats: ['image/avif', 'image/webp'],
   },
 };
 
