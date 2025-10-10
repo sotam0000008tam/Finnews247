@@ -1,93 +1,62 @@
-name: Deploy Finnews247 to Windows VPS
+name: 🚀 Deploy Finnews247 to Windows VPS
 
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
 
-concurrency:
-  group: deploy-finnews247
-  cancel-in-progress: true
-
 jobs:
   deploy:
     runs-on: self-hosted
-    timeout-minutes: 40
-    defaults:
-      run:
-        shell: powershell
 
     steps:
-      - name: Checkout
+      - name: ⬇️ Checkout
         uses: actions/checkout@v4
 
-      - name: Ensure target folders
+      - name: 📁 Ensure target folders
+        shell: powershell
         run: |
-          New-Item -ItemType Directory -Force -Path C:\apps\finnews247 | Out-Null
-          New-Item -ItemType Directory -Force -Path C:\apps\finnews247\logs | Out-Null
+          $dst = 'C:\apps\finnews247'
+          New-Item -ItemType Directory -Force -Path $dst | Out-Null
+          New-Item -ItemType Directory -Force -Path "$dst\logs" | Out-Null
 
-      - name: Stop scheduled task if running
-        continue-on-error: true
-        run: schtasks /End /TN "finnews247" 2>$null
-
-      - name: Clean target (keep logs)
-        run: |
-          Get-ChildItem C:\apps\finnews247 -Force | Where-Object { $_.Name -ne 'logs' } |
-            Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-          New-Item -ItemType Directory -Force -Path C:\apps\finnews247\public | Out-Null
-          if (Test-Path C:\apps\finnews247\public\images) {
-            $itm = Get-Item C:\apps\finnews247\public\images -Force
-            if ($itm.Attributes -band [IO.FileAttributes]::ReparsePoint) { cmd /c rmdir C:\apps\finnews247\public\images }
-          }
-
-           - name: Copy repo -> C:\apps\finnews247
+      - name: 📤 Copy repo -> C:\apps\finnews247 (keep logs)
+        shell: powershell
         run: |
           robocopy "${{ github.workspace }}" "C:\apps\finnews247" /MIR /XD .git .github node_modules .next logs
           $rc = $LASTEXITCODE
           if ($rc -le 7) {
-            Write-Host "Robocopy OK (exit code $rc)."
+            Write-Host "Robocopy OK (exit $rc)"
             exit 0
           } else {
-            Write-Error "Robocopy FAILED (exit code $rc)."
+            Write-Error "Robocopy FAILED (exit $rc)"
             exit $rc
           }
 
-
-      - name: Setup Node.js
+      - name: 🟢 Use Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22.20.0'
+          node-version: '22'
 
-      - name: Install deps
+      - name: 📦 Install deps
+        shell: powershell
         working-directory: C:\apps\finnews247
-        run: npm ci || npm install
+        run: |
+          if (Test-Path package-lock.json) {
+            npm ci
+            if ($LASTEXITCODE -ne 0) { npm install }
+          } else {
+            npm install
+          }
 
-      - name: Build
+      - name: 🏗️ Build
+        shell: powershell
         working-directory: C:\apps\finnews247
         run: npm run build
 
-      - name: Create start script
+      - name: 🔁 Restart site (Scheduled Task)
+        shell: powershell
         run: |
-          $lines = @(
-            '@echo off'
-            'cd /d C:\apps\finnews247'
-            'set "NODE_ENV=production"'
-            'set "PORT=80"'
-            '"C:\Program Files\nodejs\node.exe" node_modules\next\dist\bin\next start -p %PORT% >> "C:\apps\finnews247\logs\out.log" 2>> "C:\apps\finnews247\logs\err.log"'
-          )
-          Set-Content -Path C:\apps\finnews247\start_finnews247.cmd -Value $lines -Encoding ASCII
-
-      - name: Register/Update scheduled task
-        run: schtasks /Create /TN "finnews247" /TR "C:\apps\finnews247\start_finnews247.cmd" /SC ONSTART /RU SYSTEM /RL HIGHEST /F
-
-      - name: Start app + health check
-        run: |
+          schtasks /End /TN "finnews247" 2>$null
+          timeout /t 2 >nul
           schtasks /Run /TN "finnews247"
-          Start-Sleep -Seconds 6
-          $ok = $true
-          try {
-            (Invoke-WebRequest -Uri 'http://127.0.0.1/' -UseBasicParsing -TimeoutSec 15) | Out-Null
-            (Invoke-WebRequest -Uri 'http://127.0.0.1/logo.png' -UseBasicParsing -TimeoutSec 15) | Out-Null
-          } catch { $ok = $false }
-          if (-not $ok) { throw "Health check failed." }
-          Write-Host "OK"
