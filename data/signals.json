@@ -935,6 +935,170 @@
       }
     ],
     "disclaimer": "<p>Macro commentary. Not financial advice.</p>"
-  }
+  },
+  {
+  "id": "snx-long-20251013-1013",
+  "pair": "SNX/USDT",
+  "type": "Long",
+  "entry": "1.794",
+  "target": "detail",
+  "stoploss": "0.984",
+  "date": "2025-10-13 10:13",
+  "image": "signal46.png",
+  "excerpt": "Long SNX at 1.794, target in the chart’s green zone, stoploss 0.984.",
+  "intro": "<h1>SNX/USDT Long Signal – October 13, 2025</h1><p>SNX shows momentum rotation. Strategy: go long at <b>1.794</b>, aiming for {{TARGETS_DESC}}; protected by a stop at <b>0.984</b>. Trend participation broadens.</p>\n<aside class=\"mt-4 p-3 border-l-4 border-teal-400 bg-teal-50 text-sm\"><strong>Risk:</strong> Risk <b>0.3%–0.6%</b>. Switch to a <b>trailing stop</b> after TP1.</aside>",
+  "marketContext": "<h2>Market Context</h2><p>Institutional activity and ETF dynamics remain volatile but broadly favorable. This backdrop supports the a trend‑following long on SNX.</p>",
+  "technicalAnalysis": "<h2>Technical Analysis</h2><p>Higher-lows into resistance formed a coiled base; breakout opens the path to the chart’s green target zone.</p><h3>Key Levels</h3><ul><li>Entry: 1.794</li><li>Target: Chart green zone</li><li>Stoploss: 0.984</li></ul>",
+  "riskStrategy": "<h2>Risk Management</h2><p>Risk <b>0.8%–1.2%</b> per trade. Take partial profits at the first objective and trail stops.</p>",
+  "faq": [
+    {
+      "q": "Could it pull back?",
+      "a": "Yes, dips toward 1.75812 may occur."
+    },
+    {
+      "q": "What invalidates?",
+      "a": "A decisive close below 0.984 or loss of HL structure."
+    }
+  ],
+  "disclaimer": "<p>Educational use only. Not financial advice.</p>"
+},
+{
+  "id": "zec-long-20251014-0713",
+  "pair": "ZEC/USDT",
+  "type": "Long",
+  "entry": "227",
+  "target": "detail",
+  "stoploss": "201",
+  "date": "2025-10-14 07:13",
+  "image": "signal47.png",
+  "excerpt": "Long ZEC at 227, target in the chart’s green zone, stoploss 201.",
+  "intro": "<h1>ZEC/USDT Long — October 14, 2025</h1><p>Bias: a constructive long bias. Plan: go long <b>227</b> → the chart’s green target zone | SL <b>201</b>.</p>\n<aside class=\"mt-4 p-3 border-l-4 border-blue-400 bg-blue-50 text-sm\"><strong>Event risk:</strong> Major prints (CPI/NFP/FOMC) can gap price; hedge or flatten accordingly.</aside>",
+  "marketContext": "<h2>Market Context</h2><p>Risk tone: balanced. ZEC in focus.</p>",
+  "technicalAnalysis": "<h2>Technical</h2><ul><li>Coil → break.</li><li>HL structure intact.</li><li>Targets active.</li></ul><h3>Key Levels</h3><ul><li>Entry: 227</li><li>Target: Chart green zone</li><li>Stoploss: 201</li></ul>",
+  "riskStrategy": "<h2>Risk</h2><p>OCO + size down if funding/OI rise.</p>",
+  "faq": [
+    {
+      "q": "Pullback?",
+      "a": "Dip toward 222.46 possible."
+    },
+    {
+      "q": "Invalidate?",
+      "a": "Close below 201."
+    },
+    {
+      "q": "Why long?",
+      "a": "Above support near 227."
+    }
+  ],
+  "disclaimer": "<p>Educational content. Trade responsibly.</p>"
+},
+{
+  "id": "sys-long-20251014-0734",
+  "pair": "SYS/USDT",
+  "type": "Long",
+  "entry": "0.03162",
+  "target": "detail",
+  "stoploss": "0.02221",
+  "date": "2025-10-14 07:34",
+  "image": "signal48.png",
+  "excerpt": "Long SYS at 0.03162, target in the chart’s green zone, stoploss 0.02221.",
+  "intro": "<h1>SYS/USDT Long — October 14, 2025</h1><p>Structure: HL into supply. Trigger: <b>0.03162</b>. Targets: the chart’s green target zone. Invalidation: <b>0.02221</b>.</p>\n<aside class=\"mt-4 p-3 border-l-4 border-yellow-400 bg-yellow-50 text-sm\"><strong>Risk:</strong> Risk <b>0.8%–1.2%</b>. Switch to a <b>trailing stop</b> after TP1.</aside>",
+  "marketContext": "<h2>Market Context</h2><p>BTC.D steady; breadth modest. Perp basis neutral.</p>",
+  "technicalAnalysis": "<h2>Technical Analysis</h2><p>Breakout → retest → hold. OB cleared; continuation likely.</p><h3>Key Levels</h3><ul><li>Entry: 0.03162</li><li>Target: Chart green zone</li><li>Stoploss: 0.02221</li></ul>",
+  "riskStrategy": "<h2>Risk</h2><p>Size by volatility. Trail below last HL/above last LH after TP1.</p>",
+  "faq": [
+    {
+      "q": "Invalidation?",
+      "a": "Close beyond 0.02221 / structure break."
+    },
+    {
+      "q": "Pullback zone?",
+      "a": "~0.0309876 support."
+    }
+  ],
+  "disclaimer": "<p>Use at own risk.</p>"
+},
+{
+  "id": "ptbusdt-p-long-20251014-0811",
+  "pair": "PTB/USDT.P",
+  "type": "Long",
+  "entry": "0.05",
+  "target": "detail",
+  "stoploss": "0.0416",
+  "date": "2025-10-14 08:11",
+  "image": "signal49.png",
+  "excerpt": "Long PTB/USDT.P at 0.05, target in the chart’s green zone, stoploss 0.0416.",
+  "intro": "<h1>PTBUSDT.P Long — October 14, 2025</h1><p>DXY softening, UST 10Y easing, real yields drifting lower. ETF flows mixed. Base case: go long <b>0.05</b>, laddered exits into {{TARGETS_DESC}}; risk anchor at <b>0.0416</b>.</p>\n<aside class=\"mt-4 p-3 border-l-4 border-emerald-400 bg-emerald-50 text-sm\"><strong>Funding/OI:</strong> Extreme funding + rising OI into resistance ⇒ trim to reduce <b>squeeze risk</b>.</aside>",
+  "marketContext": "<h2>Macro Context</h2><p>liquidity pockets uneven; ETF flows mixed; sector tilt toward DeFi rotation.</p>",
+  "technicalAnalysis": "<h2>Technical</h2><p>Trend intact; acceptance above supply zones favors extension.</p><h3>Key Levels</h3><ul><li>Entry: 0.05</li><li>Target: Chart green zone</li><li>Stoploss: 0.0416</li></ul>",
+  "riskStrategy": "<h2>Risk</h2><p>Trail into strength; cut quickly on macro-driven reversals.</p>",
+  "faq": [
+    {
+      "q": "What flips the view?",
+      "a": "A sharp {{DXY_FLIP}} with yields rising and risk-off breadth."
+    },
+    {
+      "q": "Macro support?",
+      "a": "{{DXY_PHRASE}}, {{YIELD_PHRASE}}, and {{ETF_MACRO}} align with the bias."
+    }
+  ],
+  "disclaimer": "<p>For information only. Manage risk.</p>"
+},
+{
+  "id": "tao-long-20251014-0841",
+  "pair": "TAO/USDT",
+  "type": "Long",
+  "entry": "447.47",
+  "target": "detail",
+  "stoploss": "316.87",
+  "date": "2025-10-14 08:41",
+  "image": "signal50.png",
+  "excerpt": "Long TAO at 447.47, target in the chart’s green zone, stoploss 316.87.",
+  "intro": "<h1>TAO/USDT Long Signal – October 14, 2025</h1><p>TAO shows reclaim-and-hold behavior. Approach: go long at <b>447.47</b>, profit-taking into {{TARGETS_DESC}}; invalidation at <b>316.87</b>. Acceptance above prior supply keeps upside open.</p>\n<aside class=\"mt-4 p-3 border-l-4 border-amber-400 bg-amber-50 text-sm\"><strong>Funding/OI:</strong> Extreme funding + rising OI into resistance ⇒ trim to reduce <b>squeeze risk</b>.</aside>",
+  "marketContext": "<h2>Market Context</h2><p>Risk appetite is rising as majors consolidate. Rotation into AI‑themed tokens keeps TAO in focus.</p>",
+  "technicalAnalysis": "<h2>Technical Analysis</h2><p>Reclaim-and-hold above resistance improves odds for carry into the chart’s green target zone. EMAs slope upward.</p><h3>Key Levels</h3><ul><li>Entry: 447.47</li><li>Target: Chart green zone</li><li>Stoploss: 316.87</li></ul>",
+  "riskStrategy": "<h2>Risk Management</h2><p>Pre-stage <b>OCO</b> orders; scale down if funding/OI rise into resistance.</p>",
+  "faq": [
+    {
+      "q": "What invalidates?",
+      "a": "A decisive close below 316.87 or loss of HL structure."
+    },
+    {
+      "q": "Could it pull back?",
+      "a": "Yes, dips toward 438.5206 may occur."
+    }
+  ],
+  "disclaimer": "<p>Information only. Manage your own risk.</p>"
+},
+{
+  "id": "dash-long-20251014-0900",
+  "pair": "DASH/USDT",
+  "type": "Long",
+  "entry": "46.98",
+  "target": "detail",
+  "stoploss": "28.38",
+  "date": "2025-10-14 09:00",
+  "image": "signal51.png",
+  "excerpt": "Long DASH at 46.98, target in the chart’s green zone, stoploss 28.38.",
+  "intro": "<h1>DASH/USDT Long — October 14, 2025</h1><p>Trigger <b>46.98</b>, targets the chart’s green target zone, invalidation <b>28.38</b>.</p>\n<aside class=\"mt-4 p-3 border-l-4 border-rose-400 bg-rose-50 text-sm\"><strong>Funding/OI:</strong> Extreme funding + rising OI into resistance ⇒ trim to reduce <b>squeeze risk</b>.</aside>",
+  "marketContext": "<h2>Market Context</h2><p>ETF backdrop volatile but broadly favorable.</p>",
+  "technicalAnalysis": "<h2>Technical</h2><ul><li>Reclaim & hold.</li><li>EMAs up.</li><li>Path: the chart’s green target zone.</li></ul><h3>Key Levels</h3><ul><li>Entry: 46.98</li><li>Target: Chart green zone</li><li>Stoploss: 28.38</li></ul>",
+  "riskStrategy": "<h2>Risk</h2><p>Risk <b>0.8%–1.2%</b>. Partial at TP1. Trail.</p>",
+  "faq": [
+    {
+      "q": "Invalidate?",
+      "a": "Close below 28.38."
+    },
+    {
+      "q": "Why long?",
+      "a": "Above support near 46.98."
+    },
+    {
+      "q": "Pullback?",
+      "a": "Dip toward 46.0404 possible."
+    }
+  ],
+  "disclaimer": "<p>Educational content. Trade responsibly.</p>"
+}
 
 ]
