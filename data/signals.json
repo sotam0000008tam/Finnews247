@@ -1099,6 +1099,32 @@
     }
   ],
   "disclaimer": "<p>Educational content. Trade responsibly.</p>"
+},
+{
+  "id": "take-long-20251015-2118",
+  "pair": "TAKE/USDT.P",
+  "type": "Long",
+  "entry": "0.32054",
+  "target": "detail",
+  "stoploss": "0.21579",
+  "date": "2025-10-15 21:18",
+  "image": "signal52",
+  "excerpt": "Long TAKE at 0.32054, target in the chart’s green zone, stoploss 0.21579.",
+  "intro": "<h1>TAKE/USDT.P Long — October 15, 2025</h1><p>DXY softening, UST 10Y easing, real yields drifting lower. ETF flows mixed. Base case: go long <b>0.32054</b>, laddered exits into {{TARGETS_DESC}}; invalidated below/above <b>0.21579</b>.</p>\n<aside class=\"mt-4 p-3 border-l-4 border-red-400 bg-red-50 text-sm\"><strong>Funding/OI:</strong> Extreme funding + rising OI into resistance ⇒ trim to reduce <b>squeeze risk</b>.</aside>",
+  "marketContext": "<h2>Macro Context</h2><p>liquidity improving; ETF flows mixed; sector tilt toward DeFi rotation.</p>",
+  "technicalAnalysis": "<h2>Technical</h2><p>Trend intact; acceptance above supply zones favors extension.</p><h3>Key Levels</h3><ul><li>Entry: 0.32054</li><li>Target: Chart green zone</li><li>Stoploss: 0.21579</li></ul>",
+  "riskStrategy": "<h2>Risk</h2><p>Respect event risk (CPI/NFP/FOMC). Reduce size into macro prints.</p>",
+  "faq": [
+    {
+      "q": "Macro support?",
+      "a": "{{DXY_PHRASE}}, {{YIELD_PHRASE}}, and {{ETF_MACRO}} align with the bias."
+    },
+    {
+      "q": "What flips the view?",
+      "a": "A sharp {{DXY_FLIP}} with yields rising and risk-off breadth."
+    }
+  ],
+  "disclaimer": "<p>For information only. Manage risk.</p>"
 }
 
 ]
