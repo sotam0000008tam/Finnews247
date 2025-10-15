@@ -13,11 +13,20 @@ function resolveImage(src) {
 }
 
 function toTradingViewSymbol(pair) {
+  // Mặc định: Binance BTCUSDT
   if (!pair) return "BINANCE:BTCUSDT";
+
+  // Chuẩn hoá input
   let p = pair.toUpperCase().trim();
-  const isPerp = p.includes(".P");
-  let compact = p.replace("/", "").replace(/\s+/g, "");
-  if (isPerp) return `BYBIT:${compact}`;
+
+  // Nếu người dùng lỡ truyền "BYBIT:BTCUSDT.P" hay "BINANCE:BTC/USDT"
+  // thì bỏ prefix sàn đi để mình tự gắn BINANCE
+  p = p.replace(/^[A-Z]+:/, "");
+
+  // Gộp về format TradingView: "BTCUSDT" hoặc "BTCUSDT.P"
+  const compact = p.replace("/", "").replace(/\s+/g, "");
+
+  // Luôn dùng dữ liệu từ sàn Binance, kể cả perp (.P)
   return `BINANCE:${compact}`;
 }
 
