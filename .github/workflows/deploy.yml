@@ -24,27 +24,28 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 📁 Ensure target folders
-        shell: powershell
+        shell: cmd
         run: |
-          $dst = 'C:\apps\finnews247'
-          New-Item -ItemType Directory -Force -Path $dst | Out-Null
-          New-Item -ItemType Directory -Force -Path "$dst\logs" | Out-Null
-          New-Item -ItemType Directory -Force -Path "$dst\scripts" | Out-Null
+          if not exist C:\apps\finnews247 mkdir C:\apps\finnews247
+          if not exist C:\apps\finnews247\logs mkdir C:\apps\finnews247\logs
+          if not exist C:\apps\finnews247\scripts mkdir C:\apps\finnews247\scripts
 
-      - name: 🛑 Stop scheduled task (if running)
-        shell: powershell
+      - name: 🛑 Stop scheduled task (if running) & free port 80
+        shell: cmd
         run: |
-          schtasks /End /TN "finnews247" 2>$null
-          Start-Sleep -Seconds 2
+          schtasks /End /TN "finnews247" 2>nul
+          for /f "tokens=5" %%p in ('netstat -ano ^| findstr LISTENING ^| findstr ":80"') do taskkill /F /PID %%p 1>nul 2>nul
 
       - name: 🔄 Sync repo → C:\apps\finnews247 (mirror, keep logs & scripts)
-        shell: powershell
+        shell: cmd
         run: |
-          $src = "${env:GITHUB_WORKSPACE}"
-          $dst = 'C:\apps\finnews247'
-          robocopy $src $dst /MIR /XD .git .github node_modules .next logs scripts /XF start_finnews247.cmd | Out-Null
-          $code = $LASTEXITCODE
-          if ($code -le 7) { exit 0 } else { exit $code }
+          set SRC=%GITHUB_WORKSPACE%
+          set DST=C:\apps\finnews247
+          rem Giữ logs và scripts, không copy .git .github node_modules .next
+          robocopy "%SRC%" "%DST%" /MIR /XD .git .github node_modules .next logs scripts /XF start_finnews247.cmd
+          set RC=%ERRORLEVEL%
+          rem Robocopy: 0..7 = success
+          if %RC% LEQ 7 (exit /b 0) else (exit /b %RC%)
 
       - name: 🧹 Strip BOM from JSON (prevent 500)
         shell: powershell
@@ -60,18 +61,19 @@ jobs:
             }
           }
 
-      - name: 🟢 Use Node.js 22
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-
-      - name: 📦 Install dependencies
+      - name: 🟢 Node & npm versions
         shell: cmd
         working-directory: C:\apps\finnews247
         run: |
-          echo Node: && node -v
-          echo npm: && npm -v
-          rem Cài theo lockfile; KHÔNG dùng --include=dev
+          where node
+          where npm
+          node -v
+          npm -v
+
+      - name: 📦 Install dependencies (ci → fallback install)
+        shell: cmd
+        working-directory: C:\apps\finnews247
+        run: |
           call npm ci --no-audit --no-fund
           if errorlevel 1 (
             echo [warn] npm ci failed -> fallback npm install
@@ -84,92 +86,77 @@ jobs:
         working-directory: C:\apps\finnews247
         env:
           NODE_ENV: production
+          CI: 0
         run: |
           call npm run build
 
       - name: 🧾 Create start script
-        shell: powershell
+        shell: cmd
         run: |
-          $dst = 'C:\apps\finnews247'
-          $script = @"
-          @echo off
-          cd /d C:\apps\finnews247
-          set "NODE_ENV=production"
-          "C:\Program Files\nodejs\node.exe" node_modules\next\dist\bin\next start -p 80 1>>"C:\apps\finnews247\logs\out.log" 2>>"C:\apps\finnews247\logs\err.log"
-          "@
-          Set-Content -Path "$dst\start_finnews247.cmd" -Value $script -Encoding ASCII -NoNewline
+          > C:\apps\finnews247\start_finnews247.cmd (
+            echo @echo off
+            echo cd /d C:\apps\finnews247
+            echo set "NODE_ENV=production"
+            echo "C:\Program Files\nodejs\node.exe" node_modules\next\dist\bin\next start -p 80 1^>^>"C:\apps\finnews247\logs\out.log" 2^>^>"C:\apps\finnews247\logs\err.log"
+          )
 
       - name: 🧰 Create helper scripts (restart + warm)
-        shell: powershell
+        shell: cmd
         run: |
-          $dir = 'C:\apps\finnews247\scripts'
-          New-Item -ItemType Directory -Force -Path $dir | Out-Null
-          $warm = @"
-          @echo off
-          setlocal
-          cd /d C:\apps\finnews247
-
-          rem kill process on port 80 (nếu có)
-          for /f "tokens=5" %%p in ('netstat -ano ^| findstr LISTENING ^| findstr ":80"') do taskkill /F /PID %%p >nul 2>&1
-
-          rem start scheduled task
-          schtasks /Run /TN "finnews247" >nul 2>&1
-          timeout /t 3 >nul
-
-          rem warm homepage
-          curl -s -I http://127.0.0.1/ >nul
-
-          rem warm static assets
-          for /f %%f in ('dir /b .next\static\css\*.css 2^>NUL') do curl -s -o NUL http://127.0.0.1/_next/static/css/%%f
-          for /f %%f in ('dir /b .next\static\chunks\*.js 2^>NUL') do curl -s -o NUL http://127.0.0.1/_next/static/chunks/%%f
-
-          rem warm một ảnh hero (đổi tên nếu cần)
-          set "IMG=news94.jpg"
-          for %%w in (320 640 828 1080 1200 1920) do curl -s -o NUL "http://127.0.0.1/_next/image?url=%%2Fimages%%2F%IMG%&w=%%w&q=75"
-
-          endlocal
-          "@
-          Set-Content -Path "$dir\restart-and-warm.bat" -Value $warm -Encoding ASCII -NoNewline
-
-          $poll = @"
-          @echo off
-          setlocal
-          curl -s -I http://127.0.0.1/ >nul
-          if not "%ERRORLEVEL%"=="0" (
-            call C:\apps\finnews247\scripts\restart-and-warm.bat
+          > C:\apps\finnews247\scripts\restart-and-warm.bat (
+            echo @echo off
+            echo setlocal
+            echo cd /d C:\apps\finnews247
+            echo for /f "tokens=5" %%%%p in ^('netstat -ano ^^^| findstr LISTENING ^^^| findstr ":80"^) do taskkill /F /PID %%%%p ^>nul 2^>^&1
+            echo schtasks /Run /TN "finnews247" ^>nul 2^>^&1
+            echo timeout /t 3 ^>nul
+            echo curl -s -I http://127.0.0.1/ ^>nul
+            echo for /f %%%%f in ^('dir /b .next\static\css\*.css 2^^^>NUL'^) do curl -s -o NUL http://127.0.0.1/_next/static/css/%%%%f
+            echo for /f %%%%f in ^('dir /b .next\static\chunks\*.js 2^^^>NUL'^) do curl -s -o NUL http://127.0.0.1/_next/static/chunks/%%%%f
+            echo set "IMG=news94.jpg"
+            echo for %%%%w in ^(320 640 828 1080 1200 1920^) do curl -s -o NUL "http://127.0.0.1/_next/image?url=%%2Fimages%%2F%%25IMG%%25^&w=%%%%w^&q=75"
+            echo endlocal
           )
-          endlocal
-          "@
-          Set-Content -Path "$dir\auto-deploy-poll.bat" -Value $poll -Encoding ASCII -NoNewline
+          > C:\apps\finnews247\scripts\auto-deploy-poll.bat (
+            echo @echo off
+            echo setlocal
+            echo curl -s -I http://127.0.0.1/ ^>nul
+            echo if not "%%ERRORLEVEL%%"=="0" (
+            echo   call C:\apps\finnews247\scripts\restart-and-warm.bat
+            echo ^)
+            echo endlocal
+          )
 
       - name: 🗓️ Create/Update Windows Scheduled Task
-        shell: powershell
+        shell: cmd
         run: |
-          $taskName = "finnews247"
-          $exists = schtasks /Query /TN $taskName 2>$null
-          if (-not $?) {
-            schtasks /Create /TN $taskName /SC ONSTART /RU SYSTEM /RL HIGHEST /TR "C:\apps\finnews247\start_finnews247.cmd" /F
-          } else {
-            schtasks /Change /TN $taskName /TR "C:\apps\finnews247\start_finnews247.cmd"
-          }
+          schtasks /Query /TN "finnews247" 1>nul 2>nul
+          if errorlevel 1 (
+            schtasks /Create /TN "finnews247" /SC ONSTART /RU SYSTEM /RL HIGHEST /TR "C:\apps\finnews247\start_finnews247.cmd" /F
+          ) else (
+            schtasks /Change /TN "finnews247" /TR "C:\apps\finnews247\start_finnews247.cmd"
+          )
 
       - name: ▶️ Start app & health check
-        shell: powershell
+        shell: cmd
         run: |
-          schtasks /Run /TN "finnews247" | Out-Null
-          Start-Sleep -Seconds 3
-          try {
-            $r = Invoke-WebRequest -Uri "http://127.0.0.1/" -UseBasicParsing -TimeoutSec 10
-            if ($r.StatusCode -ge 500) { throw "Bad status: $($r.StatusCode)" }
-          } catch {
-            Write-Host "---- out.log (tail) ----"
-            if (Test-Path C:\apps\finnews247\logs\out.log) { Get-Content C:\apps\finnews247\logs\out.log -Tail 200 }
-            Write-Host "---- err.log (tail) ----"
-            if (Test-Path C:\apps\finnews247\logs\err.log) { Get-Content C:\apps\finnews247\logs\err.log -Tail 200 }
-            throw "Health check failed: $($_.Exception.Message)"
-          }
+          schtasks /Run /TN "finnews247" 1>nul 2>nul
+          timeout /t 3 >nul
+          for /f "tokens=2 delims=:" %%s in ('powershell -NoProfile -Command "(Invoke-WebRequest -Uri 'http://127.0.0.1/' -UseBasicParsing).StatusCode"') do set CODE=%%s
+          rem Nếu powershell ở trên không ra code thì dùng curl fallback
+          if "%CODE%"=="" (
+            for /f "tokens=2 delims= " %%h in ('curl -s -o NUL -w "HTTP %%{http_code}" http://127.0.0.1/') do set CODE=%%h
+          )
+          echo Health HTTP %CODE%
+          if "%CODE%"=="200" (exit /b 0) else (
+            echo ---- out.log (tail) ----
+            powershell -NoProfile -Command "if (Test-Path 'C:\apps\finnews247\logs\out.log') { Get-Content 'C:\apps\finnews247\logs\out.log' -Tail 200 }"
+            echo ---- err.log (tail) ----
+            powershell -NoProfile -Command "if (Test-Path 'C:\apps\finnews247\logs\err.log') { Get-Content 'C:\apps\finnews247\logs\err.log' -Tail 200 }"
+            exit /b 1
+          )
 
-      - name: 🔥 Warm cache (optional)
+      - name: 🔥 Re-warm cache (optional)
         shell: cmd
         run: |
           call C:\apps\finnews247\scripts\restart-and-warm.bat
