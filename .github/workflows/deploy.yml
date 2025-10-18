@@ -20,7 +20,7 @@ jobs:
     runs-on: self-hosted
     defaults:
       run:
-        shell: pwsh
+        shell: powershell
 
     steps:
       - name: "📥 Checkout repository"
@@ -33,15 +33,19 @@ jobs:
           New-Item -ItemType Directory -Force -Path 'C:\ops\finnews247' | Out-Null
 
       - name: "🛑 Stop task & free port 80 (non-fatal)"
+        continue-on-error: true
         run: |
           $ErrorActionPreference = 'SilentlyContinue'
           schtasks /End /TN "finnews247" 2>$null | Out-Null
           Start-Sleep -Seconds 1
-          $pids = Get-NetTCPConnection -LocalPort 80 -State Listen -ErrorAction SilentlyContinue |
-                  Select-Object -ExpandProperty OwningProcess -Unique
-          if ($pids) { foreach($pid in $pids){ Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue } }
+          try {
+            $conns = Get-NetTCPConnection -LocalPort 80 -State Listen -ErrorAction Stop
+            $pids = $conns | Select-Object -Expand OwningProcess -Unique
+          } catch {
+            $pids = @(netstat -ano | findstr ":80" | findstr "LISTENING" | ForEach-Object { ($_ -split '\s+')[-1] } | Select-Object -Unique)
+          }
+          foreach($pid in $pids){ taskkill /F /PID $pid 2>$null | Out-Null }
           exit 0
-        continue-on-error: true
 
       - name: "🔄 Sync repo → C:\apps\finnews247 (mirror, keep logs)"
         run: |
@@ -70,7 +74,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
 
-      - name: "📦 Install deps (include dev)"
+      - name: "📦 Install dependencies (include dev)"
         working-directory: C:\apps\finnews247
         run: |
           Remove-Item Env:\NODE_ENV -ErrorAction SilentlyContinue
@@ -84,19 +88,21 @@ jobs:
           NODE_ENV: production
         run: npm run build
 
+      # (postbuild trong package.json đã gọi next-sitemap; bước dưới chỉ là dự phòng)
       - name: "🧭 Generate sitemap (best effort)"
         working-directory: C:\apps\finnews247
+        continue-on-error: true
         run: |
-          npx next-sitemap || echo "skip next-sitemap"
+          npx next-sitemap
 
       - name: "🧾 Create/refresh start script (outside repo)"
         run: |
-          @'
+          @"
           @echo off
           cd /d C:\apps\finnews247
           set "NODE_ENV=production"
           "C:\Program Files\nodejs\node.exe" node_modules\next\dist\bin\next start -p 80 1>>"C:\apps\finnews247\logs\out.log" 2>>"C:\apps\finnews247\logs\err.log"
-          '@ | Set-Content -Path 'C:\ops\finnews247\start_finnews247.cmd' -Encoding Ascii -NoNewline
+          "@ | Set-Content -Path 'C:\ops\finnews247\start_finnews247.cmd' -Encoding Ascii -NoNewline
 
       - name: "🗓️ Create/Update Windows Scheduled Task"
         run: |
