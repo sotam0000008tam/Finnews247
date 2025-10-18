@@ -1,4 +1,4 @@
-name: "🚀 Deploy Finnews247 to Windows VPS"
+name: 🚀 Deploy Finnews247 to Windows VPS
 
 on:
   workflow_dispatch:
@@ -18,48 +18,41 @@ on:
 jobs:
   deploy:
     runs-on: self-hosted
+    defaults:
+      run:
+        shell: powershell
 
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
       - name: 📁 Ensure target folders
-        shell: cmd
         run: |
-          if not exist C:\apps\finnews247 mkdir C:\apps\finnews247
-          if not exist C:\apps\finnews247\logs mkdir C:\apps\finnews247\logs
-          if not exist C:\apps\finnews247\scripts mkdir C:\apps\finnews247\scripts
+          New-Item -ItemType Directory -Force -Path 'C:\apps\finnews247' | Out-Null
+          New-Item -ItemType Directory -Force -Path 'C:\apps\finnews247\logs' | Out-Null
+          New-Item -ItemType Directory -Force -Path 'C:\ops\finnews247' | Out-Null
 
+      # KHÔNG để step này fail dù không có task/PID
       - name: 🛑 Stop scheduled task (if running) & free port 80
-        shell: cmd
         run: |
-          rem Kết thúc task nếu có (nếu không có thì cũng pass)
-          schtasks /End /TN "finnews247" 2>nul || ver >nul
+          $ErrorActionPreference = 'SilentlyContinue'
+          schtasks /End /TN "finnews247" 2>$null | Out-Null
+          Start-Sleep -Seconds 1
+          $pids = (Get-NetTCPConnection -LocalPort 80 -State Listen -ErrorAction SilentlyContinue | Select-Object -Expand OwningProcess -Unique)
+          if ($pids) { $pids | % { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue } }
+          exit 0
+        continue-on-error: true
 
-          rem Tìm và kill PID nghe cổng 80; nếu không có thì vẫn exit 0
-          set "FOUND="
-          for /f "tokens=5" %%p in ('netstat -ano ^| findstr LISTENING ^| findstr ":80"') do (
-          set FOUND=1
-          taskkill /F /PID %%p 1>nul 2>nul
-          )
-          if not defined FOUND echo No process is listening on :80
-
-          rem Bắt buộc trả về 0 để step không fail khi không có PID
-          exit /b 0
-
-      - name: 🔄 Sync repo → C:\apps\finnews247 (mirror, keep logs & scripts)
-        shell: cmd
+      - name: 🔄 Sync repo → C:\apps\finnews247 (mirror, keep logs)
         run: |
-          set SRC=%GITHUB_WORKSPACE%
-          set DST=C:\apps\finnews247
-          rem Giữ logs và scripts, không copy .git .github node_modules .next
-          robocopy "%SRC%" "%DST%" /MIR /XD .git .github node_modules .next logs scripts /XF start_finnews247.cmd
-          set RC=%ERRORLEVEL%
-          rem Robocopy: 0..7 = success
-          if %RC% LEQ 7 (exit /b 0) else (exit /b %RC%)
+          $src = "${env:GITHUB_WORKSPACE}"
+          $dst = 'C:\apps\finnews247'
+          robocopy $src $dst /MIR /XD .git .github node_modules .next logs | Out-Null
+          $code = $LASTEXITCODE
+          if ($code -le 7) { exit 0 } else { exit $code }
 
+      # đề phòng JSON có BOM gây 500
       - name: 🧹 Strip BOM from JSON (prevent 500)
-        shell: powershell
         run: |
           $dir = 'C:\apps\finnews247\data'
           if (Test-Path $dir) {
@@ -72,102 +65,76 @@ jobs:
             }
           }
 
-      - name: 🟢 Node & npm versions
-        shell: cmd
-        working-directory: C:\apps\finnews247
-        run: |
-          where node
-          where npm
-          node -v
-          npm -v
+      - name: 🟢 Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: 'C:\apps\finnews247\package-lock.json'
 
-      - name: 📦 Install dependencies (ci → fallback install)
-        shell: cmd
+      # QUAN TRỌNG: ép cài cả devDependencies cho next-sitemap
+      - name: 📦 Install dependencies (include dev)
         working-directory: C:\apps\finnews247
         run: |
-          call npm ci --no-audit --no-fund
-          if errorlevel 1 (
-            echo [warn] npm ci failed -> fallback npm install
-            call npm install --no-audit --no-fund
-            if errorlevel 1 exit /b 1
-          )
+          # Clear any inherited NODE_ENV to avoid dev deps being skipped
+          Remove-Item Env:\NODE_ENV -ErrorAction SilentlyContinue
+          $env:NPM_CONFIG_PRODUCTION = "false"
+          npm ci --no-audit --no-fund 2>$null
+          if ($LASTEXITCODE -ne 0) { npm install --no-audit --no-fund }
 
       - name: 🏗️ Build (Next.js)
-        shell: cmd
         working-directory: C:\apps\finnews247
         env:
           NODE_ENV: production
-          CI: 0
         run: |
-          call npm run build
+          npm run build
 
-      - name: 🧾 Create start script
-        shell: cmd
+      # đề phòng script postbuild không chạy: gọi npx trực tiếp (không fail nếu thiếu)
+      - name: 🧭 Generate sitemap (best effort)
+        working-directory: C:\apps\finnews247
         run: |
-          > C:\apps\finnews247\start_finnews247.cmd (
-            echo @echo off
-            echo cd /d C:\apps\finnews247
-            echo set "NODE_ENV=production"
-            echo "C:\Program Files\nodejs\node.exe" node_modules\next\dist\bin\next start -p 80 1^>^>"C:\apps\finnews247\logs\out.log" 2^>^>"C:\apps\finnews247\logs\err.log"
-          )
+          npx next-sitemap || echo "skip next-sitemap"
 
-      - name: 🧰 Create helper scripts (restart + warm)
-        shell: cmd
+      # Đặt script KHÔNG nằm trong repo để không bị /MIR xóa
+      - name: 🧾 Create/refresh start script
         run: |
-          > C:\apps\finnews247\scripts\restart-and-warm.bat (
-            echo @echo off
-            echo setlocal
-            echo cd /d C:\apps\finnews247
-            echo for /f "tokens=5" %%%%p in ^('netstat -ano ^^^| findstr LISTENING ^^^| findstr ":80"^) do taskkill /F /PID %%%%p ^>nul 2^>^&1
-            echo schtasks /Run /TN "finnews247" ^>nul 2^>^&1
-            echo timeout /t 3 ^>nul
-            echo curl -s -I http://127.0.0.1/ ^>nul
-            echo for /f %%%%f in ^('dir /b .next\static\css\*.css 2^^^>NUL'^) do curl -s -o NUL http://127.0.0.1/_next/static/css/%%%%f
-            echo for /f %%%%f in ^('dir /b .next\static\chunks\*.js 2^^^>NUL'^) do curl -s -o NUL http://127.0.0.1/_next/static/chunks/%%%%f
-            echo set "IMG=news94.jpg"
-            echo for %%%%w in ^(320 640 828 1080 1200 1920^) do curl -s -o NUL "http://127.0.0.1/_next/image?url=%%2Fimages%%2F%%25IMG%%25^&w=%%%%w^&q=75"
-            echo endlocal
-          )
-          > C:\apps\finnews247\scripts\auto-deploy-poll.bat (
-            echo @echo off
-            echo setlocal
-            echo curl -s -I http://127.0.0.1/ ^>nul
-            echo if not "%%ERRORLEVEL%%"=="0" (
-            echo   call C:\apps\finnews247\scripts\restart-and-warm.bat
-            echo ^)
-            echo endlocal
-          )
+          $content = @"
+          @echo off
+          cd /d C:\apps\finnews247
+          set "NODE_ENV=production"
+          "C:\Program Files\nodejs\node.exe" node_modules\next\dist\bin\next start -p 80 1>>"C:\apps\finnews247\logs\out.log" 2>>"C:\apps\finnews247\logs\err.log"
+"@
+          Set-Content -Path "C:\ops\finnews247\start_finnews247.cmd" -Value $content -Encoding ASCII -NoNewline
 
       - name: 🗓️ Create/Update Windows Scheduled Task
-        shell: cmd
         run: |
-          schtasks /Query /TN "finnews247" 1>nul 2>nul
-          if errorlevel 1 (
-            schtasks /Create /TN "finnews247" /SC ONSTART /RU SYSTEM /RL HIGHEST /TR "C:\apps\finnews247\start_finnews247.cmd" /F
-          ) else (
-            schtasks /Change /TN "finnews247" /TR "C:\apps\finnews247\start_finnews247.cmd"
-          )
+          $taskName = "finnews247"
+          $exists = schtasks /Query /TN $taskName 2>$null
+          if (-not $?) {
+            schtasks /Create /TN $taskName /SC ONSTART /RU SYSTEM /RL HIGHEST /TR "C:\ops\finnews247\start_finnews247.cmd" /F
+          } else {
+            schtasks /Change /TN $taskName /TR "C:\ops\finnews247\start_finnews247.cmd"
+          }
 
       - name: ▶️ Start app & health check
-        shell: cmd
         run: |
-          schtasks /Run /TN "finnews247" 1>nul 2>nul
-          timeout /t 3 >nul
-          for /f "tokens=2 delims=:" %%s in ('powershell -NoProfile -Command "(Invoke-WebRequest -Uri 'http://127.0.0.1/' -UseBasicParsing).StatusCode"') do set CODE=%%s
-          rem Nếu powershell ở trên không ra code thì dùng curl fallback
-          if "%CODE%"=="" (
-            for /f "tokens=2 delims= " %%h in ('curl -s -o NUL -w "HTTP %%{http_code}" http://127.0.0.1/') do set CODE=%%h
-          )
-          echo Health HTTP %CODE%
-          if "%CODE%"=="200" (exit /b 0) else (
-            echo ---- out.log (tail) ----
-            powershell -NoProfile -Command "if (Test-Path 'C:\apps\finnews247\logs\out.log') { Get-Content 'C:\apps\finnews247\logs\out.log' -Tail 200 }"
-            echo ---- err.log (tail) ----
-            powershell -NoProfile -Command "if (Test-Path 'C:\apps\finnews247\logs\err.log') { Get-Content 'C:\apps\finnews247\logs\err.log' -Tail 200 }"
-            exit /b 1
-          )
+          schtasks /Run /TN "finnews247" | Out-Null
+          Start-Sleep -Seconds 3
+          try {
+            $r = Invoke-WebRequest -Uri "http://127.0.0.1/" -UseBasicParsing -TimeoutSec 8
+            if ($r.StatusCode -lt 200 -or $r.StatusCode -ge 500) { throw "Bad status: $($r.StatusCode)" }
+            "Health OK: $($r.StatusCode)"
+          } catch {
+            Write-Host "Health check failed: $($_.Exception.Message)" -ForegroundColor Yellow
+          }
 
+      # Không bắt buộc: warm cache để truy cập đầu tiên nhanh hơn, và KHÔNG fail job
       - name: 🔥 Re-warm cache (optional)
-        shell: cmd
+        continue-on-error: true
         run: |
-          call C:\apps\finnews247\scripts\restart-and-warm.bat
+          $css = Get-ChildItem "C:\apps\finnews247\.next\static\css\*.css" -Name -ErrorAction SilentlyContinue
+          foreach ($f in $css) { Invoke-WebRequest "http://127.0.0.1/_next/static/css/$f" -UseBasicParsing -TimeoutSec 8 | Out-Null }
+          $chunks = Get-ChildItem "C:\apps\finnews247\.next\static\chunks\*.js" -Name -ErrorAction SilentlyContinue
+          foreach ($f in $chunks) { Invoke-WebRequest "http://127.0.0.1/_next/static/chunks/$f" -UseBasicParsing -TimeoutSec 8 | Out-Null }
+          $W=(320,640,828,1080,1200,1920)
+          foreach ($w in $W) { Invoke-WebRequest "http://127.0.0.1/_next/image?url=%2Fimages%2Fnews94.jpg&w=$w&q=75" -UseBasicParsing -TimeoutSec 8 | Out-Null }
