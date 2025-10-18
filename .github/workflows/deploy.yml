@@ -38,45 +38,35 @@ jobs:
           schtasks /End /TN "finnews247" 2>$null
           Start-Sleep -Seconds 2
 
-      - name: 🔄 Sync repo → C:\apps\finnews247 (mirror, keep logs & scripts)
+      - name: 🔄 Sync repo → C:\apps\finnews247 (mirror, keep logs/scripts)
         shell: powershell
         run: |
           $src = "${env:GITHUB_WORKSPACE}"
           $dst = 'C:\apps\finnews247'
-          # Giữ lại logs & scripts trên server
           robocopy $src $dst /MIR /XD .git .github node_modules .next logs scripts | Out-Null
-          $code = $LASTEXITCODE
-          if ($code -le 7) { exit 0 } else { exit $code }
+          if ($LASTEXITCODE -gt 7) { exit $LASTEXITCODE }
 
-      - name: 🧹 (Optional) Strip BOM from JSON to avoid 500
-        shell: powershell
-        run: |
-          $dir = 'C:\apps\finnews247\data'
-          if (Test-Path $dir) {
-            Get-ChildItem $dir -Filter *.json -Recurse | ForEach-Object {
-              $bytes = [System.IO.File]::ReadAllBytes($_.FullName)
-              if ($bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF) {
-                $content = [System.Text.Encoding]::UTF8.GetString($bytes,3,$bytes.Length-3)
-                [System.IO.File]::WriteAllText($_.FullName, $content, [System.Text.Encoding]::UTF8)
-              }
-            }
-          }
-
-      - name: 🟢 Use Node.js 20 (LTS)
+      - name: 🟢 Use Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: '22'
 
-      - name: 📦 Install dependencies (include devDependencies)
+      - name: 📦 Install dependencies (include dev)
         shell: powershell
         working-directory: C:\apps\finnews247
         env:
           NPM_CONFIG_PRODUCTION: "false"
           NODE_ENV: ""
         run: |
-          npm ci
-          if ($LASTEXITCODE -ne 0) { npm install }
+          npm ci --include=dev 2>$null
+          if ($LASTEXITCODE -ne 0) { npm install --include=dev }
+
+      - name: ✅ Verify next-sitemap is available
+        shell: powershell
+        working-directory: C:\apps\finnews247
+        run: |
+          npx --no-install next-sitemap --version 2>$null
+          if ($LASTEXITCODE -ne 0) { npm i -D next-sitemap }
 
       - name: 🏗️ Build (Next.js)
         shell: powershell
@@ -86,80 +76,56 @@ jobs:
         run: |
           npm run build
 
-      - name: 🧾 Create start script (CMD)
+      - name: 🗺️ Generate sitemap (defensive)
+        shell: powershell
+        working-directory: C:\apps\finnews247
+        run: |
+          if (Test-Path ".\next-sitemap.config.js") {
+            npx next-sitemap --config .\next-sitemap.config.js
+          }
+
+      - name: 🧾 Write start script + warm scripts
         shell: powershell
         run: |
           $dst = 'C:\apps\finnews247'
-          $script = @"
+          # start_finnews247.cmd
+          $start = @"
           @echo off
           cd /d C:\apps\finnews247
           set "NODE_ENV=production"
           "C:\Program Files\nodejs\node.exe" node_modules\next\dist\bin\next start -p 80 1>>"C:\apps\finnews247\logs\out.log" 2>>"C:\apps\finnews247\logs\err.log"
           "@
-          Set-Content -Path "$dst\start_finnews247.cmd" -Value $script -Encoding ASCII -NoNewline
+          Set-Content -Path "$dst\start_finnews247.cmd" -Value $start -Encoding ASCII -NoNewline
 
-      - name: 🛠️ (Re)Create helper scripts (restart & warm, auto-deploy poll)
-        shell: powershell
-        run: |
-          $dir = 'C:\apps\finnews247\scripts'
-          New-Item -ItemType Directory -Force -Path $dir | Out-Null
-
-          # restart-and-warm.bat
+          # scripts\restart-and-warm.bat
           $warm = @"
           @echo off
-          setlocal enabledelayedexpansion
-          cd /d C:\apps\finnews247
-
           for /f "tokens=5" %%p in ('netstat -ano ^| findstr LISTENING ^| findstr ":80"') do taskkill /F /PID %%p
-
-          schtasks /Run /TN "finnews247" >NUL 2>&1
-          timeout /t 3 /nobreak >NUL
-
-          set BASE=http://127.0.0.1
-
-          curl -s -o NUL %BASE%/
-          for %%f in (.next\static\css\*.css) do curl -s -o NUL %BASE%/_next/static/css/%%~nxf
-          for %%f in (.next\static\chunks\*.js) do curl -s -o NUL %BASE%/_next/static/chunks/%%~nxf
-
-          set U=%BASE%/_next/image?url=%2Fimages%2Fnews94.jpg
-          for %%w in (320 640 828 1080 1200 1920) do curl -s -o NUL "!U!&w=%%w&q=75"
-
-          endlocal
+          schtasks /Run /TN "finnews247"
+          timeout /t 3 >NUL
+          curl -s -o NUL http://127.0.0.1/
+          for /f %%f in ('dir /b .next\static\css\*.css') do curl -s -o NUL http://127.0.0.1/_next/static/css/%%f
+          for /f %%f in ('dir /b .next\static\chunks\*.js') do curl -s -o NUL http://127.0.0.1/_next/static/chunks/%%f
+          set U=http://127.0.0.1/_next/image?url=%2Fimages%2Fnews94.jpg
+          for %%w in (320 640 828 1080 1200 1920) do curl -s -o NUL "%U%&w=%%w&q=75"
           "@
-          Set-Content -Path "$dir\restart-and-warm.bat" -Value $warm -Encoding ASCII -NoNewline
+          Set-Content -Path "$dst\scripts\restart-and-warm.bat" -Value $warm -Encoding ASCII -NoNewline
 
-          # auto-deploy-poll.bat (tuỳ chọn dùng nội bộ)
+          # scripts\auto-deploy-poll.bat (placeholder nếu bạn cần)
           $poll = @"
           @echo off
-          cd /d C:\apps\finnews247
-          :loop
-          git fetch origin main
-          for /f %%h in ('git rev-parse HEAD') do set LOCAL=%%h
-          for /f %%h in ('git rev-parse origin/main') do set REMOTE=%%h
-          if not "!LOCAL!"=="!REMOTE!" (
-            echo Changes detected at %date% %time%
-            git reset --hard
-            git pull --rebase
-            set NPM_CONFIG_PRODUCTION=false
-            set NODE_ENV=
-            npm ci || npm install
-            npm run build
-            call C:\apps\finnews247\scripts\restart-and-warm.bat
-          )
-          timeout /t 60 /nobreak >nul
-          goto loop
+          echo watcher placeholder
           "@
-          Set-Content -Path "$dir\auto-deploy-poll.bat" -Value $poll -Encoding ASCII -NoNewline
+          Set-Content -Path "$dst\scripts\auto-deploy-poll.bat" -Value $poll -Encoding ASCII -NoNewline
 
       - name: 🗓️ Create/Update Windows Scheduled Task
         shell: powershell
         run: |
           $taskName = "finnews247"
-          $exists = schtasks /Query /TN $taskName 2>$null
-          if (-not $?) {
-            schtasks /Create /TN $taskName /SC ONSTART /RU SYSTEM /RL HIGHEST /TR "C:\apps\finnews247\start_finnews247.cmd" /F
-          } else {
+          if (schtasks /Query /TN $taskName 2>$null) {
             schtasks /Change /TN $taskName /TR "C:\apps\finnews247\start_finnews247.cmd"
+          } else {
+            schtasks /Create /TN $taskName /SC ONSTART /RU SYSTEM /RL HIGHEST /TR "C:\apps\finnews247\start_finnews247.cmd" /F
           }
 
       - name: ▶️ Start app & health check
@@ -167,13 +133,4 @@ jobs:
         run: |
           schtasks /Run /TN "finnews247" | Out-Null
           Start-Sleep -Seconds 3
-          try {
-            $r = Invoke-WebRequest -Uri "http://127.0.0.1/" -UseBasicParsing -TimeoutSec 8
-            if ($r.StatusCode -lt 200 -or $r.StatusCode -ge 500) { throw "Bad status: $($r.StatusCode)" }
-          } catch {
-            Write-Error "Health check failed: $($_.Exception.Message)"
-          }
-
-      - name: 🔥 Re-warm cache (call script)
-        shell: cmd
-        run: C:\apps\finnews247\scripts\restart-and-warm.bat
+          (Invoke-WebRequest -Uri "http://127.0.0.1/" -UseBasicParsing -TimeoutSec 8).StatusCode
