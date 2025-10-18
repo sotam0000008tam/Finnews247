@@ -1,4 +1,4 @@
-name: 🚀 Deploy Finnews247 to Windows VPS
+name: "🚀 Deploy Finnews247 to Windows VPS"
 
 on:
   workflow_dispatch:
@@ -11,7 +11,6 @@ on:
       - 'public/**'
       - 'lib/**'
       - 'next.config.js'
-      - 'next-sitemap.config.js'
       - 'package.json'
       - 'package-lock.json'
       - '.github/workflows/deploy.yml'
@@ -38,104 +37,120 @@ jobs:
           schtasks /End /TN "finnews247" 2>$null
           Start-Sleep -Seconds 2
 
-      - name: 🔄 Sync repo → C:\apps\finnews247 (mirror, keep logs/scripts)
-        shell: cmd
+      - name: 🔄 Sync repo → C:\apps\finnews247 (mirror, keep logs & scripts)
+        shell: powershell
         run: |
-          set SRC=%GITHUB_WORKSPACE%
-          set DST=C:\apps\finnews247
-          echo SRC=%SRC%
-          echo DST=%DST%
-          rem mirror mã nguồn nhưng bỏ .git/.github, node_modules, .next, logs, scripts
-          robocopy "%SRC%" "%DST%" /MIR /XD .git .github node_modules .next logs scripts /R:2 /W:2
-          set RC=%ERRORLEVEL%
-          if %RC% LEQ 7 ( exit 0 ) else ( exit %RC% )
-      - name: 🔎 Debug env
-        shell: cmd
-        run: |
-          echo GITHUB_WORKSPACE=%GITHUB_WORKSPACE%
-          dir "%GITHUB_WORKSPACE%"
+          $src = "${env:GITHUB_WORKSPACE}"
+          $dst = 'C:\apps\finnews247'
+          robocopy $src $dst /MIR /XD .git .github node_modules .next logs scripts /XF start_finnews247.cmd | Out-Null
+          $code = $LASTEXITCODE
+          if ($code -le 7) { exit 0 } else { exit $code }
 
+      - name: 🧹 Strip BOM from JSON (prevent 500)
+        shell: powershell
+        run: |
+          $dir = 'C:\apps\finnews247\data'
+          if (Test-Path $dir) {
+            Get-ChildItem $dir -Filter *.json -Recurse | ForEach-Object {
+              $bytes = [System.IO.File]::ReadAllBytes($_.FullName)
+              if ($bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF) {
+                $content = [System.Text.Encoding]::UTF8.GetString($bytes,3,$bytes.Length-3)
+                [System.IO.File]::WriteAllText($_.FullName, $content, [System.Text.Encoding]::UTF8)
+              }
+            }
+          }
 
       - name: 🟢 Use Node.js 22
         uses: actions/setup-node@v4
         with:
           node-version: '22'
 
-      - name: 📦 Install dependencies (include dev)
-        shell: powershell
-        working-directory: C:\apps\finnews247
-        env:
-          NPM_CONFIG_PRODUCTION: "false"
-          NODE_ENV: ""
-        run: |
-          npm ci --include=dev 2>$null
-          if ($LASTEXITCODE -ne 0) { npm install --include=dev }
-
-      - name: ✅ Verify next-sitemap is available
-        shell: powershell
+      - name: 📦 Install dependencies
+        shell: cmd
         working-directory: C:\apps\finnews247
         run: |
-          npx --no-install next-sitemap --version 2>$null
-          if ($LASTEXITCODE -ne 0) { npm i -D next-sitemap }
+          echo Node: && node -v
+          echo npm: && npm -v
+          rem Cài theo lockfile; KHÔNG dùng --include=dev
+          call npm ci --no-audit --no-fund
+          if errorlevel 1 (
+            echo [warn] npm ci failed -> fallback npm install
+            call npm install --no-audit --no-fund
+            if errorlevel 1 exit /b 1
+          )
 
       - name: 🏗️ Build (Next.js)
-        shell: powershell
+        shell: cmd
         working-directory: C:\apps\finnews247
         env:
           NODE_ENV: production
         run: |
-          npm run build
+          call npm run build
 
-      - name: 🗺️ Generate sitemap (defensive)
-        shell: powershell
-        working-directory: C:\apps\finnews247
-        run: |
-          if (Test-Path ".\next-sitemap.config.js") {
-            npx next-sitemap --config .\next-sitemap.config.js
-          }
-
-      - name: 🧾 Write start script + warm scripts
+      - name: 🧾 Create start script
         shell: powershell
         run: |
           $dst = 'C:\apps\finnews247'
-          # start_finnews247.cmd
-          $start = @"
+          $script = @"
           @echo off
           cd /d C:\apps\finnews247
           set "NODE_ENV=production"
           "C:\Program Files\nodejs\node.exe" node_modules\next\dist\bin\next start -p 80 1>>"C:\apps\finnews247\logs\out.log" 2>>"C:\apps\finnews247\logs\err.log"
           "@
-          Set-Content -Path "$dst\start_finnews247.cmd" -Value $start -Encoding ASCII -NoNewline
+          Set-Content -Path "$dst\start_finnews247.cmd" -Value $script -Encoding ASCII -NoNewline
 
-          # scripts\restart-and-warm.bat
+      - name: 🧰 Create helper scripts (restart + warm)
+        shell: powershell
+        run: |
+          $dir = 'C:\apps\finnews247\scripts'
+          New-Item -ItemType Directory -Force -Path $dir | Out-Null
           $warm = @"
           @echo off
-          for /f "tokens=5" %%p in ('netstat -ano ^| findstr LISTENING ^| findstr ":80"') do taskkill /F /PID %%p
-          schtasks /Run /TN "finnews247"
-          timeout /t 3 >NUL
-          curl -s -o NUL http://127.0.0.1/
-          for /f %%f in ('dir /b .next\static\css\*.css') do curl -s -o NUL http://127.0.0.1/_next/static/css/%%f
-          for /f %%f in ('dir /b .next\static\chunks\*.js') do curl -s -o NUL http://127.0.0.1/_next/static/chunks/%%f
-          set U=http://127.0.0.1/_next/image?url=%2Fimages%2Fnews94.jpg
-          for %%w in (320 640 828 1080 1200 1920) do curl -s -o NUL "%U%&w=%%w&q=75"
-          "@
-          Set-Content -Path "$dst\scripts\restart-and-warm.bat" -Value $warm -Encoding ASCII -NoNewline
+          setlocal
+          cd /d C:\apps\finnews247
 
-          # scripts\auto-deploy-poll.bat (placeholder nếu bạn cần)
+          rem kill process on port 80 (nếu có)
+          for /f "tokens=5" %%p in ('netstat -ano ^| findstr LISTENING ^| findstr ":80"') do taskkill /F /PID %%p >nul 2>&1
+
+          rem start scheduled task
+          schtasks /Run /TN "finnews247" >nul 2>&1
+          timeout /t 3 >nul
+
+          rem warm homepage
+          curl -s -I http://127.0.0.1/ >nul
+
+          rem warm static assets
+          for /f %%f in ('dir /b .next\static\css\*.css 2^>NUL') do curl -s -o NUL http://127.0.0.1/_next/static/css/%%f
+          for /f %%f in ('dir /b .next\static\chunks\*.js 2^>NUL') do curl -s -o NUL http://127.0.0.1/_next/static/chunks/%%f
+
+          rem warm một ảnh hero (đổi tên nếu cần)
+          set "IMG=news94.jpg"
+          for %%w in (320 640 828 1080 1200 1920) do curl -s -o NUL "http://127.0.0.1/_next/image?url=%%2Fimages%%2F%IMG%&w=%%w&q=75"
+
+          endlocal
+          "@
+          Set-Content -Path "$dir\restart-and-warm.bat" -Value $warm -Encoding ASCII -NoNewline
+
           $poll = @"
           @echo off
-          echo watcher placeholder
+          setlocal
+          curl -s -I http://127.0.0.1/ >nul
+          if not "%ERRORLEVEL%"=="0" (
+            call C:\apps\finnews247\scripts\restart-and-warm.bat
+          )
+          endlocal
           "@
-          Set-Content -Path "$dst\scripts\auto-deploy-poll.bat" -Value $poll -Encoding ASCII -NoNewline
+          Set-Content -Path "$dir\auto-deploy-poll.bat" -Value $poll -Encoding ASCII -NoNewline
 
       - name: 🗓️ Create/Update Windows Scheduled Task
         shell: powershell
         run: |
           $taskName = "finnews247"
-          if (schtasks /Query /TN $taskName 2>$null) {
-            schtasks /Change /TN $taskName /TR "C:\apps\finnews247\start_finnews247.cmd"
-          } else {
+          $exists = schtasks /Query /TN $taskName 2>$null
+          if (-not $?) {
             schtasks /Create /TN $taskName /SC ONSTART /RU SYSTEM /RL HIGHEST /TR "C:\apps\finnews247\start_finnews247.cmd" /F
+          } else {
+            schtasks /Change /TN $taskName /TR "C:\apps\finnews247\start_finnews247.cmd"
           }
 
       - name: ▶️ Start app & health check
@@ -143,4 +158,18 @@ jobs:
         run: |
           schtasks /Run /TN "finnews247" | Out-Null
           Start-Sleep -Seconds 3
-          (Invoke-WebRequest -Uri "http://127.0.0.1/" -UseBasicParsing -TimeoutSec 8).StatusCode
+          try {
+            $r = Invoke-WebRequest -Uri "http://127.0.0.1/" -UseBasicParsing -TimeoutSec 10
+            if ($r.StatusCode -ge 500) { throw "Bad status: $($r.StatusCode)" }
+          } catch {
+            Write-Host "---- out.log (tail) ----"
+            if (Test-Path C:\apps\finnews247\logs\out.log) { Get-Content C:\apps\finnews247\logs\out.log -Tail 200 }
+            Write-Host "---- err.log (tail) ----"
+            if (Test-Path C:\apps\finnews247\logs\err.log) { Get-Content C:\apps\finnews247\logs\err.log -Tail 200 }
+            throw "Health check failed: $($_.Exception.Message)"
+          }
+
+      - name: 🔥 Warm cache (optional)
+        shell: cmd
+        run: |
+          call C:\apps\finnews247\scripts\restart-and-warm.bat
