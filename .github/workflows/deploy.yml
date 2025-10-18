@@ -39,12 +39,22 @@ jobs:
           Start-Sleep -Seconds 2
 
       - name: 🔄 Sync repo → C:\apps\finnews247 (mirror, keep logs/scripts)
-        shell: powershell
+        shell: cmd
         run: |
-          $src = "${env:GITHUB_WORKSPACE}"
-          $dst = 'C:\apps\finnews247'
-          robocopy $src $dst /MIR /XD .git .github node_modules .next logs scripts | Out-Null
-          if ($LASTEXITCODE -gt 7) { exit $LASTEXITCODE }
+          set SRC=%GITHUB_WORKSPACE%
+          set DST=C:\apps\finnews247
+          echo SRC=%SRC%
+          echo DST=%DST%
+          rem mirror mã nguồn nhưng bỏ .git/.github, node_modules, .next, logs, scripts
+          robocopy "%SRC%" "%DST%" /MIR /XD .git .github node_modules .next logs scripts /R:2 /W:2
+          set RC=%ERRORLEVEL%
+          if %RC% LEQ 7 ( exit 0 ) else ( exit %RC% )
+      - name: 🔎 Debug env
+        shell: cmd
+        run: |
+          echo GITHUB_WORKSPACE=%GITHUB_WORKSPACE%
+          dir "%GITHUB_WORKSPACE%"
+
 
       - name: 🟢 Use Node.js 22
         uses: actions/setup-node@v4
