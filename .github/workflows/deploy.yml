@@ -33,8 +33,19 @@ jobs:
       - name: 🛑 Stop scheduled task (if running) & free port 80
         shell: cmd
         run: |
-          schtasks /End /TN "finnews247" 2>nul
-          for /f "tokens=5" %%p in ('netstat -ano ^| findstr LISTENING ^| findstr ":80"') do taskkill /F /PID %%p 1>nul 2>nul
+          rem Kết thúc task nếu có (nếu không có thì cũng pass)
+          schtasks /End /TN "finnews247" 2>nul || ver >nul
+
+          rem Tìm và kill PID nghe cổng 80; nếu không có thì vẫn exit 0
+          set "FOUND="
+          for /f "tokens=5" %%p in ('netstat -ano ^| findstr LISTENING ^| findstr ":80"') do (
+          set FOUND=1
+          taskkill /F /PID %%p 1>nul 2>nul
+          )
+          if not defined FOUND echo No process is listening on :80
+
+          rem Bắt buộc trả về 0 để step không fail khi không có PID
+          exit /b 0
 
       - name: 🔄 Sync repo → C:\apps\finnews247 (mirror, keep logs & scripts)
         shell: cmd
