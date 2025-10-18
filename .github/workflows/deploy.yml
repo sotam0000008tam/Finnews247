@@ -11,6 +11,7 @@ on:
       - 'public/**'
       - 'lib/**'
       - 'next.config.js'
+      - 'next-sitemap.config.js'
       - 'package.json'
       - 'package-lock.json'
       - '.github/workflows/deploy.yml'
@@ -29,6 +30,7 @@ jobs:
           $dst = 'C:\apps\finnews247'
           New-Item -ItemType Directory -Force -Path $dst | Out-Null
           New-Item -ItemType Directory -Force -Path "$dst\logs" | Out-Null
+          New-Item -ItemType Directory -Force -Path "$dst\scripts" | Out-Null
 
       - name: 🛑 Stop scheduled task (if running)
         shell: powershell
@@ -36,12 +38,13 @@ jobs:
           schtasks /End /TN "finnews247" 2>$null
           Start-Sleep -Seconds 2
 
-      - name: 🔄 Sync repo → C:\apps\finnews247 (mirror, keep logs)
+      - name: 🔄 Sync repo → C:\apps\finnews247 (mirror, keep logs & scripts)
         shell: powershell
         run: |
           $src = "${env:GITHUB_WORKSPACE}"
           $dst = 'C:\apps\finnews247'
-          robocopy $src $dst /MIR /XD .git .github node_modules .next logs | Out-Null
+          # Giữ lại logs & scripts trên server
+          robocopy $src $dst /MIR /XD .git .github node_modules .next logs scripts | Out-Null
           $code = $LASTEXITCODE
           if ($code -le 7) { exit 0 } else { exit $code }
 
@@ -59,16 +62,20 @@ jobs:
             }
           }
 
-      - name: 🟢 Use Node.js 22
+      - name: 🟢 Use Node.js 20 (LTS)
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '20'
+          cache: 'npm'
 
-      - name: 📦 Install dependencies
+      - name: 📦 Install dependencies (include devDependencies)
         shell: powershell
         working-directory: C:\apps\finnews247
+        env:
+          NPM_CONFIG_PRODUCTION: "false"
+          NODE_ENV: ""
         run: |
-          npm ci 2>$null
+          npm ci
           if ($LASTEXITCODE -ne 0) { npm install }
 
       - name: 🏗️ Build (Next.js)
@@ -90,6 +97,59 @@ jobs:
           "C:\Program Files\nodejs\node.exe" node_modules\next\dist\bin\next start -p 80 1>>"C:\apps\finnews247\logs\out.log" 2>>"C:\apps\finnews247\logs\err.log"
           "@
           Set-Content -Path "$dst\start_finnews247.cmd" -Value $script -Encoding ASCII -NoNewline
+
+      - name: 🛠️ (Re)Create helper scripts (restart & warm, auto-deploy poll)
+        shell: powershell
+        run: |
+          $dir = 'C:\apps\finnews247\scripts'
+          New-Item -ItemType Directory -Force -Path $dir | Out-Null
+
+          # restart-and-warm.bat
+          $warm = @"
+          @echo off
+          setlocal enabledelayedexpansion
+          cd /d C:\apps\finnews247
+
+          for /f "tokens=5" %%p in ('netstat -ano ^| findstr LISTENING ^| findstr ":80"') do taskkill /F /PID %%p
+
+          schtasks /Run /TN "finnews247" >NUL 2>&1
+          timeout /t 3 /nobreak >NUL
+
+          set BASE=http://127.0.0.1
+
+          curl -s -o NUL %BASE%/
+          for %%f in (.next\static\css\*.css) do curl -s -o NUL %BASE%/_next/static/css/%%~nxf
+          for %%f in (.next\static\chunks\*.js) do curl -s -o NUL %BASE%/_next/static/chunks/%%~nxf
+
+          set U=%BASE%/_next/image?url=%2Fimages%2Fnews94.jpg
+          for %%w in (320 640 828 1080 1200 1920) do curl -s -o NUL "!U!&w=%%w&q=75"
+
+          endlocal
+          "@
+          Set-Content -Path "$dir\restart-and-warm.bat" -Value $warm -Encoding ASCII -NoNewline
+
+          # auto-deploy-poll.bat (tuỳ chọn dùng nội bộ)
+          $poll = @"
+          @echo off
+          cd /d C:\apps\finnews247
+          :loop
+          git fetch origin main
+          for /f %%h in ('git rev-parse HEAD') do set LOCAL=%%h
+          for /f %%h in ('git rev-parse origin/main') do set REMOTE=%%h
+          if not "!LOCAL!"=="!REMOTE!" (
+            echo Changes detected at %date% %time%
+            git reset --hard
+            git pull --rebase
+            set NPM_CONFIG_PRODUCTION=false
+            set NODE_ENV=
+            npm ci || npm install
+            npm run build
+            call C:\apps\finnews247\scripts\restart-and-warm.bat
+          )
+          timeout /t 60 /nobreak >nul
+          goto loop
+          "@
+          Set-Content -Path "$dir\auto-deploy-poll.bat" -Value $poll -Encoding ASCII -NoNewline
 
       - name: 🗓️ Create/Update Windows Scheduled Task
         shell: powershell
@@ -113,3 +173,7 @@ jobs:
           } catch {
             Write-Error "Health check failed: $($_.Exception.Message)"
           }
+
+      - name: 🔥 Re-warm cache (call script)
+        shell: cmd
+        run: C:\apps\finnews247\scripts\restart-and-warm.bat
