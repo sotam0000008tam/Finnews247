@@ -32,19 +32,12 @@ jobs:
           New-Item -ItemType Directory -Force -Path 'C:\apps\finnews247\logs' | Out-Null
           New-Item -ItemType Directory -Force -Path 'C:\ops\finnews247' | Out-Null
 
-      - name: "🛑 Stop task & free port 80 (non-fatal)"
-        continue-on-error: true
+      - name: 🛑 Stop task & free port 80 (non-fatal)
+        shell: powershell
         run: |
-          $ErrorActionPreference = 'SilentlyContinue'
           schtasks /End /TN "finnews247" 2>$null | Out-Null
           Start-Sleep -Seconds 1
-          try {
-            $conns = Get-NetTCPConnection -LocalPort 80 -State Listen -ErrorAction Stop
-            $pids = $conns | Select-Object -Expand OwningProcess -Unique
-          } catch {
-            $pids = @(netstat -ano | findstr ":80" | findstr "LISTENING" | ForEach-Object { ($_ -split '\s+')[-1] } | Select-Object -Unique)
-          }
-          foreach($pid in $pids){ taskkill /F /PID $pid 2>$null | Out-Null }
+          try { (Get-NetTCPConnection -LocalPort 80 -State Listen | Select -Expand OwningProcess -Unique) | ForEach-Object { taskkill /F /PID $_ 2>$null | Out-Null } } catch {}
           exit 0
 
       - name: "🔄 Sync repo → C:\apps\finnews247 (mirror, keep logs)"
