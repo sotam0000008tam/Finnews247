@@ -5,19 +5,26 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'data/**'
-      - 'pages/**'
-      - 'components/**'
-      - 'public/**'
-      - 'lib/**'
-      - 'next.config.js'
-      - 'package.json'
-      - 'package-lock.json'
-      - '.github/workflows/deploy.yml'
+      - "data/**"
+      - "pages/**"
+      - "components/**"
+      - "public/**"
+      - "lib/**"
+      - "next.config.js"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/deploy.yml"
 
 jobs:
   deploy:
     runs-on: self-hosted
+
+    # ⬇️ ép npm KHÔNG ở production mode trong job này
+    env:
+      NPM_CONFIG_PRODUCTION: "false"
+      npm_config_production: "false"
+      npm_config_omit: ""
+      NODE_ENV: "production"
 
     steps:
       - name: "📥 Checkout repository"
@@ -36,7 +43,7 @@ jobs:
           schtasks /End /TN "finnews247" 2>$null
           Start-Sleep -Seconds 2
 
-      - name: "🔄 Sync repo → C:\apps\finnews247 (mirror, keep logs)"
+      - name: "🔄 Sync repo → C:\\apps\\finnews247 (mirror, keep logs)"
         shell: powershell
         run: |
           $src = "${env:GITHUB_WORKSPACE}"
@@ -45,7 +52,7 @@ jobs:
           $code = $LASTEXITCODE
           if ($code -le 7) { exit 0 } else { exit $code }
 
-      - name: "🧹 (Optional) Strip BOM from JSON to avoid 500"
+      - name: "🧹 Strip BOM from JSON (prevent 500)"
         shell: powershell
         run: |
           $dir = 'C:\apps\finnews247\data'
@@ -62,20 +69,26 @@ jobs:
       - name: "🟢 Use Node.js 22"
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: "22"
 
-      - name: "📦 Install dependencies"
+      # An toàn: xoá cấu hình npm production/omit ở cấp user của runner (nếu có)
+      - name: "🧯 Reset npm production flags (safety)"
         shell: powershell
+        continue-on-error: true
+        run: |
+          npm config delete production
+          npm config delete omit
+
+      # ⬇️ CHẠY BẰNG CMD để cảnh báo stderr không làm fail step
+      - name: "📦 Install dependencies (include dev)"
+        shell: cmd
         working-directory: C:\apps\finnews247
         run: |
-          npm ci 2>$null
-          if ($LASTEXITCODE -ne 0) { npm install }
+          npm ci --no-audit --no-fund --include=dev || npm install --no-audit --no-fund --include=dev
 
       - name: "🏗️ Build (Next.js)"
-        shell: powershell
+        shell: cmd
         working-directory: C:\apps\finnews247
-        env:
-          NODE_ENV: production
         run: |
           npm run build
 
