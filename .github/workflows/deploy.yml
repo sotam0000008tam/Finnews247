@@ -3,7 +3,7 @@ name: "🚀 Deploy Finnews247 to Windows VPS"
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [ main ]
     paths:
       - 'data/**'
       - 'pages/**'
@@ -18,44 +18,43 @@ on:
 jobs:
   deploy:
     runs-on: self-hosted
-    defaults:
-      run:
-        shell: powershell
 
     steps:
       - name: "📥 Checkout repository"
         uses: actions/checkout@v4
 
       - name: "📁 Ensure target folders"
-        run: |
-          New-Item -ItemType Directory -Force -Path 'C:\apps\finnews247' | Out-Null
-          New-Item -ItemType Directory -Force -Path 'C:\apps\finnews247\logs' | Out-Null
-          New-Item -ItemType Directory -Force -Path 'C:\ops\finnews247' | Out-Null
-
-      - name: 🛑 Stop task & free port 80 (non-fatal)
         shell: powershell
         run: |
-          schtasks /End /TN "finnews247" 2>$null | Out-Null
-          Start-Sleep -Seconds 1
-          try { (Get-NetTCPConnection -LocalPort 80 -State Listen | Select -Expand OwningProcess -Unique) | ForEach-Object { taskkill /F /PID $_ 2>$null | Out-Null } } catch {}
-          exit 0
+          $dst = 'C:\apps\finnews247'
+          New-Item -ItemType Directory -Force -Path $dst | Out-Null
+          New-Item -ItemType Directory -Force -Path "$dst\logs" | Out-Null
+
+      - name: "🛑 Stop scheduled task (if running)"
+        shell: powershell
+        run: |
+          schtasks /End /TN "finnews247" 2>$null
+          Start-Sleep -Seconds 2
 
       - name: "🔄 Sync repo → C:\apps\finnews247 (mirror, keep logs)"
+        shell: powershell
         run: |
-          $src = "$env:GITHUB_WORKSPACE"
+          $src = "${env:GITHUB_WORKSPACE}"
           $dst = 'C:\apps\finnews247'
           robocopy $src $dst /MIR /XD .git .github node_modules .next logs | Out-Null
-          if ($LASTEXITCODE -gt 7) { exit $LASTEXITCODE }
+          $code = $LASTEXITCODE
+          if ($code -le 7) { exit 0 } else { exit $code }
 
-      - name: "🧹 Strip BOM from JSON (prevent 500)"
+      - name: "🧹 (Optional) Strip BOM from JSON to avoid 500"
+        shell: powershell
         run: |
           $dir = 'C:\apps\finnews247\data'
           if (Test-Path $dir) {
             Get-ChildItem $dir -Filter *.json -Recurse | ForEach-Object {
-              $bytes = [IO.File]::ReadAllBytes($_.FullName)
+              $bytes = [System.IO.File]::ReadAllBytes($_.FullName)
               if ($bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF) {
-                $content = [Text.Encoding]::UTF8.GetString($bytes,3,$bytes.Length-3)
-                [IO.File]::WriteAllText($_.FullName, $content, [Text.Encoding]::UTF8)
+                $content = [System.Text.Encoding]::UTF8.GetString($bytes,3,$bytes.Length-3)
+                [System.IO.File]::WriteAllText($_.FullName, $content, [System.Text.Encoding]::UTF8)
               }
             }
           }
@@ -64,65 +63,53 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
 
-      - name: "📦 Install dependencies (include dev)"
+      - name: "📦 Install dependencies"
+        shell: powershell
         working-directory: C:\apps\finnews247
         run: |
-          Remove-Item Env:\NODE_ENV -ErrorAction SilentlyContinue
-          $env:NPM_CONFIG_PRODUCTION = "false"
-          npm ci --no-audit --no-fund
-          if ($LASTEXITCODE -ne 0) { npm install --no-audit --no-fund }
+          npm ci 2>$null
+          if ($LASTEXITCODE -ne 0) { npm install }
 
       - name: "🏗️ Build (Next.js)"
+        shell: powershell
         working-directory: C:\apps\finnews247
         env:
           NODE_ENV: production
-        run: npm run build
-
-      # (postbuild trong package.json đã gọi next-sitemap; bước dưới chỉ là dự phòng)
-      - name: "🧭 Generate sitemap (best effort)"
-        working-directory: C:\apps\finnews247
-        continue-on-error: true
         run: |
-          npx next-sitemap
+          npm run build
 
-      - name: "🧾 Create/refresh start script (outside repo)"
+      - name: "🧾 Create start script (CMD)"
+        shell: powershell
         run: |
-          @"
+          $dst = 'C:\apps\finnews247'
+          $script = @"
           @echo off
           cd /d C:\apps\finnews247
           set "NODE_ENV=production"
           "C:\Program Files\nodejs\node.exe" node_modules\next\dist\bin\next start -p 80 1>>"C:\apps\finnews247\logs\out.log" 2>>"C:\apps\finnews247\logs\err.log"
-          "@ | Set-Content -Path 'C:\ops\finnews247\start_finnews247.cmd' -Encoding Ascii -NoNewline
+          "@
+          Set-Content -Path "$dst\start_finnews247.cmd" -Value $script -Encoding ASCII -NoNewline
 
       - name: "🗓️ Create/Update Windows Scheduled Task"
+        shell: powershell
         run: |
-          $taskName = 'finnews247'
+          $taskName = "finnews247"
           $exists = schtasks /Query /TN $taskName 2>$null
           if (-not $?) {
-            schtasks /Create /TN $taskName /SC ONSTART /RU SYSTEM /RL HIGHEST /TR "C:\ops\finnews247\start_finnews247.cmd" /F
+            schtasks /Create /TN $taskName /SC ONSTART /RU SYSTEM /RL HIGHEST /TR "C:\apps\finnews247\start_finnews247.cmd" /F
           } else {
-            schtasks /Change /TN $taskName /TR "C:\ops\finnews247\start_finnews247.cmd"
+            schtasks /Change /TN $taskName /TR "C:\apps\finnews247\start_finnews247.cmd"
           }
 
       - name: "▶️ Start app & health check"
+        shell: powershell
         run: |
-          schtasks /Run /TN 'finnews247' | Out-Null
+          schtasks /Run /TN "finnews247" | Out-Null
           Start-Sleep -Seconds 3
           try {
-            $r = Invoke-WebRequest -Uri 'http://127.0.0.1/' -UseBasicParsing -TimeoutSec 8
-            "Health code: $($r.StatusCode)"
+            $r = Invoke-WebRequest -Uri "http://127.0.0.1/" -UseBasicParsing -TimeoutSec 8
+            if ($r.StatusCode -lt 200 -or $r.StatusCode -ge 500) { throw "Bad status: $($r.StatusCode)" }
           } catch {
-            Write-Host "Health check failed: $($_.Exception.Message)"
+            Write-Error "Health check failed: $($_.Exception.Message)"
           }
-
-      - name: "🔥 Warm cache (optional)"
-        continue-on-error: true
-        run: |
-          $css = Get-ChildItem 'C:\apps\finnews247\.next\static\css\*.css' -Name -ErrorAction SilentlyContinue
-          foreach ($f in $css) { Invoke-WebRequest "http://127.0.0.1/_next/static/css/$f" -UseBasicParsing -TimeoutSec 8 | Out-Null }
-          $chunks = Get-ChildItem 'C:\apps\finnews247\.next\static\chunks\*.js' -Name -ErrorAction SilentlyContinue
-          foreach ($f in $chunks) { Invoke-WebRequest "http://127.0.0.1/_next/static/chunks/$f" -UseBasicParsing -TimeoutSec 8 | Out-Null }
-          foreach ($w in 320,640,828,1080,1200,1920) { Invoke-WebRequest "http://127.0.0.1/_next/image?url=%2Fimages%2Fnews94.jpg&w=$w&q=75" -UseBasicParsing -TimeoutSec 8 | Out-Null }
