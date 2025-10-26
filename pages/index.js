@@ -6,7 +6,6 @@ import TradingSignalsBoxMini from "../components/TradingSignalsBoxMini";
 import TopExchanges from "../components/TopExchanges";
 import BestWallets from "../components/BestWallets";
 import TopStaking from "../components/TopStaking";
-import TopMovers from "../components/TopMovers";
 import { readJsonSafe, sortDescByDate, shallowPosts } from "../lib/data";
 
 export default function Home({
@@ -52,19 +51,18 @@ export default function Home({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-        {/* Sidebar */}
-        <aside className="md:col-span-1 space-y-6">
+      {/* Layout 12 cột: Sidebar 3/12 (trái), Main 9/12 (phải) */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+        {/* Sidebar (trái) */}
+        <aside className="md:col-span-3 w-full self-start justify-self-start space-y-4">
           <TradingSignalsBoxMini />
-          <TopExchanges />
-          <BestWallets />
-          <TopStaking />
-          {/* TopMovers tự ẩn nếu chưa có dữ liệu market */}
-          <TopMovers />
+          <TopExchanges variant="sidebar" />
+          <BestWallets variant="sidebar" />
+          <TopStaking variant="sidebar" />
         </aside>
 
-        {/* Main */}
-        <main className="md:col-span-3 space-y-12">
+        {/* Main (phải) */}
+        <main className="md:col-span-9 space-y-12">
           <TradingSignalsBoxMain />
 
           <section>

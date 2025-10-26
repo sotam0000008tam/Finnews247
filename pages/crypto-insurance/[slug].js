@@ -1,7 +1,4 @@
 import { NextSeo } from "next-seo";
-import BestWallets from "../../components/BestWallets";
-import TopStaking from "../../components/TopStaking";
-import TopExchanges from "../../components/TopExchanges";
 
 export default function InsuranceDetail({ post }) {
   if (!post) return <p className="p-6">Post not found.</p>;
@@ -33,11 +30,7 @@ export default function InsuranceDetail({ post }) {
       />
 
       {/* Sidebar mini widgets */}
-      <div className="mt-10 space-y-6">
-        <TopExchanges />
-        <BestWallets />
-        <TopStaking />
-      </div>
+      
     </div>
   );
 }

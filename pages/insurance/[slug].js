@@ -2,9 +2,6 @@
 import fs from "fs";
 import path from "path";
 import { NextSeo } from "next-seo";
-import BestWallets from "../../components/BestWallets";
-import TopStaking from "../../components/TopStaking";
-import TopExchanges from "../../components/TopExchanges";
 
 export default function InsuranceTaxDetail({ post }) {
   if (!post) {
@@ -44,11 +41,7 @@ export default function InsuranceTaxDetail({ post }) {
 
       <div dangerouslySetInnerHTML={{ __html: post.content }} />
 
-      <div className="mt-10 space-y-6">
-        <TopExchanges />
-        <BestWallets />
-        <TopStaking />
-      </div>
+      
     </article>
   );
 }

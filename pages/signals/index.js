@@ -1,10 +1,14 @@
+// pages/signals/index.js
 import Link from "next/link";
 import { NextSeo } from "next-seo";
 import signals from "../../data/signals.json";
 import FAQSchema from "../../components/FAQSchema";
+
+// 3 mục cuối trang (đã viết lại dạng card/grid, tự gắn rel="nofollow sponsored" cho link affiliate)
 import BestWallets from "../../components/BestWallets";
 import TopStaking from "../../components/TopStaking";
 import TopExchanges from "../../components/TopExchanges";
+
 import SignalFAQ from "../../components/SignalFAQ";
 
 function getThumbnail(s) {
@@ -53,17 +57,22 @@ export default function SignalsPage() {
           images: [{ url: "https://www.finnews247.com/logo.png" }],
         }}
       />
+
       <FAQSchema />
+
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
+
       <h1 className="text-2xl font-bold mb-3">📊 All Trading Signals</h1>
       <p className="text-gray-600 mb-6">
         Explore the latest cryptocurrency trading signals with clear entry,
         target, and stoploss levels. Updated frequently for traders who need
         quick and reliable insights.
       </p>
+
+      {/* Danh sách tín hiệu */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {sortedSignals.map((s) => {
           const thumbnail = getThumbnail(s);
@@ -76,7 +85,11 @@ export default function SignalsPage() {
               <div className="flex-1 pr-4">
                 <h2 className="font-semibold">
                   {s.pair} —{" "}
-                  <span className={s.type === "Long" ? "text-green-600" : "text-red-600"}>
+                  <span
+                    className={
+                      s.type === "Long" ? "text-green-600" : "text-red-600"
+                    }
+                  >
                     {s.type}
                   </span>
                 </h2>
@@ -86,6 +99,7 @@ export default function SignalsPage() {
                   Entry {s.entry} • Target {s.target} • Stoploss {s.stoploss}
                 </p>
               </div>
+
               {thumbnail && (
                 <div className="ml-4 flex-shrink-0">
                   <img
@@ -100,7 +114,8 @@ export default function SignalsPage() {
         })}
       </div>
 
-      <div className="mt-10 space-y-6">
+      {/* 3 mục chỉ đặt ở trang Signals: card/grid rõ ràng, link affiliate tự gắn rel="nofollow sponsored" */}
+      <div className="mt-10 space-y-10 not-prose">
         <TopExchanges />
         <BestWallets />
         <TopStaking />

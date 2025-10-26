@@ -1,8 +1,15 @@
+// pages/signals/[id].js
 import { NextSeo } from "next-seo";
 import Link from "next/link";
 import Script from "next/script";
 import { useState } from "react";
 import signals from "../../data/signals.json";
+
+/** ▼▼ THÊM 3 IMPORT (giữ nguyên href & logo theo file cũ) ▼▼ */
+import TopExchanges from "../../components/TopExchanges";
+import BestWallets from "../../components/BestWallets";
+import TopStaking from "../../components/TopStaking";
+/** ▲▲ THÊM 3 IMPORT ▲▲ */
 
 function resolveImage(src) {
   if (!src) return null;
@@ -15,18 +22,9 @@ function resolveImage(src) {
 function toTradingViewSymbol(pair) {
   // Mặc định: Binance BTCUSDT
   if (!pair) return "BINANCE:BTCUSDT";
-
-  // Chuẩn hoá input
   let p = pair.toUpperCase().trim();
-
-  // Nếu người dùng lỡ truyền "BYBIT:BTCUSDT.P" hay "BINANCE:BTC/USDT"
-  // thì bỏ prefix sàn đi để mình tự gắn BINANCE
   p = p.replace(/^[A-Z]+:/, "");
-
-  // Gộp về format TradingView: "BTCUSDT" hoặc "BTCUSDT.P"
   const compact = p.replace("/", "").replace(/\s+/g, "");
-
-  // Luôn dùng dữ liệu từ sàn Binance, kể cả perp (.P)
   return `BINANCE:${compact}`;
 }
 
@@ -247,6 +245,14 @@ export default function SignalDetailPage({ signal }) {
       ) : (
         <div className="text-sm text-gray-500">No detailed content provided for this signal.</div>
       )}
+
+      {/* ▼▼ THÊM KHỐI 3 MỤC — CHỈ CÓ Ở TRANG SIGNALS ▼▼ */}
+      <div className="mt-10 space-y-10 not-prose">
+        <TopExchanges />
+        <BestWallets />
+        <TopStaking />
+      </div>
+      {/* ▲▲ THÊM KHỐI 3 MỤC ▲▲ */}
 
       <div className="mt-10 flex items-center gap-4 text-sky-600">
         <Link href="/signals" className="hover:underline">← Back to all signals</Link>
