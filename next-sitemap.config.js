@@ -1,151 +1,73 @@
 /** @type {import('next-sitemap').IConfig} */
-const fs = require('fs');
-const path = require('path');
 
-// ÉP domain thật – không bao giờ dùng localhost
-const SITE = 'https://www.finnews247.com';
+// ==== WHITELIST pattern chỉ cho phép các đường dẫn bạn quy định ====
+const ALLOW_RE = new RegExp(
+  [
+    '^/$', // home
+    '^/(about|contact|privacy|terms)$',
+    '^/(signals|altcoins|crypto-exchanges|best-crypto-apps|insurance|crypto-market|guides)$',
+    '^/(signals|altcoins|crypto-exchanges|best-crypto-apps|insurance|crypto-market|guides)/[\\w-]+$',
+  ].join('|')
+);
 
-// Đọc JSON an toàn
-function readJson(name) {
-  try {
-    const p = path.join(process.cwd(), 'data', name);
-    if (!fs.existsSync(p)) return [];
-    return JSON.parse(fs.readFileSync(p, 'utf-8'));
-  } catch {
-    return [];
-  }
+// ==== Helpers parse lastmod cho /signals/... nếu slug có ngày ====
+function isoFromParts(y, m, d, hh = 0, mm = 0) {
+  const year = Number(y), month = Number(m), day = Number(d);
+  const hour = Number(hh), min = Number(mm);
+  return new Date(Date.UTC(year, month - 1, day, hour, min, 0)).toISOString();
 }
+function parseLastmodFromPath(path) {
+  if (!path.startsWith('/signals/')) return null;
 
-// Chuẩn hoá url path
-function buildLoc(base, slug) {
-  if (!slug) return null;
-  slug = String(slug).trim();
-  if (slug.startsWith('/')) return slug.replace(/\/{2,}/g, '/');
-  if (slug.includes('/')) return `/${slug}`.replace(/\/{2,}/g, '/');
-  return `${base}/${slug}`.replace(/\/{2,}/g, '/');
-}
+  // ...-YYYYMMDD-HHMM
+  let m = path.match(/-(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})$/);
+  if (m) return isoFromParts(m[1], m[2], m[3], m[4], m[5]);
 
-function toISO(d) {
-  if (!d) return undefined;
-  const t = new Date(d);
-  return isNaN(t.getTime()) ? undefined : t.toISOString();
+  // ...-YYYYMMDD
+  m = path.match(/-(\d{4})(\d{2})(\d{2})$/);
+  if (m) return isoFromParts(m[1], m[2], m[3]);
+
+  // ...-YYMMDD-HHMM  → 20YY
+  m = path.match(/-(\d{2})(\d{2})(\d{2})-(\d{2})(\d{2})$/);
+  if (m) return isoFromParts(2000 + Number(m[1]), m[2], m[3], m[4], m[5]);
+
+  // ...-YYMMDD
+  m = path.match(/-(\d{2})(\d{2})(\d{2})$/);
+  if (m) return isoFromParts(2000 + Number(m[1]), m[2], m[3]);
+
+  return null;
 }
 
 module.exports = {
-  siteUrl: SITE,
-  generateRobotsTxt: true,          // muốn tự gen robots.txt luôn
-  generateIndexSitemap: true,       // tự tạo sitemap-index nếu dài
-  trailingSlash: false,
-  changefreq: 'daily',
-  priority: 0.7,
+  siteUrl: 'https://www.finnews247.com',
+  generateRobotsTxt: true,
+  // Không cần chia 1000 URL; vẫn để giá trị lớn để next-sitemap tạo 1 file duy nhất,
+  // rồi bước #2 sẽ "ép" thành index → sitemap-0.xml theo đúng format bạn muốn.
+  sitemapSize: 50000,
+  exclude: ['/api/*'],
 
-  robotsTxtOptions: {
-    policies: [
-      { userAgent: '*', allow: '/' },
-      { userAgent: '*', disallow: ['/admin', '/admin/*', '/api/*'] },
-    ],
-  },
+  transform: async (config, path) => {
+    // Chỉ giữ URL đúng whitelist, còn lại loại bỏ khỏi sitemap
+    if (!ALLOW_RE.test(path)) return null;
 
-  // Loại các route cũ/không dùng
-  exclude: [
-    '/admin', '/admin/*',
-    '/api/*',
-    '/privacy-policy', '/privacy-policy/*',
-    '/news/*',           // nếu không còn dùng
-    '/exchanges*',       // route cũ
-    '/crypto-tax*',      // route cũ
-    '/crypto-insurance*' // route cũ
-  ],
-
-  // Mặc định mọi URL transform theo cấu hình chung
-  transform: async (config, url) => ({
-    loc: url,
-    changefreq: 'daily',
-    priority: url === '/' ? 1.0 : 0.7,
-    lastmod: new Date().toISOString(),
-    alternateRefs: [],
-  }),
-
-  /**
-   * Bơm thêm đường dẫn tuỳ biến (trang chính + bài viết từ /data).
-   * Bạn chỉ cần cập nhật JSON trong /data rồi rebuild là sitemap tự sinh đúng.
-   */
-  additionalPaths: async () => {
-    const out = [];
-    const seen = new Set();
-    const push = (loc, lastmod, priority = 0.7) => {
-      if (!loc) return;
-      loc = loc.replace(/\/{2,}/g, '/');
-      if (seen.has(loc)) return;
-      seen.add(loc);
-      out.push({
-        loc,
-        changefreq: 'daily',
-        priority,
-        lastmod: lastmod || new Date().toISOString(),
-      });
+    const entry = {
+      loc: path,
+      changefreq: 'weekly',
+      priority: 0.7,
     };
 
-    // 1) Trang cố định + các listing CHÍNH
-    [
-      '/', '/about', '/contact', '/privacy', '/terms',
-      '/signals',
-      '/altcoins',
-      '/crypto-exchanges',
-      '/best-crypto-apps',
-      '/insurance',
-      '/crypto-market',
-      '/guides',
-    ].forEach(u => push(u, new Date().toISOString(), u === '/' ? 1.0 : 0.7));
+    if (path === '/') {
+      entry.changefreq = 'daily';
+      entry.priority = 1.0;
+    }
 
-    // 2) Bài viết từ /data (giữ đúng cấu trúc site hiện tại)
-    // - Signals
-    readJson('signals.json').forEach(it => {
-      const s = String(it?.slug || it?.id || '').replace(/^\/+/, '');
-      const loc = buildLoc('/signals', s);
-      push(loc, toISO(it?.date || it?.createdAt));
-    });
+    const lm = parseLastmodFromPath(path);
+    if (lm) entry.lastmod = lm;
 
-    // - Guides
-    readJson('guides.json').forEach(it => {
-      const loc = buildLoc('/guides', it?.slug || '');
-      push(loc, toISO(it?.date));
-    });
+    return entry;
+  },
 
-    // - Insurance
-    readJson('insurance.json').forEach(it => {
-      const loc = buildLoc('/insurance', it?.slug || '');
-      push(loc, toISO(it?.date));
-    });
-
-    // - Crypto Exchanges (gộp 2 nguồn thường thấy)
-    [...readJson('cryptoexchanges.json'), ...readJson('fidelity.json')].forEach(it => {
-      const loc = buildLoc('/crypto-exchanges', it?.slug || '');
-      push(loc, toISO(it?.date));
-    });
-
-    // - Best crypto apps
-    readJson('bestapps.json').forEach(it => {
-      const loc = buildLoc('/best-crypto-apps', it?.slug || '');
-      push(loc, toISO(it?.date));
-    });
-
-    // - Altcoins (có thể gồm cả seccoin.json nếu bạn tách bộ bài)
-    [...readJson('altcoins.json'), ...readJson('seccoin.json')].forEach(it => {
-      const loc = buildLoc('/altcoins', it?.slug || '');
-      push(loc, toISO(it?.date));
-    });
-
-    // - Crypto market:
-    //   Nhiều repo lưu chung vào news.json với slug đã chứa "crypto-market/..."
-    //   nên mình đọc news.json và giữ nguyên slug.
-    readJson('news.json').forEach(it => {
-      let slug = String(it?.slug || '').trim().replace(/^\/+/, '');
-      if (!slug || slug === '/') return;
-      const loc = buildLoc('/', slug);  // slug đã gồm 'crypto-market/...'
-      push(loc, toISO(it?.date));
-    });
-
-    return out;
+  robotsTxtOptions: {
+    policies: [{ userAgent: '*', allow: '/' }],
   },
 };
