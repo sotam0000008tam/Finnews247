@@ -1,73 +1,64 @@
+// next-sitemap.config.js
 /** @type {import('next-sitemap').IConfig} */
 
-// ==== WHITELIST pattern chỉ cho phép các đường dẫn bạn quy định ====
-const ALLOW_RE = new RegExp(
-  [
-    '^/$', // home
-    '^/(about|contact|privacy|terms)$',
-    '^/(signals|altcoins|crypto-exchanges|best-crypto-apps|insurance|crypto-market|guides)$',
-    '^/(signals|altcoins|crypto-exchanges|best-crypto-apps|insurance|crypto-market|guides)/[\\w-]+$',
-  ].join('|')
-);
+// Các trang gốc bắt buộc có
+const ROOT_PAGES = [
+  '/', '/about', '/contact', '/privacy', '/terms',
+  '/signals', '/altcoins', '/crypto-exchanges', '/best-crypto-apps',
+  '/insurance', '/crypto-market', '/guides',
+];
 
-// ==== Helpers parse lastmod cho /signals/... nếu slug có ngày ====
-function isoFromParts(y, m, d, hh = 0, mm = 0) {
-  const year = Number(y), month = Number(m), day = Number(d);
-  const hour = Number(hh), min = Number(mm);
-  return new Date(Date.UTC(year, month - 1, day, hour, min, 0)).toISOString();
-}
-function parseLastmodFromPath(path) {
-  if (!path.startsWith('/signals/')) return null;
+// Chỉ cho phép các bài viết bên trong các thư mục này
+const ARTICLE_PREFIXES = [
+  '/signals/', '/altcoins/', '/crypto-exchanges/', '/best-crypto-apps/',
+  '/insurance/', '/crypto-market/', '/guides/',
+];
 
-  // ...-YYYYMMDD-HHMM
-  let m = path.match(/-(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})$/);
-  if (m) return isoFromParts(m[1], m[2], m[3], m[4], m[5]);
-
-  // ...-YYYYMMDD
-  m = path.match(/-(\d{4})(\d{2})(\d{2})$/);
-  if (m) return isoFromParts(m[1], m[2], m[3]);
-
-  // ...-YYMMDD-HHMM  → 20YY
-  m = path.match(/-(\d{2})(\d{2})(\d{2})-(\d{2})(\d{2})$/);
-  if (m) return isoFromParts(2000 + Number(m[1]), m[2], m[3], m[4], m[5]);
-
-  // ...-YYMMDD
-  m = path.match(/-(\d{2})(\d{2})(\d{2})$/);
-  if (m) return isoFromParts(2000 + Number(m[1]), m[2], m[3]);
-
-  return null;
-}
+// Hàm whitelist
+const isAllowed = (path) => {
+  if (['/_next', '/api'].some(p => path.startsWith(p))) return false;
+  if (path === '/') return true;
+  if (ROOT_PAGES.includes(path)) return true;
+  return ARTICLE_PREFIXES.some(prefix => path.startsWith(prefix));
+};
 
 module.exports = {
   siteUrl: 'https://www.finnews247.com',
-  generateRobotsTxt: true,
-  // Không cần chia 1000 URL; vẫn để giá trị lớn để next-sitemap tạo 1 file duy nhất,
-  // rồi bước #2 sẽ "ép" thành index → sitemap-0.xml theo đúng format bạn muốn.
-  sitemapSize: 50000,
-  exclude: ['/api/*'],
 
+  // ✅ KHÔNG sinh robots.txt
+  generateRobotsTxt: false,
+
+  // ✅ Luôn có index /sitemap.xml trỏ tới /sitemap-0.xml
+  generateIndexSitemap: true,
+  sitemapBaseFileName: 'sitemap',
+  sitemapSize: 45000, // đủ lớn để thường chỉ tạo 1 file /sitemap-0.xml
+
+  // Loại nhanh những đường dẫn chắc chắn không lấy
+  exclude: [
+    '/_next/*', '/api/*', '/404', '/500', '/server-sitemap.xml',
+    '/drafts/*', '/tags/*', '/category/*'
+  ],
+
+  // Lọc giữ lại đúng whitelist
   transform: async (config, path) => {
-    // Chỉ giữ URL đúng whitelist, còn lại loại bỏ khỏi sitemap
-    if (!ALLOW_RE.test(path)) return null;
-
-    const entry = {
+    if (!isAllowed(path)) return null; // skip URL không hợp lệ
+    const isHome = path === '/';
+    return {
       loc: path,
-      changefreq: 'weekly',
-      priority: 0.7,
+      changefreq: isHome ? 'daily' : 'weekly',
+      priority: isHome ? 1.0 : 0.7,
+      lastmod: new Date().toISOString(),
     };
-
-    if (path === '/') {
-      entry.changefreq = 'daily';
-      entry.priority = 1.0;
-    }
-
-    const lm = parseLastmodFromPath(path);
-    if (lm) entry.lastmod = lm;
-
-    return entry;
   },
 
-  robotsTxtOptions: {
-    policies: [{ userAgent: '*', allow: '/' }],
+  // Đảm bảo luôn có các trang gốc (dù là dynamic)
+  additionalPaths: async () => {
+    const now = new Date().toISOString();
+    return ROOT_PAGES.map(p => ({
+      loc: p,
+      changefreq: p === '/' ? 'daily' : 'weekly',
+      priority: p === '/' ? 1.0 : 0.7,
+      lastmod: now,
+    }));
   },
 };

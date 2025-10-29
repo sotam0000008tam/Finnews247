@@ -5,10 +5,10 @@
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",
-    "postbuild": "next-sitemap && node scripts/force-index-sitemap.mjs",
+    "postbuild": "next-sitemap",
     "start": "next start -p 3000",
 
-    "sitemap": "next-sitemap && node scripts/force-index-sitemap.mjs",
+    "sitemap": "next-sitemap",
 
     "check:links": "start-server-and-test \"next start -p 3000\" http://localhost:3000 \"linkinator http://localhost:3000 --recurse --timeout 15000 --concurrency 10 --skip '^mailto:|^tel:|#|\\\\.pdf($|\\\\?)|/api/|^javascript:' --format json --silent > link-report.json\"",
     "check:sidebar": "start-server-and-test \"next start -p 3000\" http://localhost:3000 \"node scripts/check-sidebar-links.mjs\"",
