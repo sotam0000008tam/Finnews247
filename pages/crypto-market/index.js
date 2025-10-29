@@ -3,10 +3,13 @@ import path from "path";
 import Link from "next/link";
 import { NextSeo } from "next-seo";
 
+/* ===== Helpers ===== */
+const stripHtml = (html = "") => String(html).replace(/<script[\s\S]*?<\/script>/gi,"").replace(/<style[\s\S]*?<\/style>/gi,"").replace(/<[^>]+>/g," ").replace(/\s+/g," ").trim();
 const firstImg = (html = "") => (String(html).match(/<img[^>]+src=["']([^"']+)["']/i) || [])[1] || null;
-const pickThumb = (p, fallback="/images/dummy/insurance64.jpg") => p?.thumb || p?.ogImage || p?.image || firstImg(p?.content || p?.body || "") || fallback;
+const pickThumb = (p, fallback="/images/dummy/market64.jpg") => p?.thumb || p?.ogImage || p?.image || firstImg(p?.content || p?.body || "") || fallback;
 
-const FALLBACK_BASE = "/insurance";
+/* === buildUrl mapping theo _cat/category (giống trang chi tiết) === */
+const FALLBACK_BASE = "/crypto-market";
 const buildUrl = (p) => {
   if (p?.href) return p.href;
   const slug = p?.slug; if (!slug) return "#";
@@ -21,6 +24,7 @@ const buildUrl = (p) => {
   return `${FALLBACK_BASE}/${slug}`;
 };
 
+/* === Sidebar item (y hệt ở trang chi tiết) === */
 function SideMiniItem({ item }) {
   const href = buildUrl(item);
   const img = pickThumb(item);
@@ -35,16 +39,17 @@ function SideMiniItem({ item }) {
   );
 }
 
-export default function InsuranceIndex({ posts = [], latest = [] }) {
+export default function MarketIndex({ posts = [], latest = [] }) {
   return (
     <>
-      <NextSeo title="Insurance & Tax | FinNews247" canonical="https://www.finnews247.com/insurance" />
+      <NextSeo title="Crypto & Market | FinNews247" description="Latest crypto market news and analysis." canonical="https://www.finnews247.com/crypto-market" />
       <div className="container mx-auto px-4 py-6">
-        <h1 className="text-2xl md:text-3xl font-bold mb-4">Insurance &amp; Tax</h1>
+        <h1 className="text-2xl md:text-3xl font-bold mb-4">Crypto &amp; Market</h1>
         <div className="grid md:grid-cols-12 gap-8">
+          {/* List */}
           <section className="md:col-span-9 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {posts.map((it) => (
-              <Link key={it.slug} href={buildUrl({ ...it, _cat: "insurance" })} className="block rounded-lg border p-3 hover:bg-gray-50 dark:hover:bg-gray-800">
+              <Link key={it.slug} href={buildUrl({ ...it, _cat: "crypto-market" })} className="block rounded-lg border p-3 hover:bg-gray-50 dark:hover:bg-gray-800">
                 <img src={pickThumb(it)} alt={it.title} className="w-full h-40 object-cover rounded-md mb-2" loading="lazy"/>
                 <div className="font-medium line-clamp-2">{it.title}</div>
                 {it.date && <div className="text-xs text-gray-500 mt-1">{it.date}</div>}
@@ -52,6 +57,7 @@ export default function InsuranceIndex({ posts = [], latest = [] }) {
             ))}
           </section>
 
+          {/* Sidebar */}
           <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
             <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
               <div className="px-4 py-3 border-b dark:border-gray-700"><h3 className="text-sm font-semibold">Latest on FinNews247</h3></div>
@@ -64,27 +70,33 @@ export default function InsuranceIndex({ posts = [], latest = [] }) {
         </div>
       </div>
 
-      <style jsx global>{`.sidebar-scope img{width:45px!important;height:45px!important;max-width:none!important;object-fit:cover!important;border-radius:8px!important;display:block!important;}`}</style>
+      <style jsx global>{`
+        .sidebar-scope img {
+          width:45px!important;height:45px!important;max-width:none!important;object-fit:cover!important;border-radius:8px!important;display:block!important;
+        }
+      `}</style>
     </>
   );
 }
 
 export async function getServerSideProps() {
   const read = (f) => { try { return JSON.parse(fs.readFileSync(path.join(process.cwd(),"data",f),"utf-8")); } catch { return []; } };
-  const posts = read("insurance.json").filter(Boolean);
+  const posts = read("news.json").filter(Boolean);
 
+  // latest mix (gắn _cat đúng)
   const market = read("news.json").map((p) => ({ ...p, _cat: "crypto-market" }));
   const alt = read("altcoins.json").map((p) => ({ ...p, _cat: "altcoins" }));
   const ex = [].concat(read("cryptoexchanges.json"), read("fidelity.json")).map((p) => ({ ...p, _cat: "crypto-exchanges" }));
   const apps = read("bestapps.json").map((p) => ({ ...p, _cat: "best-crypto-apps" }));
+  const ins = read("insurance.json").map((p) => ({ ...p, _cat: "insurance" }));
   const guides = read("guides.json").map((p) => ({ ...p, _cat: "guides" }));
   const tax = (read("tax.json") || []).map((p) => ({ ...p, _cat: "tax" }));
 
   const seen = new Set();
-  const latest = [...market, ...alt, ...ex, ...apps, ...guides, ...tax]
+  const latest = [...market, ...alt, ...ex, ...apps, ...ins, ...guides, ...tax]
     .filter((x) => x?.slug && !seen.has(x.slug) && seen.add(x.slug))
-    .sort((a,b)=> (Date.parse(b.date||b.updatedAt)||0)-(Date.parse(a.date||a.updatedAt)||0))
-    .slice(0,10);
+    .sort((a,b) => (Date.parse(b.date||b.updatedAt)||0) - (Date.parse(a.date||a.updatedAt)||0))
+    .slice(0, 10);
 
   return { props: { posts, latest } };
 }

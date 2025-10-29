@@ -1,9 +1,10 @@
+﻿// components/PostCard.js
 import Link from "next/link";
 
-export default function PostCard({ post }) {
-  let postUrl = `/${post.slug}`;
+export default function PostCard({ post = {} }) {
+  let postUrl = `/${post.slug || ""}`;
 
-  // Route mapping theo category
+  // Route mapping theo category (giữ nguyên như bạn)
   if (post.category === "Fidelity Crypto") {
     postUrl = `/fidelity-crypto/${post.slug}`;
   } else if (post.category === "SEC Coin" || post.category === "Sec Coin") {
@@ -39,27 +40,27 @@ export default function PostCard({ post }) {
         <div className="w-full">
           <img
             src={post.image}
-            alt={post.title}
+            alt={post.title || "post"}
             className="w-full h-auto rounded-t-lg"
+            loading="lazy"
           />
         </div>
       )}
 
       <div className="p-4">
         <div className="text-xs text-gray-500 mb-2">{post.date}</div>
+
         <h3 className="text-lg font-semibold mb-2">
-          <Link href={postUrl} className="hover:underline">
-            {post.title}
-          </Link>
+          <Link href={postUrl} className="hover:underline">{post.title}</Link>
         </h3>
+
         {post.excerpt && (
           <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
             {post.excerpt}
           </p>
         )}
-        <Link href={postUrl} className="text-sky-600 hover:underline text-sm">
-          Read more →
-        </Link>
+
+        <Link href={postUrl} className="text-sky-600 hover:underline text-sm">Read more →</Link>
       </div>
     </article>
   );

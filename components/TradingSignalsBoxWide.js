@@ -1,4 +1,4 @@
-// components/TradingSignalsBoxWide.js
+﻿// components/TradingSignalsBoxWide.js
 import Link from "next/link";
 import signals from "../data/signals.json";
 
@@ -51,8 +51,7 @@ export default function TradingSignalsBoxWide() {
       <div className="mt-6 text-center">
         <Link
           href="/signals"
-          className="inline-block px-6 py-3 bg-sky-600 hover:bg-sky-700 text-white font-medium rounded-lg shadow transition"
-        >
+         className="inline-block px-6 py-3 bg-sky-600 hover:bg-sky-700 text-white font-medium rounded-lg shadow transition">
           View All Signals →
         </Link>
       </div>
@@ -65,3 +64,4 @@ export default function TradingSignalsBoxWide() {
     </div>
   );
 }
+

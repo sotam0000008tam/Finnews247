@@ -1,4 +1,4 @@
-import { NextSeo } from "next-seo";
+﻿import { NextSeo } from "next-seo";
 import Link from "next/link";
 
 export default function WalletsPage() {
@@ -203,3 +203,4 @@ export default function WalletsPage() {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import signals from "../data/signals.json";
 
 export default function TradingSignalsBoxMain() {
@@ -36,8 +36,7 @@ export default function TradingSignalsBoxMain() {
 
             <Link
               href={`/signals/${s.id}`}
-              className="mt-3 inline-block text-sm text-sky-600 hover:underline"
-            >
+             className="mt-3 inline-block text-sm text-sky-600 hover:underline">
               View details →
             </Link>
           </div>
@@ -46,3 +45,4 @@ export default function TradingSignalsBoxMain() {
     </div>
   );
 }
+

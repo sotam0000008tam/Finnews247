@@ -1,18 +1,28 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: true,
+  swcMinify: true,
+  trailingSlash: false,
+
   async redirects() {
     return [
+      // Canonicalize legacy sections to the new structure
       { source: '/fidelity-crypto', destination: '/crypto-exchanges', permanent: true },
       { source: '/fidelity-crypto/:slug*', destination: '/crypto-exchanges/:slug*', permanent: true },
 
-      // các legacy khác nếu còn:
       { source: '/privacy-policy', destination: '/privacy', permanent: true },
       { source: '/exchanges', destination: '/crypto-exchanges', permanent: true },
       { source: '/crypto-tax/:slug*', destination: '/tax/:slug*', permanent: true },
       { source: '/crypto-insurance/:slug*', destination: '/insurance/:slug*', permanent: true },
-      { source: '/news/:slug', destination: '/:slug', permanent: true },
 
-      // ========= 25 redirect cũ: /signals/:id -> /signals/:slug =========
+      // Fix legacy /news -> /crypto-market mapping (avoid /:slug root collisions)
+      { source: '/news/:slug*', destination: '/crypto-market/:slug*', permanent: true },
+
+      // Optional: normalize /market to /crypto-market
+      { source: '/market', destination: '/crypto-market', permanent: true },
+      { source: '/market/:slug*', destination: '/crypto-market/:slug*', permanent: true },
+
+      // ========= ID -> slug redirects for Signals (sample list kept) =========
       { source: '/signals/1',  destination: '/signals/btc-long-250912',           permanent: true },
       { source: '/signals/2',  destination: '/signals/eth-short-250912',          permanent: true },
       { source: '/signals/3',  destination: '/signals/sol-long-250912',           permanent: true },
@@ -39,13 +49,13 @@ const nextConfig = {
       { source: '/signals/24', destination: '/signals/aster-long-250926-0014',    permanent: true },
       { source: '/signals/25', destination: '/signals/mira-long-250926-1736',     permanent: true },
 
-      // ========= Trading Signals News Update (bỏ /signals) =========
+      // Trading Signals "news update" slugs => normalized
       { source: '/trading-signals-09-18-2025-latest-crypto-news-update', destination: '/trading-signals-sep18-2025-market-update',   permanent: true },
       { source: '/trading-signals-09-19-2025-latest-crypto-news-update', destination: '/trading-signals-sep19-2025-market-summary',   permanent: true },
       { source: '/trading-signals-09-23-2025-latest-crypto-news-update', destination: '/trading-signals-sep23-2025-crypto-news',      permanent: true },
       { source: '/trading-signals-09-25-2025-latest-crypto-news-update', destination: '/trading-signals-sep25-2025-crypto-market-report', permanent: true },
 
-      // ========= các redirect lẻ =========
+      // Misc legacy slugs
       { source: '/sec-coin/altcoin-analysis-31', destination: '/sec-coin/ethereum-altcoin-trends-sep24', permanent: true },
       { source: '/sec-coin/altcoin-analysis-32', destination: '/sec-coin/altcoin-market-pulse-sep25',   permanent: true },
       { source: '/sec-coin/altcoin-analysis-33', destination: '/sec-coin/crypto-highlights-sep26',      permanent: true },
@@ -97,8 +107,8 @@ const nextConfig = {
       { source: '/news/apple-hits-record-market-cap',
         destination: '/apple-stock-hits-record-high-on-ai-integration-success', permanent: true },
 
-      { source: '/economy', destination: '/market', permanent: true },
-      { source: '/stocks',  destination: '/market', permanent: true },
+      { source: '/economy', destination: '/crypto-market', permanent: true },
+      { source: '/stocks',  destination: '/crypto-market', permanent: true },
 
       { source: '/news/nasdaq-hits-record-high-tech-rally-continues',
         destination: '/nasdaq-hits-record-high-as-tech-rally-continues', permanent: true },
@@ -107,17 +117,17 @@ const nextConfig = {
     ];
   },
 
-  // nén response (giữ nguyên hành vi mặc định, không động vào logic render)
+  // Default compression
   compress: true,
 
-  // TTL cho ảnh tối ưu của Next Image
+  // Next/Image cache TTL
   images: {
-    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 ngày
+    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
   },
 
-  // Header cache cho static & ảnh gốc
   async headers() {
     return [
+      // Static assets
       {
         source: '/_next/static/:path*',
         headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
@@ -126,7 +136,17 @@ const nextConfig = {
         source: '/images/:path*',
         headers: [{ key: 'Cache-Control', value: 'public, max-age=604800, stale-while-revalidate=86400' }],
       },
-      // KHÔNG đặt header riêng cho '/_next/image' để không ghi đè minimumCacheTTL
+
+      // Security best-practice headers
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+        ],
+      },
     ];
   },
 };

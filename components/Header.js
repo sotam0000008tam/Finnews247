@@ -1,53 +1,84 @@
+﻿// components/Header.js
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import ThemeToggle from "./ThemeToggle";
 
+// Menu đúng tên & thứ tự như file gốc
+const NAV_ITEMS = [
+  { href: "/", label: "Home" },
+  { href: "/signals", label: "Trading Signals" },
+  { href: "/altcoins", label: "Altcoin Analysis" },
+  { href: "/crypto-exchanges", label: "Exchanges" },
+  { href: "/best-crypto-apps", label: "Apps & Wallets" },
+  { href: "/insurance", label: "Insurance & Tax" },
+  { href: "/crypto-market", label: "Crypto & Market" },
+  { href: "/guides", label: "Guides & Reviews" },
+];
+
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-40">
-      <div className="container mx-auto px-4 flex items-center justify-between py-3">
-        {/* Logo */}
-        <Link href="/" className="flex items-center">
-          <Image src="/logo.png" alt="FinNews Logo" width={140} height={40} />
-        </Link>
+    // Header dán dưới CryptoTicker cao 30px
+    <header className="relative bg-white dark:bg-gray-900/90 backdrop-blur sticky top-[30px] z-50 shadow-sm">
+      <div className="container 2xl:max-w-[1600px] mx-auto px-4 lg:px-6">
+        {/* Header thấp hơn ~30% (py-3) và giữ logo không bị bóp (shrink-0) */}
+        <div className="grid grid-cols-[auto,1fr,auto] items-center gap-6 py-3">
+          {/* Logo to, không co lại */}
+          <Link href="/" className="flex items-center shrink-0" aria-label="FinNews247">
+              <Image
+                src="/logo.png"
+                alt="FinNews Logo"
+                width={640}
+                height={192}
+                className="h-24 lg:h-28 xl:h-32 w-auto"
+                priority
+              />
+            </Link>
 
-        {/* Desktop nav */}
-        <nav className="hidden md:flex gap-6 text-sm font-medium text-gray-700 dark:text-gray-300">
-          <Link href="/">Home</Link>
-          <Link href="/crypto">Crypto</Link>
-          <Link href="/stocks">Stocks</Link>
-          <Link href="/economy">Economy</Link>
-          <Link href="/market">Market</Link>
-          <Link href="/signals">Signals</Link>
-        </nav>
+          {/* Menu: chữ nhỏ lại + khoảng cách gần hơn; căn giữa; không ép logo */}
+          <nav className="hidden md:flex justify-center items-center min-w-0 overflow-x-auto no-scrollbar whitespace-nowrap gap-5 text-[18px] lg:text-[19px] font-medium text-gray-800 dark:text-gray-200">
+            {NAV_ITEMS.map((it) => (
+              <Link key={it.href} href={it.href} className="hover:text-blue-600">{it.label}</Link>
+            ))}
+          </nav>
 
-        <div className="flex items-center gap-3">
-          <ThemeToggle />
-          <button
-            className="md:hidden p-2"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            ☰
-          </button>
+          {/* Theme + nút mobile */}
+          <div className="flex items-center justify-end gap-3">
+            <ThemeToggle />
+            <button
+              className="md:hidden p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-2xl"
+              aria-label="Toggle menu"
+              onClick={() => setMenuOpen((v) => !v)}
+            >
+              ☰
+            </button>
+          </div>
         </div>
+      </div>
+
+      {/* Viền mảnh dưới header giống bản cũ */}
+      <div className="pointer-events-none absolute -bottom-px left-0 right-0">
+        <div className="h-[2px] w-full bg-gradient-to-r from-sky-500 via-purple-500 to-pink-500" />
       </div>
 
       {/* Mobile menu */}
       {menuOpen && (
         <div className="md:hidden bg-white dark:bg-gray-800 border-t">
-          <nav className="flex flex-col p-3 space-y-2 text-sm">
-            <Link href="/">Home</Link>
-            <Link href="/crypto">Crypto</Link>
-            <Link href="/stocks">Stocks</Link>
-            <Link href="/economy">Economy</Link>
-            <Link href="/market">Market</Link>
-            <Link href="/signals">Signals</Link>
+          <nav className="container 2xl:max-w-[1600px] mx-auto flex flex-col px-4 py-2 space-y-2 text-[18px]">
+            {NAV_ITEMS.map((it) => (
+              <Link key={it.href} href={it.href} onClick={() => setMenuOpen(false)}>{it.label}</Link>
+            ))}
           </nav>
         </div>
       )}
+
+      {/* Ẩn scrollbar ngang của nav khi tràn */}
+      <style jsx>{`
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
     </header>
   );
 }

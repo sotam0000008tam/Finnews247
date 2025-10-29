@@ -1,0 +1,13 @@
+{
+  "recurse": true,
+  "timeout": 20000,
+  "concurrency": 10,
+  "skip": [
+    "^mailto:",
+    "^tel:",
+    "#",
+    "\\.pdf($|\\?)",
+    "/api/",
+    "^javascript:"
+  ]
+}

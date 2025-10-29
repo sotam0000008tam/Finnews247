@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import fs from "fs";
 import path from "path";
 import { NextSeo } from "next-seo";
@@ -56,4 +57,21 @@ export async function getServerSideProps({ params }) {
   const posts = JSON.parse(raw);
   const post = posts.find(p=>p.slug===params.slug) || null;
   return { props:{ post } };
+=======
+// pages/[slug].js (chỉ còn GSSP redirect)
+export async function getServerSideProps({ params }) {
+  const { readCat } = await import("../lib/serverCat");
+  const all = readCat("crypto-market");
+  const found = all.some((p) => p.slug === params.slug);
+  if (found) {
+    return {
+      redirect: {
+        destination: `/crypto-market/${params.slug}`,
+        permanent: true,
+      },
+    };
+  }
+  return { notFound: true };
+>>>>>>> 310b096 (feat: sidebar/pages + link check config; chore: .gitignore; rm tracked sitemap)
 }
+export default function _() { return null; }

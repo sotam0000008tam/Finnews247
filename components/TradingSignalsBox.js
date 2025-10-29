@@ -1,4 +1,4 @@
-// components/TradingSignalsBoxWide.js
+﻿// components/TradingSignalsBoxWide.js
 import Link from "next/link";
 
 export default function TradingSignalsBoxWide() {
@@ -80,8 +80,7 @@ export default function TradingSignalsBoxWide() {
       <div className="mt-4 flex justify-end">
         <Link
           href="/signals"
-          className="px-4 py-2 bg-sky-600 text-white rounded hover:bg-sky-700 text-sm"
-        >
+         className="px-4 py-2 bg-sky-600 text-white rounded hover:bg-sky-700 text-sm">
           View All Signals →
         </Link>
       </div>
@@ -93,3 +92,4 @@ export default function TradingSignalsBoxWide() {
     </div>
   );
 }
+

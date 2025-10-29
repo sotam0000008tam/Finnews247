@@ -1,22 +1,9 @@
-// pages/guides/[slug].js
+﻿// pages/crypto-market/[slug].js
 import fs from "fs";
 import path from "path";
 import Link from "next/link";
 import { NextSeo } from "next-seo";
 
-<<<<<<< HEAD
-/* helpers */
-function firstImage(html=""){ const m=html.match(/<img[^>]+src=["']([^"']+)["']/i); return m?m[1]:null; }
-
-export default function GuideDetail({ post }) {
-  if (!post) {
-    return <div className="p-6">
-      <h1 className="text-3xl font-semibold mb-4">404 - Not Found</h1>
-      <p>Guide not found.</p>
-    </div>;
-  }
-  const hero = post.image || post.ogImage || firstImage(post.content || "");
-=======
 /* Helpers */
 const stripHtml = (html = "") =>
   String(html)
@@ -25,7 +12,6 @@ const stripHtml = (html = "") =>
     .replace(/<[^>]+>/g, " ")
     .replace(/\s+/g, " ")
     .trim();
->>>>>>> 310b096 (feat: sidebar/pages + link check config; chore: .gitignore; rm tracked sitemap)
 
 const truncate = (s = "", n = 160) => {
   if (s.length <= n) return s;
@@ -38,8 +24,13 @@ const firstImg = (html = "") => {
   const m = String(html).match(/<img[^>]+src=["']([^"']+)["']/i);
   return m ? m[1] : null;
 };
+
 const pickThumb = (p) =>
-  p?.thumb || p?.ogImage || p?.image || firstImg(p?.content || p?.body || "") || "/images/dummy/guides64.jpg";
+  p?.thumb ||
+  p?.ogImage ||
+  p?.image ||
+  firstImg(p?.content || p?.body || "") ||
+  "/images/dummy/market64.jpg";
 
 /* ===== Universal href resolver (đúng mọi chuyên mục) ===== */
 function buildHref(p) {
@@ -53,10 +44,10 @@ function buildHref(p) {
   if (c.includes("wallet") || c.includes("app")) return `/best-crypto-apps/${slug}`;
   if (c.includes("insurance") || c.includes("tax")) return `/insurance/${slug}`;
   if (c.includes("guide") || c.includes("review")) return `/guides/${slug}`;
-  return `/guides/${slug}`;
+  return `/crypto-market/${slug}`;
 }
 
-/* ===== Dò tên tác giả (ưu tiên data, fallback đoán trong content) ===== */
+/* Lấy tên tác giả; nếu thiếu thì đoán trong content/body */
 function guessAuthor(post) {
   const direct =
     post.author ||
@@ -69,7 +60,7 @@ function guessAuthor(post) {
     post?.meta?.author ||
     post?.source?.author ||
     "";
-  if (direct && String(direct).trim()) return String(direct).trim();
+  if (String(direct).trim()) return String(direct).trim();
 
   const raw = String(post.content || post.body || "");
   const m =
@@ -83,34 +74,10 @@ function SideMiniItem({ item }) {
   const href = buildHref(item);
   const img = pickThumb(item);
   return (
-<<<<<<< HEAD
-    <article className="prose lg:prose-xl max-w-none container mx-auto px-4 py-6">
-      <ArticleSeo post={post} path={`/guides/${post.slug}`} />
-      <h1>{post.title}</h1>
-      {post.date && <p className="text-sm text-gray-500">{post.date}</p>}
-
-      {hero && (
-        <div className="article-hero my-4">
-          <img src={hero} alt={post.title} loading="lazy" />
-        </div>
-      )}
-
-      <div className="post-body" dangerouslySetInnerHTML={{ __html: post.content }} />
-    </article>
-  );
-}
-
-export async function getStaticPaths(){
-  const posts = JSON.parse(fs.readFileSync(path.join(process.cwd(),"data","guides.json"),"utf-8"));
-  return { paths: posts.map(p=>({ params:{ slug:p.slug }})), fallback:"blocking" };
-}
-export async function getStaticProps({ params }){
-  const posts = JSON.parse(fs.readFileSync(path.join(process.cwd(),"data","guides.json"),"utf-8"));
-  const post = posts.find(p=>p.slug===params.slug) || null;
-  if (!post) return { notFound:true, revalidate:60 };
-  return { props:{ post }, revalidate:600 };
-=======
-    <Link href={href} className="group flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+    <Link
+      href={href}
+      className="group flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+    >
       <img
         src={img}
         alt={item?.title || "post"}
@@ -121,19 +88,25 @@ export async function getStaticProps({ params }){
         <div className="text-sm leading-snug line-clamp-2 group-hover:underline">
           {item?.title || "Untitled"}
         </div>
-        {(item?.date || item?.updatedAt) && (
-          <div className="text-xs text-gray-500 mt-0.5">
-            {item?.date || item?.updatedAt}
-          </div>
+        {item?.date && (
+          <div className="text-xs text-gray-500 mt-0.5">{item.date}</div>
         )}
       </div>
     </Link>
   );
 }
 
-export default function DetailPage({ post, related = [], latest = [] }) {
-  if (!post) return <div className="container mx-auto px-4 py-6">Not found</div>;
-  const canonical = `https://www.finnews247.com/guides/${post.slug}`;
+export default function Post({ post, related = [], latest = [] }) {
+  if (!post) {
+    return (
+      <div className="container mx-auto px-4 py-6">
+        <h1 className="text-2xl font-bold mb-3">404 - Not Found</h1>
+        <p>The article you are looking for does not exist.</p>
+      </div>
+    );
+  }
+
+  const canonical = `https://www.finnews247.com/crypto-market/${post.slug}`;
   const title = `${post.title} | FinNews247`;
   const description =
     (post.excerpt && post.excerpt.trim()) ||
@@ -144,17 +117,7 @@ export default function DetailPage({ post, related = [], latest = [] }) {
     firstImg(post.content || post.body || "") ||
     "https://www.finnews247.com/logo.png";
   const hero = post.image || ogImage || firstImg(post.content || post.body || "");
-
-  // tên tác giả: ưu tiên field trong data, nếu thiếu thì đoán từ nội dung
-  const author =
-    (post.author ||
-      post.authorName ||
-      post.author_name ||
-      post.by ||
-      post.byline ||
-      post?.meta?.author ||
-      post?.source?.author ||
-      "").trim() || guessAuthor(post);
+  const author = guessAuthor(post);
 
   return (
     <>
@@ -166,25 +129,27 @@ export default function DetailPage({ post, related = [], latest = [] }) {
       />
 
       <div className="container mx-auto px-4 py-6">
+        {/* Breadcrumb */}
         <nav className="text-sm text-gray-500 mb-4">
           <Link href="/">Home</Link>
           <span className="mx-2">/</span>
-          <Link href="/guides">Guides &amp; Reviews</Link>
+          <Link href="/crypto-market">Crypto &amp; Market</Link>
           <span className="mx-2">/</span>
           <span className="text-gray-700 dark:text-gray-300 line-clamp-1">{post.title}</span>
         </nav>
 
         <div className="grid md:grid-cols-12 gap-8">
+          {/* Main */}
           <article className="md:col-span-9">
             <h1 className="text-2xl md:text-3xl font-bold">{post.title}</h1>
-            {(post.date || post.updatedAt) && (
-              <p className="text-sm text-gray-500">{post.date || post.updatedAt}</p>
-            )}
+            {post.date && <p className="text-sm text-gray-500">{post.date}</p>}
 
-            {/* Author (góc phải, phía trên, ngoài ảnh) */}
+            {/* Tác giả: góc phải phía trên ảnh */}
             <div className="mt-2 mb-1 flex justify-end">
               <div className="flex items-center gap-2">
-                <span className="text-[11px] uppercase tracking-wide text-gray-500">Written by:</span>
+                <span className="text-[11px] uppercase tracking-wide text-gray-500">
+                  Written by:
+                </span>
                 <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-xs">
                   <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor" aria-hidden="true">
                     <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z" />
@@ -205,10 +170,11 @@ export default function DetailPage({ post, related = [], latest = [] }) {
               dangerouslySetInnerHTML={{ __html: post.content || post.body || "" }}
             />
 
+            {/* More */}
             <div className="mt-8">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg font-semibold">More from Guides &amp; Reviews</h3>
-                <Link href="/guides" className="text-sm text-sky-600 hover:underline">View all</Link>
+                <h3 className="text-lg font-semibold">More from Crypto & Market</h3>
+                <Link href="/crypto-market" className="text-sm text-sky-600 hover:underline">View all</Link>
               </div>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {(related || []).slice(0, 6).map((it) => (
@@ -226,6 +192,7 @@ export default function DetailPage({ post, related = [], latest = [] }) {
             </div>
           </article>
 
+          {/* Sidebar */}
           <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
             <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
               <div className="px-4 py-3 border-b dark:border-gray-700">
@@ -266,22 +233,23 @@ export async function getServerSideProps({ params }) {
     try { return JSON.parse(fs.readFileSync(path.join(process.cwd(), "data", f), "utf-8")); }
     catch { return []; }
   };
-  const pool = read("guides.json").filter(Boolean);
-  const post =
-    pool.find((p) => (p.slug || "").toLowerCase() === (params.slug || "").toLowerCase()) || null;
+
+  const pool = read("news.json").filter(Boolean);
+  const post = pool.find((p) => (p.slug || "").toLowerCase() === (params.slug || "").toLowerCase()) || null;
   if (!post) return { notFound: true };
 
   const related = pool.filter((p) => p.slug && p.slug !== post.slug).slice(0, 8);
 
-  // latest (mix a few categories)
+  // latest mix
   const market = read("news.json").map((p) => ({ ...p, _cat: "crypto-market" }));
   const alt = read("altcoins.json").map((p) => ({ ...p, _cat: "altcoins" }));
   const ex = [].concat(read("cryptoexchanges.json"), read("fidelity.json")).map((p) => ({ ...p, _cat: "crypto-exchanges" }));
   const apps = read("bestapps.json").map((p) => ({ ...p, _cat: "best-crypto-apps" }));
   const ins = read("insurance.json").map((p) => ({ ...p, _cat: "insurance" }));
+  const guides = read("guides.json").map((p) => ({ ...p, _cat: "guides" }));
 
   const used = new Set(related.map((r) => r.slug).concat(post.slug));
-  const poolLatest = [...market, ...alt, ...ex, ...apps, ...ins].filter((x) => x?.slug && !used.has(x.slug));
+  const poolLatest = [...market, ...alt, ...ex, ...apps, ...ins, ...guides].filter((x) => x?.slug && !used.has(x.slug));
   const seen = new Set();
   const latest = poolLatest
     .filter((p) => { if (seen.has(p.slug)) return false; seen.add(p.slug); return true; })
@@ -289,5 +257,4 @@ export async function getServerSideProps({ params }) {
     .slice(0, 10);
 
   return { props: { post, related, latest } };
->>>>>>> 310b096 (feat: sidebar/pages + link check config; chore: .gitignore; rm tracked sitemap)
 }

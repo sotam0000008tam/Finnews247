@@ -6,7 +6,9 @@
     "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start -p 3000",
-    "postbuild": "next-sitemap"
+    "postbuild": "next-sitemap",
+    "check:links": "start-server-and-test 'next start -p 3000' http://localhost:3000 \"linkinator http://localhost:3000 --recurse --timeout 15000 --concurrency 10 --skip '^mailto:|^tel:|#|\\\\.pdf($|\\\\?)|/api/|^javascript:' --format json --silent > link-report.json\"",
+    "check:sidebar": "start-server-and-test 'next start -p 3000' http://localhost:3000 'node scripts/check-sidebar-links.mjs'"
   },
   "dependencies": {
     "lucide-react": "^0.543.0",
@@ -22,7 +24,14 @@
     "autoprefixer": "^10.4.21",
     "next-sitemap": "^4.2.3",
     "postcss": "^8.5.6",
-    "tailwindcss": "^3.4.17"
-  }
+    "tailwindcss": "^3.4.17",
+    "linkinator": "^4.1.1",
+    "start-server-and-test": "^2.0.7",
+    "cheerio": "^1.0.0-rc.12"
+  },
+  "precheck:links": "npm run build",
+  "precheck:sidebar": "npm run build"
 
-  }
+ 
+
+}
