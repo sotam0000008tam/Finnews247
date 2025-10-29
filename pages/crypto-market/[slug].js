@@ -24,30 +24,12 @@ const firstImg = (html = "") => {
   const m = String(html).match(/<img[^>]+src=["']([^"']+)["']/i);
   return m ? m[1] : null;
 };
-
 const pickThumb = (p) =>
-  p?.thumb ||
-  p?.ogImage ||
-  p?.image ||
-  firstImg(p?.content || p?.body || "") ||
-  "/images/dummy/market64.jpg";
+  p?.thumb || p?.ogImage || p?.image || firstImg(p?.content || p?.body || "") || "/images/dummy/market64.jpg";
 
-/* ===== Universal href resolver (đúng mọi chuyên mục) ===== */
-function buildHref(p) {
-  if (p?.href) return p.href;
-  const slug = p?.slug;
-  if (!slug) return "#";
-  const c = String(p?._cat || p?.category || "").toLowerCase();
-  if (c.includes("market") || c.includes("news")) return `/crypto-market/${slug}`;
-  if (c.includes("altcoin") || c.includes("sec coin") || c.includes("seccoin")) return `/altcoins/${slug}`;
-  if (c.includes("exchange") || c.includes("fidelity")) return `/crypto-exchanges/${slug}`;
-  if (c.includes("wallet") || c.includes("app")) return `/best-crypto-apps/${slug}`;
-  if (c.includes("insurance") || c.includes("tax")) return `/insurance/${slug}`;
-  if (c.includes("guide") || c.includes("review")) return `/guides/${slug}`;
-  return `/crypto-market/${slug}`;
-}
+const buildUrl = (p) => `/crypto-market/${p.slug}`;
 
-/* Lấy tên tác giả; nếu thiếu thì đoán trong content/body */
+/* Lấy tên tác giả từ data; nếu không có thì đoán trong content/body */
 function guessAuthor(post) {
   const direct =
     post.author ||
@@ -71,7 +53,7 @@ function guessAuthor(post) {
 }
 
 function SideMiniItem({ item }) {
-  const href = buildHref(item);
+  const href = buildUrl(item);
   const img = pickThumb(item);
   return (
     <Link
@@ -178,7 +160,7 @@ export default function Post({ post, related = [], latest = [] }) {
               </div>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {(related || []).slice(0, 6).map((it) => (
-                  <Link key={it.slug} href={buildHref(it)} className="block rounded-lg border p-3 hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <Link key={it.slug} href={buildUrl(it)} className="block rounded-lg border p-3 hover:bg-gray-50 dark:hover:bg-gray-800">
                     <img
                       src={pickThumb(it)}
                       alt={it.title}

@@ -4,19 +4,6 @@ import path from "path";
 import Link from "next/link";
 import { NextSeo } from "next-seo";
 
-<<<<<<< HEAD
-/* helpers */
-function firstImage(html=""){ const m=html.match(/<img[^>]+src=["']([^"']+)["']/i); return m?m[1]:null; }
-
-export default function GuideDetail({ post }) {
-  if (!post) {
-    return <div className="p-6">
-      <h1 className="text-3xl font-semibold mb-4">404 - Not Found</h1>
-      <p>Guide not found.</p>
-    </div>;
-  }
-  const hero = post.image || post.ogImage || firstImage(post.content || "");
-=======
 /* Helpers */
 const stripHtml = (html = "") =>
   String(html)
@@ -25,7 +12,6 @@ const stripHtml = (html = "") =>
     .replace(/<[^>]+>/g, " ")
     .replace(/\s+/g, " ")
     .trim();
->>>>>>> 310b096 (feat: sidebar/pages + link check config; chore: .gitignore; rm tracked sitemap)
 
 const truncate = (s = "", n = 160) => {
   if (s.length <= n) return s;
@@ -41,20 +27,7 @@ const firstImg = (html = "") => {
 const pickThumb = (p) =>
   p?.thumb || p?.ogImage || p?.image || firstImg(p?.content || p?.body || "") || "/images/dummy/guides64.jpg";
 
-/* ===== Universal href resolver (đúng mọi chuyên mục) ===== */
-function buildHref(p) {
-  if (p?.href) return p.href;
-  const slug = p?.slug;
-  if (!slug) return "#";
-  const c = String(p?._cat || p?.category || "").toLowerCase();
-  if (c.includes("market") || c.includes("news")) return `/crypto-market/${slug}`;
-  if (c.includes("altcoin") || c.includes("sec coin") || c.includes("seccoin")) return `/altcoins/${slug}`;
-  if (c.includes("exchange") || c.includes("fidelity")) return `/crypto-exchanges/${slug}`;
-  if (c.includes("wallet") || c.includes("app")) return `/best-crypto-apps/${slug}`;
-  if (c.includes("insurance") || c.includes("tax")) return `/insurance/${slug}`;
-  if (c.includes("guide") || c.includes("review")) return `/guides/${slug}`;
-  return `/guides/${slug}`;
-}
+const buildUrl = (p) => `/guides/${p.slug}`;
 
 /* ===== Dò tên tác giả (ưu tiên data, fallback đoán trong content) ===== */
 function guessAuthor(post) {
@@ -80,36 +53,9 @@ function guessAuthor(post) {
 }
 
 function SideMiniItem({ item }) {
-  const href = buildHref(item);
+  const href = buildUrl(item);
   const img = pickThumb(item);
   return (
-<<<<<<< HEAD
-    <article className="prose lg:prose-xl max-w-none container mx-auto px-4 py-6">
-      <ArticleSeo post={post} path={`/guides/${post.slug}`} />
-      <h1>{post.title}</h1>
-      {post.date && <p className="text-sm text-gray-500">{post.date}</p>}
-
-      {hero && (
-        <div className="article-hero my-4">
-          <img src={hero} alt={post.title} loading="lazy" />
-        </div>
-      )}
-
-      <div className="post-body" dangerouslySetInnerHTML={{ __html: post.content }} />
-    </article>
-  );
-}
-
-export async function getStaticPaths(){
-  const posts = JSON.parse(fs.readFileSync(path.join(process.cwd(),"data","guides.json"),"utf-8"));
-  return { paths: posts.map(p=>({ params:{ slug:p.slug }})), fallback:"blocking" };
-}
-export async function getStaticProps({ params }){
-  const posts = JSON.parse(fs.readFileSync(path.join(process.cwd(),"data","guides.json"),"utf-8"));
-  const post = posts.find(p=>p.slug===params.slug) || null;
-  if (!post) return { notFound:true, revalidate:60 };
-  return { props:{ post }, revalidate:600 };
-=======
     <Link href={href} className="group flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition">
       <img
         src={img}
@@ -212,7 +158,7 @@ export default function DetailPage({ post, related = [], latest = [] }) {
               </div>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {(related || []).slice(0, 6).map((it) => (
-                  <Link key={it.slug} href={buildHref(it)} className="block rounded-lg border p-3 hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <Link key={it.slug} href={buildUrl(it)} className="block rounded-lg border p-3 hover:bg-gray-50 dark:hover:bg-gray-800">
                     <img
                       src={pickThumb(it)}
                       alt={it.title}
@@ -289,5 +235,4 @@ export async function getServerSideProps({ params }) {
     .slice(0, 10);
 
   return { props: { post, related, latest } };
->>>>>>> 310b096 (feat: sidebar/pages + link check config; chore: .gitignore; rm tracked sitemap)
 }

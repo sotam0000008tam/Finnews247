@@ -1,50 +1,9 @@
+// pages/insurance/[slug].js
 import fs from "fs";
 import path from "path";
 import Link from "next/link";
 import { NextSeo } from "next-seo";
 
-<<<<<<< HEAD
-/* helpers */
-function stripHtml(html=""){ return html.replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim(); }
-function truncate(s="",n=160){ if(s.length<=n) return s; const cut=s.slice(0,n); const i=cut.lastIndexOf(" "); return (i>80?cut.slice(0,i):cut)+"…"; }
-function firstImage(html=""){ const m=html.match(/<img[^>]+src=["']([^"']+)["']/i); return m?m[1]:null; }
-
-export default function InsuranceTaxDetail({ post }) {
-  if (!post) {
-    return <div className="container mx-auto px-4 py-6">
-      <h1 className="text-3xl font-semibold mb-6">404 - Not Found</h1>
-      <p>The article you are looking for does not exist.</p>
-    </div>;
-  }
-
-  const url = `https://www.finnews247.com/insurance/${post.slug}`;
-  const desc = (post.excerpt && post.excerpt.trim()) || truncate(stripHtml(post.content||""),160);
-  const hero = post.image || post.ogImage || firstImage(post.content||"");
-
-  return (
-    <article className="prose lg:prose-xl max-w-none container mx-auto px-4 py-6">
-      <NextSeo title={`${post.title} | FinNews247`} description={desc} canonical={url}
-        openGraph={{ title:`${post.title} | FinNews247`, description:desc, url, images: hero?[{url:hero}]:undefined }} />
-      <h1>{post.title}</h1>
-      {post.date && <p className="text-sm text-gray-500">{post.date}</p>}
-
-      {hero && (
-        <div className="article-hero my-4">
-          <img src={hero} alt={post.title} loading="lazy" />
-        </div>
-      )}
-
-      <div className="post-body" dangerouslySetInnerHTML={{ __html: post.content }} />
-    </article>
-  );
-}
-
-export async function getServerSideProps({ params }){
-  const read = (f)=>JSON.parse(fs.readFileSync(path.join(process.cwd(),"data",f),"utf8"));
-  const posts = [...read("insurance.json"), ...read("tax.json")];
-  const post = posts.find(p=>p.slug===params.slug) || null;
-  return { props:{ post } };
-=======
 /* Helpers */
 const stripHtml = (html = "") =>
   String(html)
@@ -68,20 +27,7 @@ const firstImg = (html = "") => {
 const pickThumb = (p) =>
   p?.thumb || p?.ogImage || p?.image || firstImg(p?.content || p?.body || "") || "/images/dummy/insurance64.jpg";
 
-/* Resolver tổng quát cho mọi chuyên mục (dựa theo _cat / category) */
-function buildHref(p) {
-  if (p?.href) return p.href;
-  const slug = p?.slug;
-  if (!slug) return "#";
-  const c = String(p?._cat || p?.category || "").toLowerCase();
-  if (c.includes("market") || c.includes("news")) return `/crypto-market/${slug}`;
-  if (c.includes("altcoin") || c.includes("sec coin") || c.includes("seccoin")) return `/altcoins/${slug}`;
-  if (c.includes("exchange") || c.includes("fidelity")) return `/crypto-exchanges/${slug}`;
-  if (c.includes("wallet") || c.includes("app")) return `/best-crypto-apps/${slug}`;
-  if (c.includes("insurance") || c.includes("tax")) return `/insurance/${slug}`;
-  if (c.includes("guide") || c.includes("review")) return `/guides/${slug}`;
-  return `/insurance/${slug}`;
-}
+const buildUrl = (p) => `/insurance/${p.slug}`;
 
 /* ===== Dò tên tác giả (ưu tiên data, fallback đoán trong content) ===== */
 function guessAuthor(post) {
@@ -107,7 +53,7 @@ function guessAuthor(post) {
 }
 
 function SideMiniItem({ item }) {
-  const href = buildHref(item);
+  const href = buildUrl(item);
   const img = pickThumb(item);
   return (
     <Link href={href} className="group flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition">
@@ -223,7 +169,7 @@ export default function DetailPage({ post, related = [], latest = [] }) {
               </div>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {(related || []).slice(0, 6).map((it) => (
-                  <Link key={it.slug} href={buildHref(it)} className="block rounded-lg border p-3 hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <Link key={it.slug} href={buildUrl(it)} className="block rounded-lg border p-3 hover:bg-gray-50 dark:hover:bg-gray-800">
                     <img
                       src={pickThumb(it)}
                       alt={it.title}
@@ -287,7 +233,7 @@ export async function getServerSideProps({ params }) {
 
   const related = pool.filter((p) => p.slug && p.slug !== post.slug).slice(0, 8);
 
-  // latest mix (đính kèm _cat để buildHref hoạt động đúng)
+  // latest mix
   const market = read("news.json").map((p) => ({ ...p, _cat: "crypto-market" }));
   const alt = read("altcoins.json").map((p) => ({ ...p, _cat: "altcoins" }));
   const ex = [].concat(read("cryptoexchanges.json"), read("fidelity.json")).map((p) => ({ ...p, _cat: "crypto-exchanges" }));
@@ -303,5 +249,4 @@ export async function getServerSideProps({ params }) {
     .slice(0, 10);
 
   return { props: { post, related, latest } };
->>>>>>> 310b096 (feat: sidebar/pages + link check config; chore: .gitignore; rm tracked sitemap)
 }

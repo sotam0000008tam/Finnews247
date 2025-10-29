@@ -1,79 +1,21 @@
-/* styles/globals.css — Clean baseline, giống Home/Signals */
-
-/* Tailwind */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Reset nhẹ */
-*,*::before,*::after{ box-sizing:border-box; }
-html,body{ margin:0; padding:0; }
-
-/* Ảnh mặc định */
-img{ max-width:100%; height:auto; display:block; }
-
-/* ========== HERO 16:9 đồng nhất ========== */
-.article-hero{
-  position:relative;
-  width:100%;
-  aspect-ratio:16/9;
-  border-radius:0.75rem;
-  overflow:hidden;
-  background:#f3f4f6;
-}
-.article-hero img{
-  position:absolute; inset:0;
-  width:100%; height:100%;
-  object-fit:cover;
+/* ====== Base Style ====== */
+body {
+  @apply bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  line-height: 1.5;
 }
 
-<<<<<<< HEAD
-/* Nội dung render HTML */
-.post-body img{
-  display:block;
-  max-width:100%;
-  height:auto;
-  border-radius:0.5rem;
-  margin:1rem auto;
-}
-.post-body video,
-.post-body iframe{
-  display:block;
-  width:100%;
-  max-width:100%;
-  border:0;
-}
-=======
 a { @apply text-sky-600 hover:underline; }
->>>>>>> 310b096 (feat: sidebar/pages + link check config; chore: .gitignore; rm tracked sitemap)
 
-/* Nếu dùng typography */
-.prose{ max-width:100%; } /* tránh 65ch mặc định */
-.prose :where(img,video,iframe){
-  max-width:100%;
-  height:auto;
-  margin:1rem auto;
-  border-radius:0.5rem;
+h1, h2, h3, h4, h5, h6 {
+  @apply font-semibold text-gray-900 dark:text-gray-100;
 }
 
-<<<<<<< HEAD
-/* Thumbnail nhỏ trong sidebar */
-.fn-mini{ display:flex; align-items:center; gap:.75rem; padding:.5rem; border-radius:.5rem; text-decoration:none; }
-.fn-mini:hover{ background:rgba(0,0,0,.04); }
-@media (prefers-color-scheme:dark){ .fn-mini:hover{ background:rgba(255,255,255,.06); } }
-.fn-mini img{ width:45px; height:45px; object-fit:cover; border-radius:.5rem; flex-shrink:0; }
-.fn-mini .title{ font-size:.9rem; line-height:1.25; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-.fn-mini .date{ font-size:.75rem; color:#6b7280; margin-top:2px; }
-
-/* Card thumbnail (trang danh sách) */
-.card-thumb,.post-card img{
-  width:100%;
-  aspect-ratio:16/9;
-  object-fit:cover;
-  border-radius:.5rem;
-  display:block;
-}
-=======
 .container { @apply max-w-7xl mx-auto; }
 
 /* ✅ UNIVERSAL image safety */
@@ -121,4 +63,3 @@ header.sticky.top-10 .container img[alt="FinNews Logo"] { max-height: 36px; heig
 .sidebar-scope .group { align-items: flex-start; }
 .sidebar-scope img { flex: 0 0 45px; width:45px; height:45px; object-fit: cover; border-radius: 8px; }
 .sidebar-scope .min-w-0 { min-width: 0; }
->>>>>>> 310b096 (feat: sidebar/pages + link check config; chore: .gitignore; rm tracked sitemap)
