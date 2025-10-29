@@ -136,7 +136,7 @@ export default function SignalDetailPage({ signal, latest=[] }){
           ): content? <section className="prose max-w-none" dangerouslySetInnerHTML={{__html:String(content)}}/> : <div className="text-sm text-gray-500">No detailed content provided for this signal.</div>}
 
           <div className="mt-10 flex items-center gap-4 text-sky-600">
-            <Link href="/signals" className="hover:underline">† Back to all signals</Link>
+            <Link href="/signals" className="hover:underline">← Back to all signals</Link>
           </div>
         </div>
 

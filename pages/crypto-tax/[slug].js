@@ -30,7 +30,26 @@ const pickThumb = (p) =>
   p?.thumb || p?.ogImage || p?.image || firstImg(p?.content || p?.body || "") || "/images/dummy/insurance64.jpg";
 
 /** Build URL đúng category chung: /insurance/{slug} */
-const buildUrl = (p) => `/insurance/${p.slug}`;
+const buildUrl = (p) => {
+  const s = p?.slug;
+  if (!s) return "#";
+  const c = String(p?.category || p?._cat || "").toLowerCase();
+
+  if (c.includes("fidelity")) return `/fidelity-crypto/${s}`;
+  if (c.includes("exchange")) return `/crypto-exchanges/${s}`;
+
+  if (c.includes("altcoin") || c.includes("sec coin") || c.includes("seccoin") || c.includes("sec-coin")) return `/altcoins/${s}`;
+  if (c.includes("app") || c.includes("wallet")) return `/best-crypto-apps/${s}`;
+
+  if (c.includes("insurance")) return `/insurance/${s}`;
+  if (c.includes("tax")) return `/tax/${s}`;
+
+  if (c.includes("guide") || c.includes("review")) return `/guides/${s}`;
+  if (c.includes("market") || c.includes("news") || c.includes("crypto-market")) return `/crypto-market/${s}`;
+
+  return `/guides/${s}`;
+};
+
 
 /** Lấy tên tác giả từ data; fallback đoán trong content/body */
 function guessAuthor(post) {
