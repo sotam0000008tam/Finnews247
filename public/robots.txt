@@ -1,17 +1,15 @@
-# robots.txt for FinNews247
-
+# *
 User-agent: *
 Allow: /
-Disallow: /admin/
-Disallow: /api/
-Allow: /ads.txt
 
-# Google ads-related crawlers
-User-agent: AdsBot-Google
-Allow: /ads.txt
+# *
+User-agent: *
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /api/*
 
-User-agent: Mediapartners-Google
-Allow: /ads.txt
+# Host
+Host: https://www.finnews247.com
 
-# Sitemap index
+# Sitemaps
 Sitemap: https://www.finnews247.com/sitemap.xml
