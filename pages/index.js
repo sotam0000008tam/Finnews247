@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 // pages/index.js
-=======
-﻿// pages/index.js
->>>>>>> 310b096 (feat: sidebar/pages + link check config; chore: .gitignore; rm tracked sitemap)
 import Link from "next/link";
 import PostCard from "../components/PostCard";
 import { NextSeo } from "next-seo";
@@ -44,15 +40,9 @@ function hrefOf(p) {
   if (cat.includes("tax") || cat.includes("compliance")) return `/tax/${slug}`;
 
   if (cat.includes("guide") || cat.includes("review")) return `/guides/${slug}`;
-<<<<<<< HEAD
-  if (cat.includes("market") || cat.includes("news")) return `/${slug}`;
-
-  // fallback: đoán theo nhóm lớn
-=======
   if (cat.includes("market") || cat.includes("news")) return `/crypto-market/${slug}`;
 
   // fallback
->>>>>>> 310b096 (feat: sidebar/pages + link check config; chore: .gitignore; rm tracked sitemap)
   return `/guides/${slug}`;
 }
 
@@ -69,14 +59,7 @@ function LatestMini({ items = [] }) {
           const img = pickThumb(p);
           return (
             <li key={(p.slug || p.title) + "-latest"}>
-<<<<<<< HEAD
-              <Link
-                href={href}
-                className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
-              >
-=======
               <Link href={href} className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
->>>>>>> 310b096 (feat: sidebar/pages + link check config; chore: .gitignore; rm tracked sitemap)
                 <img
                   src={img}
                   alt={p?.title || "post"}
@@ -110,11 +93,7 @@ export default function Home({
   insuranceTaxPosts,
   newsPosts,
   guidePosts,
-<<<<<<< HEAD
-  latestAll, // <-- mới
-=======
   latestAll,
->>>>>>> 310b096 (feat: sidebar/pages + link check config; chore: .gitignore; rm tracked sitemap)
 }) {
   const structuredData = {
     "@context": "https://schema.org",
@@ -153,21 +132,12 @@ export default function Home({
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
         {/* Sidebar (trái) */}
-<<<<<<< HEAD
         <aside className="md:col-span-4 w-full space-y-6">
-=======
-        <aside className="md:col-span-3 w-full space-y-6">
->>>>>>> 310b096 (feat: sidebar/pages + link check config; chore: .gitignore; rm tracked sitemap)
           <TradingSignalsBoxMini />
           <TopExchanges variant="sidebar" />
           <BestWallets variant="sidebar" />
           <TopStaking variant="sidebar" />
-
-<<<<<<< HEAD
-          {/* ▼ Block mới: Latest dưới TopStaking (có thumbnail) ▼ */}
-=======
           {/* Latest toàn site (có thumbnail) */}
->>>>>>> 310b096 (feat: sidebar/pages + link check config; chore: .gitignore; rm tracked sitemap)
           <LatestMini items={latestAll} />
         </aside>
 
@@ -227,7 +197,7 @@ export default function Home({
             <h2 className="text-2xl font-semibold mb-4">Crypto & Market News</h2>
             <div className="grid md:grid-cols-2 gap-6">
               {newsPosts.map((p) => (
-                // TRẢ VỀ ROOT SLUG: /<slug>
+                // Nếu thích direct path: đổi thành `/crypto-market/${p.slug}`
                 <PostCard key={p.slug} post={{ ...p, href: `/${p.slug}` }} />
               ))}
             </div>
@@ -242,8 +212,6 @@ export default function Home({
               </Link>
             </div>
           </section>
-
-
 
           <section>
             <h2 className="text-2xl font-semibold mb-4">Guides & Reviews</h2>
@@ -284,7 +252,7 @@ export async function getStaticProps() {
   const news = readJsonSafe("news.json");
   const guides = readJsonSafe("guides.json");
 
-  // nội dung chính (giữ nguyên logic cũ)
+  // nội dung chính
   const altcoinPosts = shallowPosts(
     sortDescByDate([...altcoins, ...seccoin]).slice(0, SECTION_COUNTS.altcoins)
   );

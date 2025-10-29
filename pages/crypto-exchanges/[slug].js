@@ -4,19 +4,6 @@ import path from "path";
 import Link from "next/link";
 import { NextSeo } from "next-seo";
 
-<<<<<<< HEAD
-/* helpers */
-function firstImage(html=""){ const m=html.match(/<img[^>]+src=["']([^"']+)["']/i); return m?m[1]:null; }
-
-export default function ExchangeDetail({ post }) {
-  if (!post) {
-    return <div className="p-6">
-      <h1 className="text-3xl font-semibold mb-4">404 - Not Found</h1>
-      <p>Exchange review not found.</p>
-    </div>;
-  }
-  const hero = post.image || post.ogImage || firstImage(post.content || "");
-=======
 /* Helpers */
 const stripHtml = (html = "") =>
   String(html)
@@ -44,20 +31,7 @@ const pickThumb = (p) =>
   firstImg(p?.content || p?.body || "") ||
   "/images/dummy/exchanges64.jpg";
 
-/* ===== Universal href resolver (đúng mọi chuyên mục) ===== */
-function buildHref(p) {
-  if (p?.href) return p.href;
-  const slug = p?.slug;
-  if (!slug) return "#";
-  const c = String(p?._cat || p?.category || "").toLowerCase();
-  if (c.includes("market") || c.includes("news")) return `/crypto-market/${slug}`;
-  if (c.includes("altcoin") || c.includes("sec coin") || c.includes("seccoin")) return `/altcoins/${slug}`;
-  if (c.includes("exchange") || c.includes("fidelity")) return `/crypto-exchanges/${slug}`;
-  if (c.includes("wallet") || c.includes("app")) return `/best-crypto-apps/${slug}`;
-  if (c.includes("insurance") || c.includes("tax")) return `/insurance/${slug}`;
-  if (c.includes("guide") || c.includes("review")) return `/guides/${slug}`;
-  return `/crypto-exchanges/${slug}`;
-}
+const buildUrl = (p) => `/crypto-exchanges/${p.slug}`;
 
 /* Guess author if missing */
 function guessAuthor(post) {
@@ -71,7 +45,6 @@ function guessAuthor(post) {
     post?.source?.author ||
     "";
   if (String(direct).trim()) return String(direct).trim();
->>>>>>> 310b096 (feat: sidebar/pages + link check config; chore: .gitignore; rm tracked sitemap)
 
   const raw = String(post.content || post.body || "");
   const m =
@@ -82,38 +55,9 @@ function guessAuthor(post) {
 }
 
 function SideMiniItem({ item }) {
-  const href = buildHref(item);
+  const href = buildUrl(item);
   const img = pickThumb(item);
   return (
-<<<<<<< HEAD
-    <article className="prose lg:prose-xl max-w-none container mx-auto px-4 py-6">
-      <ArticleSeo post={post} path={`/crypto-exchanges/${post.slug}`} />
-      <h1>{post.title}</h1>
-      {post.date && <p className="text-sm text-gray-500">{post.date}</p>}
-
-      {hero && (
-        <div className="article-hero my-4">
-          <img src={hero} alt={post.title} loading="lazy" />
-        </div>
-      )}
-
-      <div className="post-body" dangerouslySetInnerHTML={{ __html: post.content }} />
-    </article>
-  );
-}
-
-export async function getStaticPaths(){
-  const a = JSON.parse(fs.readFileSync(path.join(process.cwd(),"data","cryptoexchanges.json"),"utf8")||"[]");
-  const b = JSON.parse(fs.readFileSync(path.join(process.cwd(),"data","fidelity.json"),"utf8")||"[]");
-  return { paths:[...a,...b].map(p=>({ params:{ slug:p.slug }})), fallback:"blocking" };
-}
-export async function getStaticProps({ params }){
-  const a = JSON.parse(fs.readFileSync(path.join(process.cwd(),"data","cryptoexchanges.json"),"utf8")||"[]");
-  const b = JSON.parse(fs.readFileSync(path.join(process.cwd(),"data","fidelity.json"),"utf8")||"[]");
-  const post = [...a,...b].find(p=>p.slug===params.slug) || null;
-  if (!post) return { notFound:true, revalidate:60 };
-  return { props:{ post }, revalidate:600 };
-=======
     <Link
       href={href}
       className="group flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition"
@@ -152,15 +96,7 @@ export default function DetailPage({ post, related = [], latest = [] }) {
     "https://www.finnews247.com/logo.png";
   const hero = post.image || ogImage || firstImg(post.content || post.body || "");
 
-  const author =
-    (post.author ||
-      post.authorName ||
-      post.author_name ||
-      post.by ||
-      post.byline ||
-      post?.meta?.author ||
-      post?.source?.author ||
-      "").trim() || guessAuthor(post);
+  const author = guessAuthor(post);
 
   return (
     <>
@@ -189,7 +125,7 @@ export default function DetailPage({ post, related = [], latest = [] }) {
               <p className="text-sm text-gray-500">{post.date || post.updatedAt}</p>
             )}
 
-            {/* Author block (top-right, before hero) */}
+            {/* Author block (top-right) */}
             <div className="mt-2 mb-1 flex justify-end">
               <div className="flex items-center gap-2">
                 <span className="text-[11px] uppercase tracking-wide text-gray-500">
@@ -226,7 +162,7 @@ export default function DetailPage({ post, related = [], latest = [] }) {
                 {(related || []).slice(0, 6).map((it) => (
                   <Link
                     key={it.slug}
-                    href={buildHref(it)}
+                    href={buildUrl(it)}
                     className="block rounded-lg border p-3 hover:bg-gray-50 dark:hover:bg-gray-800"
                   >
                     <img
@@ -323,5 +259,4 @@ export async function getServerSideProps({ params }) {
     .slice(0, 10);
 
   return { props: { post, related, latest } };
->>>>>>> 310b096 (feat: sidebar/pages + link check config; chore: .gitignore; rm tracked sitemap)
 }

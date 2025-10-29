@@ -4,19 +4,6 @@ import path from "path";
 import Link from "next/link";
 import { NextSeo } from "next-seo";
 
-<<<<<<< HEAD
-/* helpers */
-function firstImage(html=""){ const m=html.match(/<img[^>]+src=["']([^"']+)["']/i); return m?m[1]:null; }
-
-export default function TaxDetail({ post }) {
-  if (!post) {
-    return <div className="p-6">
-      <h1 className="text-3xl font-semibold mb-4">404 - Not Found</h1>
-      <p>Tax article not found.</p>
-    </div>;
-  }
-  const hero = post.image || post.ogImage || firstImage(post.content || "");
-=======
 const firstImg = (h = "") => (String(h).match(/<img[^>]+src=["']([^"']+)["']/i) || [])[1] || null;
 const pickThumb = (p) =>
   p?.thumb ||
@@ -41,7 +28,6 @@ const buildUrl = (p) => {
   if (c.includes("guide") || c.includes("review")) return `/guides/${s}`;
   return `/tax/${s}`;
 };
->>>>>>> 310b096 (feat: sidebar/pages + link check config; chore: .gitignore; rm tracked sitemap)
 
 /* ===== Dò tên tác giả ===== */
 function guessAuthor(post) {
@@ -71,41 +57,6 @@ function SideItem({ item }) {
   const href = buildUrl(item);
   const img = pickThumb(item);
   return (
-<<<<<<< HEAD
-    <div className="container mx-auto px-4 py-6">
-      <div className="grid md:grid-cols-12 gap-8">
-        <article className="md:col-span-8 prose lg:prose-xl max-w-none">
-          <ArticleSeo post={post} path={`/tax/${post.slug}`} />
-          <h1>{post.title}</h1>
-          {post.date && <p className="text-sm text-gray-500">{post.date}</p>}
-
-          {hero && (
-            <div className="article-hero my-4">
-              <img src={hero} alt={post.title} loading="lazy" />
-            </div>
-          )}
-
-          <div className="post-body" dangerouslySetInnerHTML={{ __html: post.content }} />
-        </article>
-
-        {/* (Optional) sidebar ở đây nếu cần */}
-        <aside className="md:col-span-4"></aside>
-      </div>
-    </div>
-  );
-}
-
-export async function getStaticPaths(){
-  const posts = JSON.parse(fs.readFileSync(path.join(process.cwd(),"data","tax.json"),"utf-8"));
-  const paths = posts.filter(p=>p?.slug).map(p=>({ params:{ slug:p.slug } }));
-  return { paths, fallback:"blocking" };
-}
-export async function getStaticProps({ params }){
-  const posts = JSON.parse(fs.readFileSync(path.join(process.cwd(),"data","tax.json"),"utf-8"));
-  const post = posts.find(p=>p.slug===params.slug) || null;
-  if (!post) return { notFound:true, revalidate:60 };
-  return { props:{ post }, revalidate:600 };
-=======
     <Link
       href={href}
       className="group flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition"
@@ -144,8 +95,8 @@ export default function TaxDetail({ post, related = [], latest = [] }) {
           <h1 className="text-2xl md:text-3xl font-bold">{post.title}</h1>
           {post.date && <p className="text-gray-600 mt-1">{post.date}</p>}
 
-          {/* Dòng tác giả (góc phải, phía trên, ngoài ảnh) */}
-          <div className="mt-2 mb-1 flex justify-end">
+          {/* Dòng tác giả (chỉ hiện trên mobile) */}
+          <div className="mt-2 mb-1 flex justify-end md:hidden">
             <div className="flex items-center gap-2">
               <span className="text-[11px] uppercase tracking-wide text-gray-500">Written by:</span>
               <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-xs">
@@ -159,6 +110,14 @@ export default function TaxDetail({ post, related = [], latest = [] }) {
 
           {hero && (
             <div className="relative overflow-hidden rounded-xl my-4" style={{ paddingTop: "56.25%" }}>
+              {/* Author badge (hiện trên desktop) */}
+              <div className="hidden md:flex absolute top-2 right-2 z-10 items-center gap-2 px-2.5 py-1 rounded-full bg-black/60 text-white text-xs backdrop-blur">
+                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor" aria-hidden="true">
+                  <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z" />
+                </svg>
+                <span className="font-medium">{author}</span>
+              </div>
+
               <img src={hero} alt={post.title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
             </div>
           )}
@@ -273,5 +232,4 @@ export async function getStaticProps({ params }) {
     .slice(0, 10);
 
   return { props: { post, related, latest }, revalidate: 600 };
->>>>>>> 310b096 (feat: sidebar/pages + link check config; chore: .gitignore; rm tracked sitemap)
 }
