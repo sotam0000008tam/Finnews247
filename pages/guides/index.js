@@ -54,7 +54,9 @@ export default function GuidesIndex({items=[],latest=[],page=1,totalPages=1}){
     <style jsx global>{`.sidebar-scope img{width:45px!important;height:45px!important;max-width:none!important;object-fit:cover!important;border-radius:8px!important;display:block!important;}`}</style>
   </div>)}
 export async function getServerSideProps(){const read=(f)=>{try{return JSON.parse(fs.readFileSync(path.join(process.cwd(),"data",f),"utf-8"))}catch{return[]}};
-  const posts=read("guides.json"); const PAGE_SIZE=30,page=1,totalPages=Math.max(1,Math.ceil(posts.length/PAGE_SIZE)); const items=posts.slice(0,PAGE_SIZE);
+  const posts=read("guides.json"); 
+  posts.sort((a,b) => (Date.parse(b.date || b.updatedAt) || 0) - (Date.parse(a.date || a.updatedAt) || 0));
+  const PAGE_SIZE=30,page=1,totalPages=Math.max(1,Math.ceil(posts.length/PAGE_SIZE)); const items=posts.slice(0,PAGE_SIZE);
   const cats=["crypto-market","altcoins","crypto-exchanges","best-crypto-apps","insurance","guides","tax","fidelity","sec-coin"];
   const fileForCat=(c)=>(c==="crypto-exchanges"?"cryptoexchanges":c==="best-crypto-apps"?"bestapps":c==="sec-coin"?"seccoin":c==="crypto-market"?"news":c)+".json";
   let pool=[]; for(const c of cats){try{pool=pool.concat(read(fileForCat(c)).map(p=>({...p,_cat:c})))}catch{}}

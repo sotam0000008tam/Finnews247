@@ -122,6 +122,7 @@ export default function ExchangesIndex({ items = [], latest = [], page = 1, tota
 export async function getServerSideProps() {
   const { readCat } = await import("../../lib/serverCat");
   const posts = readCat("crypto-exchanges");
+  posts.sort((a,b) => (Date.parse(b.date || b.updatedAt) || 0) - (Date.parse(a.date || a.updatedAt) || 0));
   const PAGE_SIZE = 30;
   const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));
   const items = posts.slice(0, PAGE_SIZE);

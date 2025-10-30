@@ -70,6 +70,7 @@ export default function FidIndex({items=[],latest=[],page=1,totalPages=1}){
 export async function getServerSideProps(){
   const read=(f)=>{try{return JSON.parse(fs.readFileSync(path.join(process.cwd(),"data",f),"utf-8"))}catch{return[]}};
   const posts=read("fidelity.json");
+  posts.sort((a,b) => (Date.parse(b.date || b.updatedAt) || 0) - (Date.parse(a.date || a.updatedAt) || 0));
   const PAGE_SIZE=30,page=1,totalPages=Math.max(1,Math.ceil(posts.length/PAGE_SIZE));
   const items=posts.slice(0,PAGE_SIZE);
 
