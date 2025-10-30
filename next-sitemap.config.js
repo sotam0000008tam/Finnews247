@@ -3,105 +3,115 @@ const fs = require('fs');
 const path = require('path');
 
 const SITE = 'https://www.finnews247.com';
-const DATA_DIR = path.join(process.cwd(), 'data');
 
-// Đọc JSON an toàn: hỗ trợ mảng thuần, hoặc {items|posts}
-function safeParse(filePath) {
+// Alias tên file JSON -> base path
+const PATH_ALIASES = {
+  // news/bài thị trường phải vào /crypto-market
+  news: '/crypto-market',
+  market: '/crypto-market',
+  posts: '/crypto-market',
+  articles: '/crypto-market',
+  'crypto-market': '/crypto-market',
+
+  // các section khác giữ nguyên
+  altcoins: '/altcoins',
+  guides: '/guides',
+  insurance: '/insurance',
+  wallets: '/wallets',
+  signals: '/signals',
+  'crypto-exchanges': '/crypto-exchanges',
+  exchanges: '/crypto-exchanges',
+  'best-crypto-apps': '/best-crypto-apps',
+  apps: '/best-crypto-apps',
+};
+
+function readJson(name) {
   try {
-    const raw = fs.readFileSync(filePath, 'utf8');
-    const json = JSON.parse(raw);
-    if (Array.isArray(json)) return json;
-    if (Array.isArray(json.items)) return json.items;
-    if (Array.isArray(json.posts)) return json.posts;
-    return [];
+    const fp = path.join(process.cwd(), 'data', name);
+    if (!fs.existsSync(fp)) return [];
+    return JSON.parse(fs.readFileSync(fp, 'utf8'));
   } catch {
     return [];
   }
 }
 
-// Load tất cả file .json trong /data có "keyword" trong tên file (vd: "news", "signals")
-function loadAllByKeyword(keyword) {
-  if (!fs.existsSync(DATA_DIR)) return [];
-  const files = fs
-    .readdirSync(DATA_DIR)
-    .filter(f => f.endsWith('.json') && f.toLowerCase().includes(keyword.toLowerCase()));
-  return files.flatMap(f => safeParse(path.join(DATA_DIR, f)));
+function toISO(d) {
+  const dt = d ? new Date(d) : new Date();
+  return isNaN(+dt) ? new Date().toISOString() : dt.toISOString();
 }
 
-const toISO = (d) => {
-  if (!d) return undefined;
-  const t = new Date(d);
-  return isNaN(t.getTime()) ? undefined : t.toISOString();
-};
+function buildLoc(base, slug) {
+  const s = String(slug || '').trim().replace(/^\/+|\/+$/g, '');
+  const b = String(base || '').trim().replace(/^\/+|\/+$/g, '');
+  return `/${[b, s].filter(Boolean).join('/')}`.replace(/\/{2,}/g, '/');
+}
 
-const clean = (s) => s.replace(/\/{2,}/g, '/');
-
-function joinUnder(base, slug) {
-  if (!slug) return null;
-  let s = String(slug).trim();
-  // bỏ domain nếu có
-  s = s.replace(/^https?:\/\/[^/]+/i, '');
-  // bỏ slash đầu
-  s = s.replace(/^\/+/, '');
-  const baseNo = base.replace(/^\//, '').toLowerCase();
-  if (s.toLowerCase().startsWith(baseNo + '/')) return clean('/' + s);
-  return clean(`${base}/${s}`);
+function baseFromFile(filename) {
+  const key = filename.replace(/\.json$/,'');
+  return PATH_ALIASES[key] || `/${key}`;
 }
 
 module.exports = {
   siteUrl: SITE,
-  generateIndexSitemap: true,
   generateRobotsTxt: false,
+  trailingSlash: false,
+  sitemapSize: 45000,
+  exclude: ['/api/*', '/server-sitemap.xml'],
 
-  // *** QUAN TRỌNG ***
-  // Loại BỎ TOÀN BỘ url mặc định mà next-sitemap tự tìm thấy
-  transform: async () => null,
-  // Thắt lưng buộc bụng thêm 1 lớp:
-  exclude: ['/**'],
+  // Giữ nguyên transform mặc định cho các route tĩnh (/, /about, /crypto-market, …)
+  transform: async (_config, url) => ({
+    loc: url,
+    changefreq: 'daily',
+    priority: url === '/' ? 1 : 0.7,
+    lastmod: new Date().toISOString(),
+  }),
 
-  // Chỉ tự tay thêm những URL được phép
+  // CHỈ liệt kê các bài viết có trong các file phân trang (JSON) bạn quy định
   additionalPaths: async () => {
     const out = [];
     const seen = new Set();
-    const push = (loc, lastmod, priority = 0.7, changefreq = 'weekly') => {
+    const push = (loc, lastmod, priority = 0.7) => {
       if (!loc) return;
-      loc = clean(loc);
+      loc = loc.replace(/\/{2,}/g, '/');
       if (seen.has(loc)) return;
       seen.add(loc);
-      out.push({ loc, lastmod, priority, changefreq });
+      out.push({
+        loc,
+        changefreq: 'daily',
+        priority,
+        lastmod: toISO(lastmod),
+      });
     };
 
-    const now = new Date().toISOString();
-
-    // 1) Trang tĩnh chính (whitelist)
-    [
-      '/', '/about', '/contact', '/privacy', '/terms',
-      '/signals', '/altcoins', '/crypto-exchanges',
-      '/best-crypto-apps', '/insurance', '/crypto-market', '/guides',
-    ].forEach((p) => push(p, now, p === '/' ? 1.0 : 0.7, p === '/' ? 'daily' : 'weekly'));
-
-    // 2) Bài viết theo từng chuyên mục — chỉ lấy từ file phân trang/data của bạn
-    const sections = [
-      { key: 'signals', base: '/signals' },
-      { key: 'altcoins', base: '/altcoins' },
-      { key: 'exchange', base: '/crypto-exchanges' },     // khớp các file có 'exchange' trong tên
-      { key: 'best', base: '/best-crypto-apps' },         // khớp các file có 'best' trong tên
-      { key: 'insurance', base: '/insurance' },
-      { key: 'guides', base: '/guides' },
-    ];
-
-    sections.forEach(({ key, base }) => {
-      loadAllByKeyword(key).forEach((it) => {
-        const slug = it.slug || it.path || it.id;
-        push(joinUnder(base, slug), toISO(it.lastmod || it.date || it.updatedAt || it.createdAt));
-      });
+    // 1) Signals (giữ nguyên)
+    readJson('signals.json').forEach((it) => {
+      const slug = String(it?.slug || it?.id || '').trim();
+      push(buildLoc('/signals', slug), it?.date || it?.lastmod);
     });
 
-    // 3) TẤT CẢ bài "news/market" => ÉP về /crypto-market/<slug>
-    loadAllByKeyword('news').forEach((it) => {
-      const slug = it.slug || it.path || it.id;
-      push(joinUnder('/crypto-market', slug), toISO(it.lastmod || it.date || it.updatedAt || it.createdAt));
-    });
+    // 2) Các section còn lại theo các file trong /data
+    const dataDir = path.join(process.cwd(), 'data');
+    if (fs.existsSync(dataDir)) {
+      fs.readdirSync(dataDir)
+        .filter((f) => f.endsWith('.json') && f !== 'signals.json')
+        .forEach((file) => {
+          const base = baseFromFile(file);
+          const arr = readJson(file);
+
+          arr.forEach((it) => {
+            const slug = String(it?.slug || it?.id || '').trim();
+            let locBase = base;
+
+            // BẮT BUỘC: mọi “news/bài thị trường” phải vào /crypto-market
+            const key = file.replace('.json', '');
+            if (['news', 'market', 'posts', 'articles', 'crypto-market'].includes(key)) {
+              locBase = '/crypto-market';
+            }
+
+            push(buildLoc(locBase, slug), it?.date || it?.updatedAt);
+          });
+        });
+    }
 
     return out;
   },
