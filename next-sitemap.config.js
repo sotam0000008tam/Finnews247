@@ -39,7 +39,7 @@ function toISO(d) {
 module.exports = {
   siteUrl: SITE,
   generateIndexSitemap: true,
-  generateRobotsTxt: true,
+  generateRobotsTxt: false,
   changefreq: 'daily',
   priority: 0.7,
   sitemapSize: 45000,

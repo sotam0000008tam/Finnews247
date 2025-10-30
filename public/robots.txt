@@ -1,4 +1,4 @@
-# robots.txt for FinNews247
+# robots.txt for Finnews247 
 
 User-agent: *
 Allow: /
