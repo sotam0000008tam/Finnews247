@@ -6,9 +6,11 @@
     "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start -p 3000",
+
     "presitemap": "node -e \"const fs=require('fs'),p='public';if(fs.existsSync(p)){for(const f of fs.readdirSync(p)){if(/^sitemap(.*)\\.xml(\\.gz)?$/i.test(f)){try{fs.rmSync(p+'/'+f,{force:true})}catch{}}}}\"",
-    "sitemap": "next-sitemap --config ./next-sitemap.config.cjs",
-    "postbuild": "npm run presitemap && npm run sitemap",
+    "sitemap": "next-sitemap",
+    "postbuild": "npm run sitemap",
+
     "check:links": "start-server-and-test \"next start -p 3000\" http://localhost:3000 \"linkinator http://localhost:3000 --recurse --timeout 15000 --concurrency 10 --skip '^mailto:|^tel:|#|\\\\.pdf($|\\\\?)|/api/|^javascript:' --format json --silent > link-report.json\"",
     "check:sidebar": "start-server-and-test \"next start -p 3000\" http://localhost:3000 \"node scripts/check-sidebar-links.mjs\"",
     "precheck:links": "npm run build",

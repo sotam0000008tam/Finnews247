@@ -6,7 +6,7 @@ const SITE = 'https://www.finnews247.com';
 
 // Alias tên file JSON -> base path
 const PATH_ALIASES = {
-  // news/bài thị trường phải vào /crypto-market
+  // news/bài thị trường quy về /crypto-market
   news: '/crypto-market',
   market: '/crypto-market',
   posts: '/crypto-market',
@@ -47,23 +47,23 @@ function buildLoc(base, slug) {
 }
 
 function baseFromFile(filename) {
-  const key = filename.replace(/\.json$/, '');
+  const key = filename.replace(/\.json$/,'');
   return PATH_ALIASES[key] || `/${key}`;
 }
 
 module.exports = {
   siteUrl: SITE,
-  generateRobotsTxt: false,          // tắt auto robots.txt (giữ nguyên yêu cầu)
+  generateRobotsTxt: false,      // KHÔNG tự sinh robots.txt
   trailingSlash: false,
   sitemapSize: 45000,
-  // THÊM exclude admin, giữ nguyên api & server-sitemap, KHÔNG exclude /signals/*
   exclude: [
-    '/api', '/api/*',
-    '/server-sitemap.xml',
-    '/admin', '/admin/*', '/admin/signals',
+    '/admin',
+    '/admin/*',
+    '/api/*',
+    '/server-sitemap.xml'
   ],
 
-  // Giữ transform mặc định cho các route tĩnh (/, /about, /crypto-market, …)
+  // Các route tĩnh: để mặc định, nhưng thêm meta chuẩn
   transform: async (_config, url) => ({
     loc: url,
     changefreq: 'daily',
@@ -71,7 +71,7 @@ module.exports = {
     lastmod: new Date().toISOString(),
   }),
 
-  // Liệt kê các bài viết từ các file JSON trong /data
+  // CHỈ liệt kê các bài động theo dữ liệu JSON trong /data
   additionalPaths: async () => {
     const out = [];
     const seen = new Set();
@@ -88,10 +88,9 @@ module.exports = {
       });
     };
 
-    // 1) Signals (GIỮ NGUYÊN)
+    // 1) Signals (giữ nguyên)
     readJson('signals.json').forEach((it) => {
       const slug = String(it?.slug || it?.id || '').trim();
-      if (!slug) return;
       push(buildLoc('/signals', slug), it?.date || it?.lastmod);
     });
 
@@ -106,10 +105,9 @@ module.exports = {
 
           arr.forEach((it) => {
             const slug = String(it?.slug || it?.id || '').trim();
-            if (!slug) return;
-
             let locBase = base;
-            // MỌI “news/bài thị trường” ép về /crypto-market
+
+            // BẮT BUỘC: mọi “news/bài thị trường” phải vào /crypto-market
             const key = file.replace('.json', '');
             if (['news', 'market', 'posts', 'articles', 'crypto-market'].includes(key)) {
               locBase = '/crypto-market';
