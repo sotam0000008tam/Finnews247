@@ -5,6 +5,7 @@ export default function Document() {
   return (
     <Html lang="vi">
       <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         {/* ✅ Google AdSense mới */}
         <script
           async

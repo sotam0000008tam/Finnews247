@@ -21,7 +21,7 @@ export default function Header() {
 
   return (
     // Header dán dưới CryptoTicker cao 30px
-    <header className="relative bg-white dark:bg-gray-900/90 backdrop-blur sticky top-[30px] z-50 shadow-sm">
+    <header className="relative w-full bg-white dark:bg-gray-900 sticky top-[30px] left-0 right-0 z-50 shadow-sm">
       <div className="container 2xl:max-w-[1600px] mx-auto px-4 lg:px-6">
         {/* Header thấp hơn ~30% (py-3) và giữ logo không bị bóp (shrink-0) */}
         <div className="grid grid-cols-[auto,1fr,auto] items-center gap-6 py-3">

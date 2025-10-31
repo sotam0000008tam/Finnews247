@@ -62,7 +62,7 @@ export default function Layout({ children, title }) {
       </Head>
 
       {/* Ticker cố định */}
-      <div className="fixed top-0 left-0 right-0 z-50">
+      <div className="fixed top-0 left-0 right-0 z-50 w-full">
         <CryptoTicker />
       </div>
       {/* khoảng chèn đúng bằng chiều cao ticker */}
