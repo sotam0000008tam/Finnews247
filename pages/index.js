@@ -201,11 +201,7 @@ export default function Home({
                 <PostCard key={p.slug} post={{ ...p, href: `/${p.slug}` }} />
               ))}
             </div>
-            <div className="mt-4">
-              <Link href="/market" className="text-sky-600 hover:underline text-sm">
-                View all Market News →
-              </Link>
-            </div>
+            
             <div className="mt-4">
               <Link href="/crypto-market" className="text-sky-600 hover:underline text-sm">
                 View all Market News →
