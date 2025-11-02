@@ -1,6 +1,6 @@
-﻿// pages/signals/index.js
-import Link from "next/link";
+﻿import Link from "next/link";
 import { NextSeo } from "next-seo";
+// import SidebarSignals from "../../components/SidebarSignals"; // không dùng ở trang này
 
 /* ===== helpers ===== */
 const prettyType = (t) => (String(t).toLowerCase() === "long" ? "Long" : "Short");
@@ -125,14 +125,14 @@ export default function SignalsPage({ signals = [], latest = [] }) {
           </section>
         </section>
 
-        {/* SIDEBAR: Latest */}
+        {/* SIDEBAR: Latest (phủ mỗi chuyên mục, mới→cũ) */}
         <aside className="md:col-span-3">
           <div className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
             <div className="px-4 py-3 border-b dark:border-gray-800">
               <h2 className="text-base font-semibold">📰 Latest on FinNews247</h2>
             </div>
             <ul className="divide-y dark:divide-gray-800">
-              {latest.map((p) => (
+              {(latest ?? []).map((p) => (
                 <li key={p.slug}>
                   <Link
                     href={p.href}
@@ -172,8 +172,9 @@ export default function SignalsPage({ signals = [], latest = [] }) {
   );
 }
 
-/* ===== server-only: đọc signals.json + gom latest ===== */
+/* ===== server-only: đọc signals.json + gom latest có COVERAGE mỗi chuyên mục ===== */
 export async function getServerSideProps() {
+  const { latestSignals } = await import("../../lib/sidebar.server");
   const fs = await import("fs/promises");
   const path = await import("path");
 
@@ -199,23 +200,34 @@ export async function getServerSideProps() {
     .sort((a, b) => (Date.parse(b.date || "") || 0) - (Date.parse(a.date || "") || 0))
     .map((s) => ({
       id: s.id,
-      pair: fixMojibake(s.pair || ""),
+      pair: s.pair || "",
       type: s.type,
       date: s.date,
-      title: fixMojibake(s.title || ""),
-      excerpt: fixMojibake(s.excerpt || ""),
+      title: s.title || "",
+      excerpt: s.excerpt || "",
       entry: s.entry || "",
       target: s.target || "",
       stoploss: s.stoploss || "",
       thumb: thumbOf(s),
     }));
 
-  // Latest on FinNews247
+  // ===== Latest on FinNews247 với COVERAGE mỗi chuyên mục, rồi sort mới→cũ
   const { readCat } = await import("../../lib/serverCat");
-  const cats = ["crypto-market", "altcoins", "crypto-exchanges", "best-crypto-apps", "insurance", "guides"];
+  const cats = [
+    "crypto-market",
+    "altcoins",
+    "crypto-exchanges",
+    "best-crypto-apps",
+    "insurance",
+    "guides",
+    "tax",
+    "fidelity",
+    "sec-coin",
+  ];
 
   const firstImg2 = (html = "") => (html.match(/<img[^>]+src=["']([^"']+)["']/i) || [])[1] || null;
-  const pickThumb = (p) => p.thumb || p.ogImage || p.image || firstImg2(p.content || "") || "/images/dummy/64x64.jpg";
+  const pickThumb = (p) =>
+    p.thumb || p.ogImage || p.image || firstImg2(p.content || p.body || "") || "/images/dummy/64x64.jpg";
 
   const buildHref = (p, cat) => {
     const c = String(cat);
@@ -225,32 +237,58 @@ export async function getServerSideProps() {
     if (c === "best-crypto-apps") return `/best-crypto-apps/${p.slug}`;
     if (c === "insurance") return `/insurance/${p.slug}`;
     if (c === "guides") return `/guides/${p.slug}`;
+    if (c === "tax") return `/tax/${p.slug}`;
+    if (c === "fidelity") return `/fidelity-crypto/${p.slug}`;
+    if (c === "sec-coin") return `/sec-coin/${p.slug}`;
     return `/${p.slug}`;
   };
 
-  const pool = [];
-  cats.forEach((c) => {
-    (readCat(c) || []).forEach((p) => {
-      pool.push({
-        title: fixMojibake(p.title || ""),
+  // byCat: mỗi cat là mảng đã shape {title, date, slug, href, thumb}
+  const byCat = {};
+  for (const c of cats) {
+    const arr = (readCat(c) || [])
+      .sort(
+        (a, b) =>
+          (Date.parse(b.date || b.updatedAt) || 0) -
+          (Date.parse(a.date || a.updatedAt) || 0)
+      )
+      .map((p) => ({
+        title: p.title || "",
         date: p.date || p.updatedAt || "",
         slug: p.slug,
         href: buildHref(p, c),
         thumb: pickThumb(p),
-      });
-    });
-  });
+      }));
+    byCat[c] = arr;
+  }
 
-  // unique theo slug + sort mới nhất
+  const LATEST_LIMIT = 12;
   const seen = new Set();
-  const latest = pool
-    .filter((p) => {
-      if (!p.slug || seen.has(p.slug)) return false;
-      seen.add(p.slug);
-      return true;
-    })
-    .sort((a, b) => (Date.parse(b.date || "") || 0) - (Date.parse(a.date || "") || 0))
-    .slice(0, 12);
+  const coverage = [];
 
-  return { props: { signals, latest } };
+  // 1) lấy bài mới nhất của MỖI chuyên mục
+  for (const c of cats) {
+    const top = byCat[c]?.find((x) => x?.slug && !seen.has(x.slug));
+    if (top) {
+      seen.add(top.slug);
+      coverage.push(top);
+    }
+  }
+
+  // 2) bù phần còn lại toàn site (trừ slug đã có), sort mới→cũ
+  const poolAll = cats.flatMap((c) => byCat[c] || []);
+  const rest = poolAll
+    .filter((p) => p?.slug && !seen.has(p.slug))
+    .sort((a, b) => (Date.parse(b.date || "") || 0) - (Date.parse(a.date || "") || 0));
+
+  // 3) ghép coverage + rest, cắt limit, rồi sort lại mới→cũ
+  const latestRaw = coverage.concat(rest).slice(0, LATEST_LIMIT);
+  const latest = latestRaw.sort(
+    (a, b) => (Date.parse(b.date || "") || 0) - (Date.parse(a.date || "") || 0)
+  );
+
+  // (Optional) Tín hiệu mới nhất nếu cần dùng nơi khác
+  const signalsLatest = latestSignals(8);
+
+  return { props: { signals, latest, signalsLatest } };
 }

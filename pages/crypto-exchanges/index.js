@@ -2,11 +2,18 @@
 import Link from "next/link";
 import { NextSeo } from "next-seo";
 
-/* Helpers */
+/* ===== Helpers ===== */
 const stripHtml = (h = "") =>
-  String(h).replace(/<script[\s\S]*?<\/script>/gi,"").replace(/<style[\s\S]*?<\/style>/gi,"").replace(/<[^>]+>/g," ").replace(/\s+/g," ").trim();
-const firstImage = (h = "") => (String(h).match(/<img[^>]+src=["']([^"']+)["']/i) || [])[1] || null;
-const pickThumb = (p, f = "/images/dummy/market64.jpg") => p?.thumb || p?.ogImage || p?.image || firstImage(p?.content || p?.body || "") || f;
+  String(h)
+    .replace(/<script[\s\S]*?<\/script>/gi, "")
+    .replace(/<style[\s\S]*?<\/style>/gi, "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+const firstImage = (h = "") =>
+  (String(h).match(/<img[^>]+src=["']([^"']+)["']/i) || [])[1] || null;
+const pickThumb = (p, f = "/images/dummy/market64.jpg") =>
+  p?.thumb || p?.ogImage || p?.image || firstImage(p?.content || p?.body || "") || f;
 
 const hrefMixed = (p) => {
   if (p?.href) return p.href;
@@ -51,15 +58,63 @@ function Card({ item }) {
       <div className="p-3">
         <div className="font-semibold leading-snug line-clamp-2 group-hover:underline">{item?.title || "Untitled"}</div>
         {(item?.date || item?.updatedAt) && <div className="text-xs text-gray-500 mt-1">{item.date || item.updatedAt}</div>}
-        {item?.excerpt && <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-2">
-          {stripHtml(item.excerpt).slice(0,120)}{stripHtml(item.excerpt).length>120 ? "…" : ""}
-        </p>}
+        {item?.excerpt && (
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-2">
+            {stripHtml(item.excerpt).slice(0, 120)}
+            {stripHtml(item.excerpt).length > 120 ? "…" : ""}
+          </p>
+        )}
       </div>
     </Link>
   );
 }
 
-export default function ExchangesIndex({ items = [], latest = [], page = 1, totalPages = 1 }) {
+/* ===== Trading Signals (compact, KHÔNG Entry/Target/SL) ===== */
+const prettyType = (t = "") => (String(t).toLowerCase() === "long" ? "Long" : "Short");
+const typeColor = (t = "") =>
+  String(t).toLowerCase() === "long"
+    ? "bg-green-100 text-green-700 ring-green-200"
+    : "bg-red-100 text-red-700 ring-red-200";
+
+function TradingSignalsCompact({ items = [] }) {
+  return (
+    <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
+      <div className="px-4 py-3 border-b dark:border-gray-800">
+        <h3 className="text-sm font-semibold">📈 Trading Signals</h3>
+      </div>
+      {items.length === 0 ? (
+        <div className="px-4 py-3 text-xs text-gray-500">No signals.</div>
+      ) : (
+        <>
+          <ul className="divide-y dark:divide-gray-800">
+            {items.map((s) => (
+              <li key={s.id}>
+                <Link href={`/signals/${s.id}`} className="block px-3 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-medium truncate">{s.pair || s.title}</span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full ring-1 ${typeColor(s.type)}`}>{prettyType(s.type)}</span>
+                    {s.date && <span className="ml-auto text-[11px] text-gray-500">{s.date}</span>}
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <div className="px-3 py-2">
+            <Link href="/signals" className="text-sm text-sky-600 hover:underline">View all signals →</Link>
+          </div>
+        </>
+      )}
+    </section>
+  );
+}
+
+export default function ExchangesIndex({
+  items = [],
+  latest = [],
+  signalsLatest = [],
+  page = 1,
+  totalPages = 1,
+}) {
   const title = "Exchanges";
   const canonical = "https://www.finnews247.com/crypto-exchanges";
   const description = "Crypto exchanges insights and analysis.";
@@ -70,7 +125,7 @@ export default function ExchangesIndex({ items = [], latest = [], page = 1, tota
       <div className="mb-4"><h1 className="text-2xl md:text-3xl font-bold">{title}</h1></div>
 
       <div className="grid md:grid-cols-12 gap-8">
-        {/* MAIN: 2 cột */}
+        {/* MAIN */}
         <section className="md:col-span-9">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {(items || []).map((it) => <Card key={it.slug || it.title} item={it} />)}
@@ -83,7 +138,11 @@ export default function ExchangesIndex({ items = [], latest = [], page = 1, tota
                 const href = p === 1 ? "/crypto-exchanges" : `/crypto-exchanges/page/${p}`;
                 const active = p === page;
                 return (
-                  <Link key={p} href={href} className={"px-3 py-1 rounded border " + (active ? "bg-gray-900 text-white border-gray-900" : "hover:bg-gray-50 dark:hover:bg-gray-800")}>
+                  <Link
+                    key={p}
+                    href={href}
+                    className={"px-3 py-1 rounded border " + (active ? "bg-gray-900 text-white border-gray-900" : "hover:bg-gray-50 dark:hover:bg-gray-800")}
+                  >
                     {p}
                   </Link>
                 );
@@ -92,14 +151,22 @@ export default function ExchangesIndex({ items = [], latest = [], page = 1, tota
           )}
         </section>
 
-        {/* SIDEBAR: chỉ Latest */}
+        {/* SIDEBAR: Trading Signals (compact) + Latest */}
         <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
+          <TradingSignalsCompact items={signalsLatest ?? []} />
+
           <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
             <div className="px-4 py-3 border-b dark:border-gray-700"><h3 className="text-sm font-semibold">Latest on FinNews247</h3></div>
             <ul className="divide-y dark:divide-gray-800">
-              {latest.length ? latest.map((it) => (
-                <li key={(it.slug || it.title) + "-latest"}><SideMiniItem item={it} /></li>
-              )) : <li className="px-4 py-3 text-xs text-gray-500">No recent posts.</li>}
+              {(latest ?? []).length ? (
+                (latest ?? []).map((it) => (
+                  <li key={(it.slug || it.title) + "-latest"}>
+                    <SideMiniItem item={it} />
+                  </li>
+                ))
+              ) : (
+                <li className="px-4 py-3 text-xs text-gray-500">No recent posts.</li>
+              )}
             </ul>
           </section>
         </aside>
@@ -120,21 +187,23 @@ export default function ExchangesIndex({ items = [], latest = [], page = 1, tota
 }
 
 export async function getServerSideProps() {
+  const { ensureCoverage, GROUPS, latestSignals } = await import("../../lib/sidebar.server");
   const { readCat } = await import("../../lib/serverCat");
+
   const posts = readCat("crypto-exchanges");
-  posts.sort((a,b) => (Date.parse(b.date || b.updatedAt) || 0) - (Date.parse(a.date || a.updatedAt) || 0));
+  posts.sort((a, b) => (Date.parse(b.date || b.updatedAt) || 0) - (Date.parse(a.date || a.updatedAt) || 0));
   const PAGE_SIZE = 30;
   const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));
   const items = posts.slice(0, PAGE_SIZE);
 
-  const cats = ["crypto-market","altcoins","crypto-exchanges","best-crypto-apps","insurance","guides","tax","fidelity","sec-coin"];
-  let pool = [];
-  for (const c of cats) pool = pool.concat(readCat(c).map((p) => ({ ...p, _cat: c })));
-  const seen = new Set();
-  const latest = pool
-    .filter((x) => x?.slug && !seen.has(x.slug) && seen.add(x.slug))
-    .sort((a,b)=> (Date.parse(b.date||b.updatedAt)||0) - (Date.parse(a.date||a.updatedAt)||0))
-    .slice(0,10);
+  // Latest: coverage + re-sort mới → cũ
+  const latestRaw = ensureCoverage(GROUPS, 10) || [];
+  const latest = [...latestRaw].sort(
+    (a, b) => (Date.parse(b.date || b.updatedAt) || 0) - (Date.parse(a.date || a.updatedAt) || 0)
+  );
 
-  return { props: { items, latest, page: 1, totalPages } };
+  // Trading signals (compact)
+  const signalsLatest = latestSignals(5);
+
+  return { props: { items, latest, signalsLatest, page: 1, totalPages } };
 }

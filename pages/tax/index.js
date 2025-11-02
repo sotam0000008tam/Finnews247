@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import Link from "next/link";
 import { NextSeo } from "next-seo";
+import SidebarSignals from "../../components/SidebarSignals";
 
 /* Helpers */
 const stripHtml = (h = "") =>
@@ -105,7 +106,7 @@ export default function TaxIndex({ items = [], latest = [], page = 1, totalPages
           <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
             <div className="px-4 py-3 border-b dark:border-gray-700"><h3 className="text-sm font-semibold">Latest on FinNews247</h3></div>
             <ul className="divide-y dark:divide-gray-800">
-              {latest.length ? latest.map((it) => (<li key={(it.slug || it.title) + "-latest"}><SideMiniItem item={it} /></li>))
+              {latest.length ? (latest ?? []).map((it) => (<li key={(it.slug || it.title) + "-latest"}><SideMiniItem item={it} /></li>))
                 : (<li className="px-4 py-3 text-xs text-gray-500">No recent posts.</li>)}
             </ul>
           </section>
@@ -120,6 +121,7 @@ export default function TaxIndex({ items = [], latest = [], page = 1, totalPages
 }
 
 export async function getServerSideProps() {
+  const { ensureCoverage, GROUPS, latestSignals } = await import("../../lib/sidebar.server");
   const read = (f) => { try { return JSON.parse(fs.readFileSync(path.join(process.cwd(), "data", f), "utf-8")); } catch { return []; } };
   const posts = read("tax.json");
   posts.sort((a,b) => (Date.parse(b.date || b.updatedAt) || 0) - (Date.parse(a.date || a.updatedAt) || 0));
@@ -133,6 +135,7 @@ export async function getServerSideProps() {
   const seen = new Set();
   const latest = pool.filter(x => x?.slug && !seen.has(x.slug) && seen.add(x.slug))
     .sort((a,b)=>(Date.parse(b.date||b.updatedAt)||0)-(Date.parse(a.date||a.updatedAt)||0)).slice(0,10);
+  const signalsLatest = latestSignals(8);
 
-  return { props: { items, latest, page, totalPages } };
+  return { props: {items, latest, page, totalPages , signalsLatest} };
 }

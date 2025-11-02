@@ -4,7 +4,7 @@ import path from "path";
 import Link from "next/link";
 import { NextSeo } from "next-seo";
 
-/* Helpers */
+/* ===== Helpers ===== */
 const stripHtml = (html = "") =>
   String(html)
     .replace(/<script[\s\S]*?<\/script>/gi, "")
@@ -19,15 +19,14 @@ const firstImage = (html = "") =>
 const pickThumb = (p, f = "/images/dummy/altcoins64.jpg") =>
   p?.thumb || p?.ogImage || p?.image || firstImage(p?.content || p?.body || "") || f;
 
-/* Map link theo _cat/category cho sidebar + related */
+/* Map URL cho sidebar/related theo _cat/category */
 const buildUrl = (p) => {
   if (p?.href) return p.href;
   const s = String(p?.slug || "").replace(/^\//, "");
   if (!s) return "#";
   const c = String(p?._cat || p?.category || "").toLowerCase();
 
-  if (c.includes("sec-coin") || c.includes("sec coin") || c.includes("seccoin"))
-    return `/sec-coin/${s}`;
+  if (c.includes("sec-coin") || c.includes("sec coin") || c.includes("seccoin")) return `/sec-coin/${s}`;
   if (c.includes("altcoin")) return `/altcoins/${s}`;
   if (c.includes("fidelity")) return `/fidelity-crypto/${s}`;
   if (c.includes("exchange")) return `/crypto-exchanges/${s}`;
@@ -35,11 +34,11 @@ const buildUrl = (p) => {
   if (c.includes("insurance")) return `/insurance/${s}`;
   if (c.includes("tax") || c.includes("compliance")) return `/tax/${s}`;
   if (c.includes("guide") || c.includes("review")) return `/guides/${s}`;
-  if (c.includes("market") || c.includes("news") || c.includes("crypto-market"))
-    return `/crypto-market/${s}`;
+  if (c.includes("market") || c.includes("news") || c.includes("crypto-market")) return `/crypto-market/${s}`;
   return `/guides/${s}`;
 };
 
+/* Guess author */
 function guessAuthor(post) {
   const direct =
     post.author ||
@@ -58,10 +57,64 @@ function guessAuthor(post) {
   const m =
     raw.match(/(?:written\s+by|by)\s+([A-Z][\w .'-]{2,60})/i) ||
     raw.match(/作者[:：]\s*([^\n<]+)/i);
-  if (m && m[1]) return m[1].trim().replace(/\s{2,}/g, " ");
-  return "FinNews247 Team";
+  return m && m[1] ? m[1].trim().replace(/\s{2,}/g, " ") : "FinNews247 Team";
 }
 
+/* Trading Signals (compact, KHÔNG thumbnail — kiểu trang chủ) */
+const prettyType = (t = "") => (String(t).toLowerCase() === "long" ? "Long" : "Short");
+const typeColor = (t = "") =>
+  String(t).toLowerCase() === "long"
+    ? "bg-green-100 text-green-700 ring-green-200"
+    : "bg-red-100 text-red-700 ring-red-200";
+
+function TradingSignalsCompact({ items = [] }) {
+  return (
+    <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
+      <div className="px-4 py-3 border-b dark:border-gray-800">
+        <h3 className="text-sm font-semibold">📈 Trading Signals</h3>
+      </div>
+
+      {items.length === 0 ? (
+        <div className="px-4 py-3 text-xs text-gray-500">No signals.</div>
+      ) : (
+        <ul className="divide-y dark:divide-gray-800">
+          {items.map((s) => (
+            <li key={s.id}>
+              <Link
+                href={`/signals/${s.id}`}
+                className="block px-3 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-medium truncate">
+                    {s.pair || s.title}
+                  </span>
+                  <span
+                    className={`text-[10px] px-2 py-0.5 rounded-full ring-1 ${typeColor(s.type)}`}
+                  >
+                    {prettyType(s.type)}
+                  </span>
+                  {s.date && (
+                    <span className="ml-auto text-[11px] text-gray-500">
+                      {s.date}
+                    </span>
+                  )}
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <div className="px-3 py-2">
+        <Link href="/signals" className="text-sm text-sky-600 hover:underline">
+          View all signals →
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+/* Sidebar mini item (45x45) */
 function SideMiniItem({ item }) {
   const href = buildUrl(item);
   const img = pickThumb(item);
@@ -88,7 +141,8 @@ function SideMiniItem({ item }) {
   );
 }
 
-export default function DetailPage({ post, related = [], latest = [] }) {
+/* ===== PAGE ===== */
+export default function DetailPage({ post, related = [], latest = [], signalsLatest = [] }) {
   if (!post) {
     return (
       <div className="container mx-auto px-4 py-6">
@@ -99,17 +153,13 @@ export default function DetailPage({ post, related = [], latest = [] }) {
   }
 
   const canonical = `https://www.finnews247.com/altcoins/${post.slug}`;
-  const title = `${post.title} | FinNews247`;
+  const pageTitle = `${post.title} | FinNews247`;
   const description =
     (post.excerpt && stripHtml(post.excerpt)) ||
-    stripHtml(post.content || post.body || "");
+    stripHtml(post.content || post.body || "").slice(0, 160);
   const ogImage =
-    post.ogImage ||
-    post.image ||
-    firstImage(post.content || post.body || "") ||
-    "https://www.finnews247.com/logo.png";
-  const hero =
-    post.image || ogImage || firstImage(post.content || post.body || "");
+    post.ogImage || post.image || firstImage(post.content || post.body || "") || "https://www.finnews247.com/logo.png";
+  const hero = post.image || ogImage || firstImage(post.content || post.body || "");
   const author =
     (post.author ||
       post.authorName ||
@@ -123,10 +173,10 @@ export default function DetailPage({ post, related = [], latest = [] }) {
   return (
     <>
       <NextSeo
-        title={title}
+        title={pageTitle}
         description={description}
         canonical={canonical}
-        openGraph={{ title, description, url: canonical, images: [{ url: ogImage }] }}
+        openGraph={{ title: pageTitle, description, url: canonical, images: [{ url: ogImage }] }}
       />
 
       <div className="container mx-auto px-4 py-6">
@@ -136,9 +186,7 @@ export default function DetailPage({ post, related = [], latest = [] }) {
           <span className="mx-2">/</span>
           <Link href="/altcoins">Altcoin Analysis</Link>
           <span className="mx-2">/</span>
-          <span className="text-gray-700 dark:text-gray-300 line-clamp-1">
-            {post.title}
-          </span>
+          <span className="text-gray-700 dark:text-gray-300 line-clamp-1">{post.title}</span>
         </nav>
 
         <div className="grid md:grid-cols-12 gap-8">
@@ -149,12 +197,10 @@ export default function DetailPage({ post, related = [], latest = [] }) {
               <p className="text-sm text-gray-500">{post.date || post.updatedAt}</p>
             )}
 
-            {/* Author pill (bên ngoài hero) */}
+            {/* Author pill */}
             <div className="mt-2 mb-1 flex justify-end">
               <div className="flex items-center gap-2">
-                <span className="text-[11px] uppercase tracking-wide text-gray-500">
-                  Written by:
-                </span>
+                <span className="text-[11px] uppercase tracking-wide text-gray-500">Written by:</span>
                 <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-xs">
                   <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor" aria-hidden="true">
                     <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z" />
@@ -177,7 +223,7 @@ export default function DetailPage({ post, related = [], latest = [] }) {
               dangerouslySetInnerHTML={{ __html: post.content || post.body || "" }}
             />
 
-            {/* More (3 cột) */}
+            {/* More from Altcoin */}
             <div className="mt-8">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-lg font-semibold">More from Altcoin Analysis</h3>
@@ -205,8 +251,12 @@ export default function DetailPage({ post, related = [], latest = [] }) {
             </div>
           </article>
 
-          {/* SIDEBAR: Latest */}
+          {/* SIDEBAR */}
           <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
+            {/* Trading Signals (compact, như trang chủ) */}
+            <TradingSignalsCompact items={signalsLatest} />
+
+            {/* Latest on FinNews247 */}
             <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
               <div className="px-4 py-3 border-b dark:border-gray-700">
                 <h3 className="text-sm font-semibold">Latest on FinNews247</h3>
@@ -242,7 +292,7 @@ export default function DetailPage({ post, related = [], latest = [] }) {
   );
 }
 
-/* GSSP: đọc data từ JSON (altcoins + seccoin) */
+/* ===== GSSP ===== */
 export async function getServerSideProps({ params }) {
   const read = (file) => {
     try {
@@ -253,6 +303,7 @@ export async function getServerSideProps({ params }) {
     }
   };
 
+  // Tập bài cùng nhóm altcoins (bao gồm seccoin)
   const own = []
     .concat(read("altcoins.json"), read("seccoin.json"))
     .filter(Boolean)
@@ -264,18 +315,14 @@ export async function getServerSideProps({ params }) {
     ) || null;
   if (!post) return { notFound: true };
 
-  // related theo tag/date
-  const currentTags = (post.tags || post.keywords || []).map((t) =>
-    String(t).toLowerCase()
-  );
+  // Related theo tag/date
+  const currentTags = (post.tags || post.keywords || []).map((t) => String(t).toLowerCase());
   const tagSet = new Set(currentTags);
   let relatedPool = own.filter((p) => p.slug && p.slug !== post.slug);
   if (currentTags.length) {
     relatedPool = relatedPool
       .map((p) => {
-        const tags = (p.tags || p.keywords || []).map((t) =>
-          String(t).toLowerCase()
-        );
+        const tags = (p.tags || p.keywords || []).map((t) => String(t).toLowerCase());
         const score = tags.filter((t) => tagSet.has(t)).length;
         const d = Date.parse(p.date || p.updatedAt) || 0;
         return { p, s: score, d };
@@ -291,35 +338,72 @@ export async function getServerSideProps({ params }) {
   }
   const related = relatedPool.slice(0, 8);
 
-  // Latest mix: gắn _cat để map link đúng
-  const market = read("news.json").map((p) => ({ ...p, _cat: "crypto-market" }));
-  const alt = []
-    .concat(read("altcoins.json"), read("seccoin.json"))
-    .map((p) => ({ ...p, _cat: "altcoins" }));
-  const ex = []
-    .concat(read("fidelity.json").map((p) => ({ ...p, _cat: "fidelity" })), read("cryptoexchanges.json").map((p) => ({ ...p, _cat: "crypto-exchanges" })));
-  const apps = read("bestapps.json").map((p) => ({ ...p, _cat: "best-crypto-apps" }));
-  const ins = read("insurance.json").map((p) => ({ ...p, _cat: "insurance" }));
-  const guides = read("guides.json").map((p) => ({ ...p, _cat: "guides" }));
-  const secc = read("seccoin.json").map((p) => ({ ...p, _cat: "sec-coin" }));
+  /* Latest: đảm bảo ≥1 bài từ MỖI chuyên mục, rồi bù theo toàn site và sort mới→cũ */
+  const cats = [
+    "crypto-market",
+    "altcoins",
+    "crypto-exchanges",
+    "best-crypto-apps",
+    "insurance",
+    "guides",
+    "tax",
+    "fidelity",
+    "sec-coin",
+  ];
 
-  const used = new Set(related.map((r) => r.slug).concat(post.slug));
-  const pool = [...market, ...alt, ...ex, ...apps, ...ins, ...guides, ...secc].filter(
-    (x) => x?.slug && !used.has(x.slug)
-  );
-  const seen = new Set();
-  const latest = pool
-    .filter((p) => {
-      if (seen.has(p.slug)) return false;
-      seen.add(p.slug);
-      return true;
-    })
+  const fileForCat = (c) =>
+    (c === "crypto-exchanges"
+      ? "cryptoexchanges"
+      : c === "best-crypto-apps"
+      ? "bestapps"
+      : c === "sec-coin"
+      ? "seccoin"
+      : c === "crypto-market"
+      ? "news"
+      : c) + ".json";
+
+  const byCat = {};
+  for (const c of cats) {
+    const arr = (read(fileForCat(c)) || []).map((p) => ({ ...p, _cat: c }));
+    arr.sort(
+      (a, b) =>
+        (Date.parse(b.date || b.updatedAt) || 0) -
+        (Date.parse(a.date || a.updatedAt) || 0)
+    );
+    byCat[c] = arr;
+  }
+
+  const LATEST_LIMIT = 10;
+  const seen = new Set([post.slug, ...related.map((r) => r.slug)]);
+  const coverage = [];
+
+  for (const c of cats) {
+    const top = byCat[c]?.find((x) => x?.slug && !seen.has(x.slug));
+    if (top) {
+      seen.add(top.slug);
+      coverage.push(top);
+    }
+  }
+
+  const poolAll = cats.flatMap((c) => byCat[c] || []);
+  const rest = poolAll
+    .filter((p) => p?.slug && !seen.has(p.slug))
     .sort(
       (a, b) =>
         (Date.parse(b.date || b.updatedAt) || 0) -
         (Date.parse(a.date || a.updatedAt) || 0)
-    )
-    .slice(0, 10);
+    );
 
-  return { props: { post, related, latest } };
+  const latestRaw = coverage.concat(rest).slice(0, LATEST_LIMIT);
+  const latest = latestRaw.sort(
+    (a, b) =>
+      (Date.parse(b.date || b.updatedAt) || 0) -
+      (Date.parse(a.date || a.updatedAt) || 0)
+  );
+
+  // Trading signals (compact)
+  const { latestSignals } = await import("../../lib/sidebar.server");
+  const signalsLatest = latestSignals(5);
+
+  return { props: { post, related, latest, signalsLatest } };
 }
