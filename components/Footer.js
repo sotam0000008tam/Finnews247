@@ -40,7 +40,7 @@ export default function Footer() {
       </div>
 
       <div className="text-center py-3 text-xs text-gray-500">
-        © {new Date().getFullYear()} FinNews247. All rights reserved. • Design by Miko Tech
+        © {new Date().getFullYear()} FinNews247. All rights reserved. • Design by LongHung
       </div>
     </footer>
   );
