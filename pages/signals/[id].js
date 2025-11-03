@@ -1,12 +1,10 @@
-﻿import { NextSeo } from "next-seo";
+﻿// pages/signals/[id].js
+import { NextSeo } from "next-seo";
 import Link from "next/link";
 import Script from "next/script";
 import { useState } from "react";
-import fs from "fs";
-import path from "path";
-import allSignals from "../../data/signals.json";
 
-/* ================= Helpers ================= */
+/* ================= Helpers (client) ================= */
 function resolveImage(src) {
   if (!src) return null;
   if (src.startsWith("http") || src.startsWith("/")) return src;
@@ -16,18 +14,14 @@ function extractFirstImage(html = "") {
   const m = html?.match?.(/<img[^>]+src=["']([^"']+)["']/i);
   return m ? m[1] : null;
 }
-function pickThumb(s) {
+function pickThumb(obj) {
   return (
-    resolveImage(s?.image) ||
+    resolveImage(obj?.image) ||
     extractFirstImage(
-      s?.content || s?.intro || s?.technicalAnalysis || s?.marketContext || ""
+      obj?.content || obj?.intro || obj?.technicalAnalysis || obj?.marketContext || obj?.body || ""
     ) ||
     "/images/dummy/altcoins64.jpg"
   );
-}
-function parseDate(d) {
-  const t = Date.parse(d);
-  return Number.isNaN(t) ? 0 : t;
 }
 function toTradingViewSymbol(pair) {
   if (!pair) return "BINANCE:BTCUSDT";
@@ -36,7 +30,22 @@ function toTradingViewSymbol(pair) {
   const compact = p.replace("/", "").replace(/\s+/g, "");
   return `BINANCE:${compact}`;
 }
+function fixMojibake(s = "") {
+  return String(s)
+    .replace(/—/g, "—")
+    .replace(/–/g, "–")
+    .replace(/“/g, "“")
+    .replace(/”/g, "”")
+    .replace(/’/g, "’")
+    .replace(/…/g, "…");
+}
+const prettyType = (t = "") => (String(t).toLowerCase() === "long" ? "Long" : "Short");
+const typeColor = (t = "") =>
+  String(t).toLowerCase() === "long"
+    ? "bg-green-100 text-green-700 ring-green-200"
+    : "bg-red-100 text-red-700 ring-red-200";
 
+/* ================= Chart & Lightbox ================= */
 function TVChart({ symbol, height = 520 }) {
   const containerId = "tvchart-container";
   return (
@@ -99,158 +108,141 @@ function ZoomableImage({ src, alt }) {
   );
 }
 
-/* JSON-safe mappers (tránh undefined trong props) */
-const toSafeSignal = (s) => ({
-  id: String(s.id),
-  pair: s.pair || "",
-  type: s.type || "",
-  date: s.date || "",
-  entry: s.entry || "",
-  target: s.target || "",
-  stoploss: s.stoploss || "",
-  excerpt: s.excerpt || "",
-  image: resolveImage(s.image) || null,
-  // các field nội dung có thể null
-  intro: s.intro ?? null,
-  marketContext: s.marketContext ?? null,
-  technicalAnalysis: s.technicalAnalysis ?? null,
-  riskStrategy: s.riskStrategy ?? null,
-  disclaimer: s.disclaimer ?? null,
-  content: s.content ?? null,
-});
+/* ================= Server helpers ================= */
+const SIX_CATS = [
+  "crypto-market",
+  "altcoins",
+  "crypto-exchanges",
+  "best-crypto-apps",
+  "insurance",
+  "guides",
+];
+const firstImg2 = (html = "") =>
+  (String(html).match(/<img[^>]+src=["']([^"']+)["']/i) || [])[1] || null;
+const pickPostThumb = (p) =>
+  p?.thumb || p?.ogImage || p?.image || firstImg2(p?.content || p?.body || "") || "/images/dummy/64x64.jpg";
+const parseTs = (...candidates) => {
+  for (const d of candidates) {
+    const t = Date.parse(d || "");
+    if (!Number.isNaN(t) && t) return t;
+  }
+  return 0;
+};
+const buildHref = (p, cat) => {
+  const slug = String(p.slug || "").replace(/^\//, "");
+  switch (cat) {
+    case "crypto-market":
+      return `/crypto-market/${slug}`;
+    case "altcoins":
+      return `/altcoins/${slug}`;
+    case "crypto-exchanges":
+      return `/crypto-exchanges/${slug}`;
+    case "best-crypto-apps":
+      return `/best-crypto-apps/${slug}`;
+    case "insurance":
+      return `/insurance/${slug}`;
+    case "guides":
+      return `/guides/${slug}`;
+    default:
+      return `/${slug}`;
+  }
+};
 
-const toSafeSignalLite = (s) => ({
-  id: String(s.id),
-  pair: s.pair || "",
-  type: s.type || "",
-  date: s.date || "",
-  image: resolveImage(s.image) || null,
-  // giữ content trống string để pickThumb không bị undefined
-  content: s.content ?? "",
-});
+/* =================== GSSP =================== */
+export async function getServerSideProps({ params }) {
+  const fs = await import("fs/promises");
+  const path = await import("path");
+  const { readCat } = await import("../../lib/serverCat");
 
-/* ======== SSG ======== */
-export async function getStaticPaths() {
-  const paths = (allSignals || []).map((s) => ({ params: { id: String(s.id) } }));
-  return { paths, fallback: false };
-}
-
-export async function getStaticProps({ params }) {
-  const id = String(params.id || "");
-  const signalRaw =
-    (allSignals || []).find((s) => String(s.id) === id) || null;
-  if (!signalRaw) return { notFound: true };
-
-  const signal = toSafeSignal(signalRaw);
-
-  // Latest Signals (khối bên dưới nội dung)
-  const latestSignals = (allSignals || [])
-    .filter((s) => String(s.id) !== id)
-    .sort((a, b) => parseDate(b.date) - parseDate(a.date))
-    .slice(0, 8)
-    .map(toSafeSignalLite);
-
-  // Sidebar "Latest on FinNews247" — đảm bảo ≥1 bài/mỗi chuyên mục + sort mới→cũ
-  const dataDir = path.join(process.cwd(), "data");
-  const readJson = (file) => {
-    try {
-      const p = path.join(dataDir, file);
-      return JSON.parse(fs.readFileSync(p, "utf-8"));
-    } catch {
-      return [];
-    }
-  };
-
-  const cats = [
-    "crypto-market",
-    "altcoins",
-    "crypto-exchanges",
-    "best-crypto-apps",
-    "insurance",
-    "guides",
-    "tax",
-    "fidelity",
-    "sec-coin",
-  ];
-  const fileForCat = (c) =>
-    (c === "crypto-exchanges"
-      ? "cryptoexchanges"
-      : c === "best-crypto-apps"
-      ? "bestapps"
-      : c === "sec-coin"
-      ? "seccoin"
-      : c === "crypto-market"
-      ? "news"
-      : c) + ".json";
-
-  const firstImg = (html = "") =>
-    (String(html).match(/<img[^>]+src=["']([^"']+)["']/i) || [])[1] || null;
-  const pickThumbPost = (p) =>
-    p.thumb || p.ogImage || p.image || firstImg(p.content || p.body || "") || "/images/dummy/64x64.jpg";
-
-  const buildHref = (p, c) => {
-    const s = String(p?.slug || "").replace(/^\//, "");
-    if (!s) return "#";
-    const cat = String(c);
-    if (cat === "crypto-market") return `/crypto-market/${s}`;
-    if (cat === "altcoins") return `/altcoins/${s}`;
-    if (cat === "crypto-exchanges") return `/crypto-exchanges/${s}`;
-    if (cat === "best-crypto-apps") return `/best-crypto-apps/${s}`;
-    if (cat === "insurance") return `/insurance/${s}`;
-    if (cat === "guides") return `/guides/${s}`;
-    if (cat === "tax") return `/tax/${s}`;
-    if (cat === "fidelity") return `/fidelity-crypto/${s}`;
-    if (cat === "sec-coin") return `/sec-coin/${s}`;
-    return `/guides/${s}`;
-  };
-
-  const byCat = {};
-  for (const c of cats) {
-    const arr = (readJson(fileForCat(c)) || []).map((p) => ({
-      title: p.title || "Untitled",
-      date: p.date || p.updatedAt || "",
-      slug: p.slug || "",
-      href: buildHref(p, c),
-      thumb: pickThumbPost(p),
-      _cat: c,
-    }));
-    arr.sort(
-      (a, b) => (Date.parse(b.date || "") || 0) - (Date.parse(a.date || "") || 0)
-    );
-    byCat[c] = arr;
+  // ---- Load all signals JSON (server-time, luôn mới) ----
+  const filePath = path.join(process.cwd(), "data", "signals.json");
+  let all = [];
+  try {
+    const raw = await fs.readFile(filePath, "utf-8");
+    all = JSON.parse(raw);
+  } catch {
+    all = [];
   }
 
-  const LATEST_LIMIT = 10;
+  // ---- Current signal ----
+  const id = String(params.id || "");
+  const raw = all.find((s) => String(s.id) === id) || null;
+  if (!raw) return { notFound: true };
+
+  const signal = {
+    id: String(raw.id),
+    pair: raw.pair || "",
+    type: raw.type || "",
+    date: raw.date || raw.updatedAt || raw.publishedAt || raw.createdAt || "",
+    entry: raw.entry || "",
+    target: raw.target || "",
+    stoploss: raw.stoploss || "",
+    excerpt: raw.excerpt || "",
+    image: resolveImage(raw.image) || null,
+    intro: raw.intro ?? null,
+    marketContext: raw.marketContext ?? null,
+    technicalAnalysis: raw.technicalAnalysis ?? null,
+    riskStrategy: raw.riskStrategy ?? null,
+    disclaimer: raw.disclaimer ?? null,
+    content: raw.content ?? null,
+  };
+
+  // ---- Latest Signals (GIỐNG THỨ TỰ Ở TRANG INDEX) ----
+  const latestSignals = all
+    .filter((s) => String(s.id) !== id)
+    .map((s) => ({
+      id: String(s.id),
+      pair: s.pair || "",
+      type: s.type || "",
+      date: s.date || s.updatedAt || s.publishedAt || s.createdAt || "",
+      image: resolveImage(s.image) || null,
+      content: s.content ?? "",
+      _ts: parseTs(s.date, s.updatedAt, s.publishedAt, s.createdAt),
+    }))
+    .sort((a, b) => b._ts - a._ts)
+    .slice(0, 8)
+    .map(({ _ts, ...rest }) => rest);
+
+  // ---- Sidebar Latest: CHỈ 6 TRANG CHÍNH, phủ mỗi cat + global sort DESC ----
+  const byCat = {};
+  for (const c of SIX_CATS) {
+    const arr = (readCat(c) || [])
+      .map((p) => ({
+        title: p.title || "",
+        date: p.date || p.updatedAt || "",
+        slug: String(p.slug || "").replace(/^\//, ""),
+        href: buildHref(p, c),
+        thumb: pickPostThumb(p),
+        _ts: parseTs(p.date, p.updatedAt),
+      }))
+      .filter((x) => x.slug);
+    // sort mới → cũ trong từng cat
+    byCat[c] = arr.sort((a, b) => b._ts - a._ts);
+  }
+
+  // coverage: 1 bài mới nhất / cat
   const seen = new Set();
   const coverage = [];
-  for (const c of cats) {
+  for (const c of SIX_CATS) {
     const top = byCat[c]?.find((x) => x.slug && !seen.has(x.slug));
     if (top) {
       seen.add(top.slug);
       coverage.push(top);
     }
   }
-  const poolAll = cats.flatMap((c) => byCat[c] || []);
-  const rest = poolAll
-    .filter((p) => p.slug && !seen.has(p.slug))
-    .sort(
-      (a, b) => (Date.parse(b.date || "") || 0) - (Date.parse(a.date || "") || 0)
-    );
-  const latestSiteRaw = coverage.concat(rest).slice(0, LATEST_LIMIT);
-  const latestSite = latestSiteRaw.sort(
-    (a, b) => (Date.parse(b.date || "") || 0) - (Date.parse(a.date || "") || 0)
-  );
+  // phần còn lại từ pool 6 trang
+  const poolAll = SIX_CATS.flatMap((c) => byCat[c] || []);
+  const rest = poolAll.filter((p) => p.slug && !seen.has(p.slug)).sort((a, b) => b._ts - a._ts);
 
-  return {
-    props: {
-      signal,
-      latestSignals, // dùng ở phần dưới nội dung
-      latestSite, // dùng cho sidebar
-    },
-  };
+  const LATEST_LIMIT = 10;
+  const latestSiteRaw = coverage.concat(rest).slice(0, LATEST_LIMIT);
+  // sort LẠI toàn cục mới → cũ (để thứ tự hiển thị đúng tuyệt đối)
+  const latestSite = latestSiteRaw.sort((a, b) => b._ts - a._ts).map(({ _ts, ...rest }) => rest);
+
+  return { props: { signal, latestSignals, latestSite } };
 }
 
-/* ================ PAGE (default export BẮT BUỘC) ================ */
+/* ================ PAGE ================ */
 export default function SignalDetailPage({
   signal,
   latestSignals = [],
@@ -310,10 +302,11 @@ export default function SignalDetailPage({
             <h1 className="text-2xl md:text-3xl font-bold">
               {pair} — {type}
             </h1>
-            <p className="text-gray-600 mt-1">{date}</p>
-            {excerpt && <p className="mt-2">{excerpt}</p>}
+            {date && <p className="text-gray-600 mt-1">{date}</p>}
+            {excerpt && <p className="mt-2">{fixMojibake(excerpt)}</p>}
           </header>
 
+          {/* Levels */}
           <div className="grid md:grid-cols-3 gap-4 mb-6">
             <div className="p-4 border rounded-xl bg-white dark:bg-gray-900">
               <div className="text-gray-500 text-sm">Entry</div>
@@ -329,6 +322,7 @@ export default function SignalDetailPage({
             </div>
           </div>
 
+          {/* Chart + Image */}
           <div className="grid md:grid-cols-3 gap-6 mb-10">
             <div className="md:col-span-2 border rounded-xl overflow-hidden bg-white dark:bg-gray-900">
               <TVChart symbol={toTradingViewSymbol(pair)} height={520} />
@@ -337,9 +331,7 @@ export default function SignalDetailPage({
               {imgUrl ? (
                 <ZoomableImage src={imgUrl} alt={`${pair} ${type} setup`} />
               ) : (
-                <div className="text-sm text-gray-500">
-                  No image provided for this signal.
-                </div>
+                <div className="text-sm text-gray-500">No image provided for this signal.</div>
               )}
               <p className="text-xs text-gray-500 mt-2">
                 If the TradingView symbol is unavailable, use the annotated image
@@ -348,6 +340,7 @@ export default function SignalDetailPage({
             </div>
           </div>
 
+          {/* Content blocks */}
           {(intro ||
             marketContext ||
             technicalAnalysis ||
@@ -356,38 +349,23 @@ export default function SignalDetailPage({
             disclaimer) ? (
             <>
               {intro && (
-                <section
-                  className="prose max-w-none mb-8"
-                  dangerouslySetInnerHTML={{ __html: String(intro) }}
-                />
+                <section className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: String(intro) }} />
               )}
               {marketContext && (
-                <section
-                  className="prose max-w-none mb-8"
-                  dangerouslySetInnerHTML={{ __html: String(marketContext) }}
-                />
+                <section className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: String(marketContext) }} />
               )}
               {technicalAnalysis && (
-                <section
-                  className="prose max-w-none mb-8"
-                  dangerouslySetInnerHTML={{ __html: String(technicalAnalysis) }}
-                />
+                <section className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: String(technicalAnalysis) }} />
               )}
               {riskStrategy && (
-                <section
-                  className="prose max-w-none mb-8"
-                  dangerouslySetInnerHTML={{ __html: String(riskStrategy) }}
-                />
+                <section className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: String(riskStrategy) }} />
               )}
               {Array.isArray(faq) && faq.length > 0 && (
                 <section className="mb-8">
                   <h2 className="text-xl font-semibold mb-3">FAQ</h2>
                   <div className="space-y-3">
                     {faq.map((it, idx) => (
-                      <div
-                        key={idx}
-                        className="p-4 border rounded-lg bg-white dark:bg-gray-900"
-                      >
+                      <div key={idx} className="p-4 border rounded-lg bg-white dark:bg-gray-900">
                         <p className="font-medium">Q: {it.q}</p>
                         <p className="text-gray-700 mt-1">A: {it.a}</p>
                       </div>
@@ -403,17 +381,12 @@ export default function SignalDetailPage({
               )}
             </>
           ) : content ? (
-            <section
-              className="prose max-w-none"
-              dangerouslySetInnerHTML={{ __html: String(content) }}
-            />
+            <section className="prose max-w-none" dangerouslySetInnerHTML={{ __html: String(content) }} />
           ) : (
-            <div className="text-sm text-gray-500">
-              No detailed content provided for this signal.
-            </div>
+            <div className="text-sm text-gray-500">No detailed content provided for this signal.</div>
           )}
 
-          {/* ====== NEW: Latest Signals (giống related) ====== */}
+          {/* Latest Signals (đÃ SORT DESC theo date) */}
           <section className="mt-10">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-lg font-semibold">Latest Signals</h3>
@@ -437,9 +410,7 @@ export default function SignalDetailPage({
                   <div className="font-medium line-clamp-2">
                     {it.pair} — {it.type}
                   </div>
-                  {it.date && (
-                    <div className="text-xs text-gray-500 mt-0.5">{it.date}</div>
-                  )}
+                  {it.date && <div className="text-xs text-gray-500 mt-0.5">{it.date}</div>}
                 </Link>
               ))}
             </div>
@@ -452,7 +423,7 @@ export default function SignalDetailPage({
           </div>
         </div>
 
-        {/* SIDEBAR: Latest on FinNews247 (coverage + newest first) */}
+        {/* SIDEBAR: Latest on FinNews247 (phủ 6 trang chính, SORT DESC toàn cục) */}
         <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
           <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
             <div className="px-4 py-3 border-b dark:border-gray-700">
@@ -478,9 +449,7 @@ export default function SignalDetailPage({
                         <div className="text-sm leading-snug line-clamp-2 group-hover:underline">
                           {p.title}
                         </div>
-                        {p.date && (
-                          <div className="text-xs text-gray-500 mt-0.5">{p.date}</div>
-                        )}
+                        {p.date && <div className="text-xs text-gray-500 mt-0.5">{p.date}</div>}
                       </div>
                     </Link>
                   </li>

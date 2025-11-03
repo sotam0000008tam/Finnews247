@@ -33,9 +33,9 @@ const hrefMixed = (p) => {
   const c = String(p?._cat || p?.category || "").toLowerCase();
 
   if (c.includes("sec-coin") || c.includes("sec coin") || c.includes("seccoin"))
-    return `/sec-coin/${s}`;
+    return `/altcoins/${s}`;
   if (c.includes("altcoin")) return `/altcoins/${s}`;
-  if (c.includes("fidelity")) return `/fidelity-crypto/${s}`;
+  if (c.includes("fidelity")) return `/crypto-exchanges/${s}`;
   if (c.includes("exchange")) return `/crypto-exchanges/${s}`;
   if (c.includes("app") || c.includes("wallet")) return `/best-crypto-apps/${s}`;
   if (c.includes("insurance")) return `/insurance/${s}`;

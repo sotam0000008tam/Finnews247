@@ -1,6 +1,5 @@
 ﻿import Link from "next/link";
 import { NextSeo } from "next-seo";
-// import SidebarSignals from "../../components/SidebarSignals"; // không dùng ở trang này
 
 /* ===== helpers ===== */
 const prettyType = (t) => (String(t).toLowerCase() === "long" ? "Long" : "Short");
@@ -68,7 +67,7 @@ function SignalRow({ s }) {
   );
 }
 
-/* ===== dùng đúng 3 component sidebar TRANG CHỦ ===== */
+/* ===== 3 block sidebar TRANG CHỦ ===== */
 import TopExchanges from "../../components/TopExchanges";
 import BestWallets from "../../components/BestWallets";
 import TopStaking from "../../components/TopStaking";
@@ -115,7 +114,7 @@ export default function SignalsPage({ signals = [], latest = [] }) {
             )}
           </div>
 
-          {/* === 3 MỤC ĐÚNG như SIDEBAR TRANG CHỦ (có logo) === */}
+          {/* === 3 MỤC như SIDEBAR TRANG CHỦ === */}
           <section className="mt-12">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <TopExchanges variant="sidebar" />
@@ -125,7 +124,7 @@ export default function SignalsPage({ signals = [], latest = [] }) {
           </section>
         </section>
 
-        {/* SIDEBAR: Latest (phủ mỗi chuyên mục, mới→cũ) */}
+        {/* SIDEBAR: Latest (phủ 6 chuyên mục, mới→cũ) */}
         <aside className="md:col-span-3">
           <div className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
             <div className="px-4 py-3 border-b dark:border-gray-800">
@@ -158,7 +157,7 @@ export default function SignalsPage({ signals = [], latest = [] }) {
         </aside>
       </div>
 
-      {/* đảm bảo ảnh sidebar không tràn chữ (KHÔNG ẩn logo ở 3 block dưới) */}
+      {/* đảm bảo ảnh sidebar không tràn chữ */}
       <style jsx global>{`
         .sidebar-scope img,
         aside img {
@@ -172,13 +171,13 @@ export default function SignalsPage({ signals = [], latest = [] }) {
   );
 }
 
-/* ===== server-only: đọc signals.json + gom latest có COVERAGE mỗi chuyên mục ===== */
+/* ===== server-only: đọc signals.json + Latest 6 trang chính ===== */
 export async function getServerSideProps() {
-  const { latestSignals } = await import("../../lib/sidebar.server");
+  const { readCat } = await import("../../lib/serverCat");
   const fs = await import("fs/promises");
   const path = await import("path");
 
-  // Đọc danh sách tín hiệu
+  // Đọc danh sách tín hiệu, sort ĐƠN GIẢN theo date (đúng như file gốc index bạn đưa)
   const filePath = path.join(process.cwd(), "data", "signals.json");
   let json = [];
   try {
@@ -186,23 +185,22 @@ export async function getServerSideProps() {
     json = JSON.parse(raw);
   } catch {}
 
-  // Helper lấy thumbnail từ nội dung
   const firstImg = (html = "") => {
     const m = html?.match?.(/<img[^>]+src=["']([^"']+)["']/i);
     return m ? m[1] : null;
   };
   const thumbOf = (s) => {
-    if (s.image) return s.image.startsWith("/") ? s.image : `/images/${s.image}`;
-    return firstImg(s.content || "") || null;
+    if (s?.image) return s.image.startsWith("/") ? s.image : `/images/${s.image}`;
+    return firstImg(s?.content || "") || null;
   };
 
-  const signals = [...json]
-    .sort((a, b) => (Date.parse(b.date || "") || 0) - (Date.parse(a.date || "") || 0))
+  const signals = [...(json || [])]
+    .sort((a, b) => (Date.parse(b?.date || "") || 0) - (Date.parse(a?.date || "") || 0))
     .map((s) => ({
       id: s.id,
       pair: s.pair || "",
-      type: s.type,
-      date: s.date,
+      type: s.type || "",
+      date: s.date || "",
       title: s.title || "",
       excerpt: s.excerpt || "",
       entry: s.entry || "",
@@ -211,46 +209,52 @@ export async function getServerSideProps() {
       thumb: thumbOf(s),
     }));
 
-  // ===== Latest on FinNews247 với COVERAGE mỗi chuyên mục, rồi sort mới→cũ
-  const { readCat } = await import("../../lib/serverCat");
-  const cats = [
+  // ===== Latest on FinNews247: CHỈ 6 TRANG CHÍNH
+  const SIX_CATS = [
     "crypto-market",
     "altcoins",
     "crypto-exchanges",
     "best-crypto-apps",
     "insurance",
     "guides",
-    "tax",
-    "fidelity",
-    "sec-coin",
   ];
 
-  const firstImg2 = (html = "") => (html.match(/<img[^>]+src=["']([^"']+)["']/i) || [])[1] || null;
+  const firstImg2 = (html = "") =>
+    (String(html).match(/<img[^>]+src=["']([^"']+)["']/i) || [])[1] || null;
+
   const pickThumb = (p) =>
-    p.thumb || p.ogImage || p.image || firstImg2(p.content || p.body || "") || "/images/dummy/64x64.jpg";
+    p?.thumb ||
+    p?.ogImage ||
+    p?.image ||
+    firstImg2(p?.content || p?.body || "") ||
+    "/images/dummy/64x64.jpg";
 
   const buildHref = (p, cat) => {
-    const c = String(cat);
-    if (c === "crypto-market") return `/crypto-market/${p.slug}`;
-    if (c === "altcoins") return `/altcoins/${p.slug}`;
-    if (c === "crypto-exchanges") return `/crypto-exchanges/${p.slug}`;
-    if (c === "best-crypto-apps") return `/best-crypto-apps/${p.slug}`;
-    if (c === "insurance") return `/insurance/${p.slug}`;
-    if (c === "guides") return `/guides/${p.slug}`;
-    if (c === "tax") return `/tax/${p.slug}`;
-    if (c === "fidelity") return `/fidelity-crypto/${p.slug}`;
-    if (c === "sec-coin") return `/sec-coin/${p.slug}`;
-    return `/${p.slug}`;
+    switch (cat) {
+      case "crypto-market":
+        return `/crypto-market/${p.slug}`;
+      case "altcoins":
+        return `/altcoins/${p.slug}`;
+      case "crypto-exchanges":
+        return `/crypto-exchanges/${p.slug}`;
+      case "best-crypto-apps":
+        return `/best-crypto-apps/${p.slug}`;
+      case "insurance":
+        return `/insurance/${p.slug}`;
+      case "guides":
+        return `/guides/${p.slug}`;
+      default:
+        return `/${p.slug}`;
+    }
   };
 
-  // byCat: mỗi cat là mảng đã shape {title, date, slug, href, thumb}
   const byCat = {};
-  for (const c of cats) {
+  for (const c of SIX_CATS) {
     const arr = (readCat(c) || [])
       .sort(
         (a, b) =>
-          (Date.parse(b.date || b.updatedAt) || 0) -
-          (Date.parse(a.date || a.updatedAt) || 0)
+          (Date.parse(b?.date || b?.updatedAt || "") || 0) -
+          (Date.parse(a?.date || a?.updatedAt || "") || 0)
       )
       .map((p) => ({
         title: p.title || "",
@@ -265,30 +269,24 @@ export async function getServerSideProps() {
   const LATEST_LIMIT = 12;
   const seen = new Set();
   const coverage = [];
-
-  // 1) lấy bài mới nhất của MỖI chuyên mục
-  for (const c of cats) {
+  // 1) mỗi chuyên mục lấy bài mới nhất (nếu có)
+  for (const c of SIX_CATS) {
     const top = byCat[c]?.find((x) => x?.slug && !seen.has(x.slug));
     if (top) {
       seen.add(top.slug);
       coverage.push(top);
     }
   }
-
-  // 2) bù phần còn lại toàn site (trừ slug đã có), sort mới→cũ
-  const poolAll = cats.flatMap((c) => byCat[c] || []);
+  // 2) bù phần còn lại từ pool 6 trang
+  const poolAll = SIX_CATS.flatMap((c) => byCat[c] || []);
   const rest = poolAll
     .filter((p) => p?.slug && !seen.has(p.slug))
-    .sort((a, b) => (Date.parse(b.date || "") || 0) - (Date.parse(a.date || "") || 0));
+    .sort((a, b) => (Date.parse(b?.date || "") || 0) - (Date.parse(a?.date || "") || 0));
 
-  // 3) ghép coverage + rest, cắt limit, rồi sort lại mới→cũ
   const latestRaw = coverage.concat(rest).slice(0, LATEST_LIMIT);
   const latest = latestRaw.sort(
-    (a, b) => (Date.parse(b.date || "") || 0) - (Date.parse(a.date || "") || 0)
+    (a, b) => (Date.parse(b?.date || "") || 0) - (Date.parse(a?.date || "") || 0)
   );
 
-  // (Optional) Tín hiệu mới nhất nếu cần dùng nơi khác
-  const signalsLatest = latestSignals(8);
-
-  return { props: { signals, latest, signalsLatest } };
+  return { props: { signals, latest } };
 }

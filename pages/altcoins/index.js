@@ -1,5 +1,4 @@
-﻿// pages/altcoins/index.js
-import Link from "next/link";
+﻿import Link from "next/link";
 import { NextSeo } from "next-seo";
 
 /* ===== Helpers chung ===== */
@@ -26,10 +25,11 @@ const hrefMixed = (p) => {
   if (!s) return "#";
   const c = String(p?._cat || p?.category || "").toLowerCase();
 
+  // ✅ new consolidated mapping
   if (c.includes("sec-coin") || c.includes("sec coin") || c.includes("seccoin"))
-    return `/sec-coin/${s}`;
+    return `/altcoins/${s}`;
   if (c.includes("altcoin")) return `/altcoins/${s}`;
-  if (c.includes("fidelity")) return `/fidelity-crypto/${s}`;
+  if (c.includes("fidelity")) return `/crypto-exchanges/${s}`;
   if (c.includes("exchange")) return `/crypto-exchanges/${s}`;
   if (c.includes("app") || c.includes("wallet")) return `/best-crypto-apps/${s}`;
   if (c.includes("insurance")) return `/insurance/${s}`;

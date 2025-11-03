@@ -18,7 +18,7 @@ const pickThumb = (p, f = "/images/dummy/altcoins64.jpg") =>
 
 const hrefGuides = (slug) => `/guides/${String(slug || "").replace(/^\//, "")}`;
 
-/* Map link sidebar Latest theo _cat/category */
+/* Map link sidebar Latest — GIỐNG Altcoin */
 const hrefMixed = (p) => {
   if (p?.href) return p.href;
   const s = String(p?.slug || "").replace(/^\//, "");
@@ -26,9 +26,9 @@ const hrefMixed = (p) => {
   const c = String(p?._cat || p?.category || "").toLowerCase();
 
   if (c.includes("sec-coin") || c.includes("sec coin") || c.includes("seccoin"))
-    return `/sec-coin/${s}`;
+    return `/altcoins/${s}`;
   if (c.includes("altcoin")) return `/altcoins/${s}`;
-  if (c.includes("fidelity")) return `/fidelity-crypto/${s}`;
+  if (c.includes("fidelity")) return `/crypto-exchanges/${s}`;
   if (c.includes("exchange")) return `/crypto-exchanges/${s}`;
   if (c.includes("app") || c.includes("wallet")) return `/best-crypto-apps/${s}`;
   if (c.includes("insurance")) return `/insurance/${s}`;
@@ -39,7 +39,7 @@ const hrefMixed = (p) => {
   return `/guides/${s}`;
 };
 
-/* ===== Trading Signals block (compact, KHÔNG thumbnail — giống trang chủ) ===== */
+/* ===== Trading Signals block (compact) ===== */
 const prettyType = (t = "") =>
   String(t).toLowerCase() === "long" ? "Long" : "Short";
 const typeColor = (t = "") =>
@@ -270,7 +270,7 @@ export async function getServerSideProps() {
   const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));
   const items = posts.slice(0, PAGE_SIZE);
 
-  // build Latest: đảm bảo ≥1 bài từ MỖI chuyên mục, rồi sort mới->cũ
+  // build Latest: coverage & sort — giống Altcoin
   const cats = [
     "crypto-market",
     "altcoins",

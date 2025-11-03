@@ -1,5 +1,4 @@
-﻿// pages/best-crypto-apps/page/[page].js
-import Link from "next/link";
+﻿import Link from "next/link";
 import { NextSeo } from "next-seo";
 
 /* ===== Helpers chung ===== */
@@ -10,13 +9,23 @@ const stripHtml = (h = "") =>
     .replace(/<[^>]+>/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+
+const truncate = (s = "", n = 140) => {
+  if (!s) return "";
+  if (s.length <= n) return s;
+  const cut = s.slice(0, n);
+  const i = cut.lastIndexOf(" ");
+  return (i > 80 ? cut.slice(0, i) : cut) + "…";
+};
+
 const firstImage = (h = "") =>
   (String(h).match(/<img[^>]+src=["']([^"']+)["']/i) || [])[1] || null;
+
 const pickThumb = (p, f = "/images/dummy/altcoins64.jpg") =>
   p?.thumb || p?.ogImage || p?.image || firstImage(p?.content || p?.body || "") || f;
 
-const hrefApps = (slug) =>
-  `/best-crypto-apps/${String(slug || "").replace(/^\//, "")}`;
+const hrefApps = (slug) => `/best-crypto-apps/${String(slug || "").replace(/^\//, "")}`;
+
 const hrefMixed = (p) => {
   if (p?.href) return p.href;
   const s = String(p?.slug || "").replace(/^\//, "");
@@ -24,20 +33,19 @@ const hrefMixed = (p) => {
   const c = String(p?._cat || p?.category || "").toLowerCase();
 
   if (c.includes("sec-coin") || c.includes("sec coin") || c.includes("seccoin"))
-    return `/sec-coin/${s}`;
+    return `/altcoins/${s}`;
   if (c.includes("altcoin")) return `/altcoins/${s}`;
-  if (c.includes("fidelity")) return `/fidelity-crypto/${s}`;
+  if (c.includes("fidelity")) return `/crypto-exchanges/${s}`;
   if (c.includes("exchange")) return `/crypto-exchanges/${s}`;
   if (c.includes("app") || c.includes("wallet")) return `/best-crypto-apps/${s}`;
   if (c.includes("insurance")) return `/insurance/${s}`;
-  if (c.includes("tax") || c.includes("compliance")) return `/tax/${s}`;
   if (c.includes("guide") || c.includes("review")) return `/guides/${s}`;
   if (c.includes("market") || c.includes("news") || c.includes("crypto-market"))
     return `/crypto-market/${s}`;
   return `/guides/${s}`;
 };
 
-/* ===== Trading Signals (compact) ===== */
+/* ===== Trading Signals block (compact) ===== */
 const prettyType = (t = "") =>
   String(t).toLowerCase() === "long" ? "Long" : "Short";
 const typeColor = (t = "") =>
@@ -51,50 +59,50 @@ function TradingSignalsCompact({ items = [] }) {
       <div className="px-4 py-3 border-b dark:border-gray-800">
         <h3 className="text-sm font-semibold">📈 Trading Signals</h3>
       </div>
+
       {items.length === 0 ? (
         <div className="px-4 py-3 text-xs text-gray-500">No signals.</div>
       ) : (
-        <>
-          <ul className="divide-y dark:divide-gray-800">
-            {items.map((s) => (
-              <li key={s.id}>
-                <Link
-                  href={`/signals/${s.id}`}
-                  className="block px-3 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-medium truncate">
-                      {s.pair || s.title}
+        <ul className="divide-y dark:divide-gray-800">
+          {items.map((s) => (
+            <li key={s.id}>
+              <Link
+                href={`/signals/${s.id}`}
+                className="block px-3 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-medium truncate">
+                    {s.pair || s.title}
+                  </span>
+                  <span
+                    className={`text-[10px] px-2 py-0.5 rounded-full ring-1 ${typeColor(
+                      s.type
+                    )}`}
+                  >
+                    {prettyType(s.type)}
+                  </span>
+                  {s.date && (
+                    <span className="ml-auto text-[11px] text-gray-500">
+                      {s.date}
                     </span>
-                    <span
-                      className={`text-[10px] px-2 py-0.5 rounded-full ring-1 ${typeColor(
-                        s.type
-                      )}`}
-                    >
-                      {prettyType(s.type)}
-                    </span>
-                    {s.date && (
-                      <span className="ml-auto text-[11px] text-gray-500">
-                        {s.date}
-                      </span>
-                    )}
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <div className="px-3 py-2">
-            <Link href="/signals" className="text-sm text-sky-600 hover:underline">
-              View all signals →
-            </Link>
-          </div>
-        </>
+                  )}
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
       )}
+
+      <div className="px-3 py-2">
+        <Link href="/signals" className="text-sm text-sky-600 hover:underline">
+          View all signals →
+        </Link>
+      </div>
     </section>
   );
 }
 
-/* ===== Card & Side item ===== */
+/* ===== Card & Latest item ===== */
 function Card({ item }) {
   const href = hrefApps(item.slug);
   const img = pickThumb(item);
@@ -122,14 +130,14 @@ function Card({ item }) {
         )}
         {item?.excerpt && (
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-2">
-            {stripHtml(item.excerpt).slice(0, 120)}
-            {stripHtml(item.excerpt).length > 120 ? "…" : ""}
+            {truncate(stripHtml(item.excerpt), 120)}
           </p>
         )}
       </div>
     </Link>
   );
 }
+
 function SideMiniItem({ item }) {
   const href = hrefMixed(item);
   const img = pickThumb(item);
@@ -161,15 +169,15 @@ function SideMiniItem({ item }) {
 export default function AppsPage({
   items = [],
   latest = [],
-  signalsLatest = [],
   page = 1,
   totalPages = 1,
+  signalsLatest = [],
 }) {
-  const title = "Crypto Apps & Wallets";
+  const title = "Best Crypto Apps";
   const canonical = `https://www.finnews247.com/best-crypto-apps${
     page > 1 ? `/page/${page}` : ""
   }`;
-  const description = "Top crypto apps & wallets.";
+  const description = "Best crypto apps & wallets.";
 
   return (
     <div className="container mx-auto px-4 py-6">
@@ -179,23 +187,25 @@ export default function AppsPage({
         canonical={canonical}
         openGraph={{ title, description, url: canonical }}
       />
+
       <div className="mb-4">
         <h1 className="text-2xl md:text-3xl font-bold">{title}</h1>
       </div>
 
       <div className="grid md:grid-cols-12 gap-8">
+        {/* MAIN */}
         <section className="md:col-span-9">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {(items || []).map((it) => (
               <Card key={it.slug || it.title} item={it} />
             ))}
           </div>
+
           {totalPages > 1 && (
             <div className="flex items-center justify-center gap-2 mt-6">
               {Array.from({ length: totalPages }).map((_, i) => {
                 const p = i + 1;
-                const href =
-                  p === 1 ? "/best-crypto-apps" : `/best-crypto-apps/page/${p}`;
+                const href = p === 1 ? "/best-crypto-apps" : `/best-crypto-apps/page/${p}`;
                 const active = p === page;
                 return (
                   <Link
@@ -216,9 +226,10 @@ export default function AppsPage({
           )}
         </section>
 
-        {/* SIDEBAR */}
+        {/* SIDEBAR: Trading Signals (compact) + Latest */}
         <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
           <TradingSignalsCompact items={signalsLatest} />
+
           <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
             <div className="px-4 py-3 border-b dark:border-gray-700">
               <h3 className="text-sm font-semibold">Latest on FinNews247</h3>
@@ -248,26 +259,21 @@ export default function AppsPage({
   );
 }
 
+/* ===== SSR ===== */
 export async function getServerSideProps({ params }) {
   const { readCat } = await import("../../../lib/serverCat");
   const { latestSignals } = await import("../../../lib/sidebar.server");
 
   const posts = readCat("best-crypto-apps");
-  // newest → oldest trước khi phân trang
-  posts.sort(
-    (a, b) =>
-      (Date.parse(b.date || b.updatedAt) || 0) -
-      (Date.parse(a.date || a.updatedAt) || 0)
-  );
-
   const PAGE_SIZE = 30;
+
   const raw = parseInt(params.page, 10) || 1;
   const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));
   const page = Math.min(Math.max(1, raw), totalPages);
   const start = (page - 1) * PAGE_SIZE;
   const items = posts.slice(start, start + PAGE_SIZE);
 
-  // Latest: coverage mỗi chuyên mục + bù pool toàn site, sort mới->cũ
+  // Latest có coverage mỗi chuyên mục (KHÔNG 'tax')
   const cats = [
     "crypto-market",
     "altcoins",
@@ -275,7 +281,6 @@ export async function getServerSideProps({ params }) {
     "best-crypto-apps",
     "insurance",
     "guides",
-    "tax",
     "fidelity",
     "sec-coin",
   ];
@@ -300,6 +305,7 @@ export async function getServerSideProps({ params }) {
       coverage.push(top);
     }
   }
+
   const poolAll = cats.flatMap((c) => byCat[c] || []);
   const rest = poolAll
     .filter((p) => p?.slug && !seen.has(p.slug))
@@ -308,6 +314,7 @@ export async function getServerSideProps({ params }) {
         (Date.parse(b.date || b.updatedAt) || 0) -
         (Date.parse(a.date || a.updatedAt) || 0)
     );
+
   const latestRaw = coverage.concat(rest).slice(0, LATEST_LIMIT);
   const latest = latestRaw.sort(
     (a, b) =>
@@ -317,5 +324,5 @@ export async function getServerSideProps({ params }) {
 
   const signalsLatest = latestSignals(5);
 
-  return { props: { items, latest, signalsLatest, page, totalPages } };
+  return { props: { items, latest, page, totalPages, signalsLatest } };
 }

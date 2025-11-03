@@ -16,9 +16,9 @@ const firstImage = (h = "") =>
 const pickThumb = (p, f = "/images/dummy/altcoins64.jpg") =>
   p?.thumb || p?.ogImage || p?.image || firstImage(p?.content || p?.body || "") || f;
 
-const hrefMarket = (slug) => `/crypto-market/${String(slug || "").replace(/^\//, "")}`;
+const hrefMk = (slug) => `/crypto-market/${String(slug || "").replace(/^\//, "")}`;
 
-/* Map link sidebar Latest theo _cat/category */
+/* Map link sidebar Latest — GIỐNG Altcoin */
 const hrefMixed = (p) => {
   if (p?.href) return p.href;
   const s = String(p?.slug || "").replace(/^\//, "");
@@ -26,20 +26,19 @@ const hrefMixed = (p) => {
   const c = String(p?._cat || p?.category || "").toLowerCase();
 
   if (c.includes("sec-coin") || c.includes("sec coin") || c.includes("seccoin"))
-    return `/sec-coin/${s}`;
+    return `/altcoins/${s}`;
   if (c.includes("altcoin")) return `/altcoins/${s}`;
-  if (c.includes("fidelity")) return `/fidelity-crypto/${s}`;
+  if (c.includes("fidelity")) return `/crypto-exchanges/${s}`;
   if (c.includes("exchange")) return `/crypto-exchanges/${s}`;
   if (c.includes("app") || c.includes("wallet")) return `/best-crypto-apps/${s}`;
   if (c.includes("insurance")) return `/insurance/${s}`;
-  if (c.includes("tax") || c.includes("compliance")) return `/tax/${s}`;
   if (c.includes("guide") || c.includes("review")) return `/guides/${s}`;
   if (c.includes("market") || c.includes("news") || c.includes("crypto-market"))
     return `/crypto-market/${s}`;
   return `/guides/${s}`;
 };
 
-/* ===== Trading Signals block (compact, KHÔNG thumbnail — giống trang chủ) ===== */
+/* ===== Trading Signals block (compact) ===== */
 const prettyType = (t = "") =>
   String(t).toLowerCase() === "long" ? "Long" : "Short";
 const typeColor = (t = "") =>
@@ -98,7 +97,7 @@ function TradingSignalsCompact({ items = [] }) {
 
 /* ===== Card danh sách chính ===== */
 function Card({ item }) {
-  const href = hrefMarket(item.slug);
+  const href = hrefMk(item.slug);
   const img = pickThumb(item);
   return (
     <Link
@@ -169,9 +168,9 @@ export default function MarketIndex({
   totalPages = 1,
   signalsLatest = [],
 }) {
-  const title = "Crypto & Market";
+  const title = "Crypto Market";
   const canonical = "https://www.finnews247.com/crypto-market";
-  const description = "Crypto & market news and analysis.";
+  const description = "Crypto market news & analysis.";
 
   return (
     <div className="container mx-auto px-4 py-6">
@@ -270,7 +269,7 @@ export async function getServerSideProps() {
   const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));
   const items = posts.slice(0, PAGE_SIZE);
 
-  // build Latest: đảm bảo ≥1 bài từ MỖI chuyên mục, rồi sort mới->cũ
+  // Latest: phủ mỗi chuyên mục (KHÔNG 'tax')
   const cats = [
     "crypto-market",
     "altcoins",
@@ -278,7 +277,6 @@ export async function getServerSideProps() {
     "best-crypto-apps",
     "insurance",
     "guides",
-    "tax",
     "fidelity",
     "sec-coin",
   ];
