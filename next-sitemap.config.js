@@ -18,7 +18,6 @@ function readJsonSafe(filename) {
 function cleanSlug(slug) {
   if (!slug) return '';
   let s = String(slug).trim().replace(/^\/+/, '');
-  // bỏ prefix sai nếu còn sót
   s = s.replace(/^news\//i, '');
   s = s.replace(/^crypto-market\//i, '');
   return s;
@@ -38,15 +37,21 @@ function toISO(d) {
 
 module.exports = {
   siteUrl: SITE,
-  generateIndexSitemap: true,
+
+  // QUAN TRỌNG: chỉ 1 file sitemap.xml, không tạo sitemap index/các file con
+  generateIndexSitemap: false,
+  sitemapBaseFileName: 'sitemap',
+
+  // TẮT robots tự sinh (dùng public/robots.txt thủ công)
   generateRobotsTxt: false,
+
   changefreq: 'daily',
   priority: 0.7,
-  sitemapSize: 45000,
 
-  // Chặn toàn bộ auto-scan; chỉ xuất những path tự thêm ở additionalPaths
+  // Không quét tự động; chỉ dùng additionalPaths
   exclude: ['/*', '/**/*'],
 
+  // transform chỉ áp dụng cho auto-scan; vẫn để ổn định giá trị mặc định
   transform: async (_config, url) => ({
     loc: url,
     changefreq: 'daily',
@@ -70,27 +75,27 @@ module.exports = {
       });
     };
 
-    // 1) Trang chính (đúng danh sách bạn yêu cầu)
+    // 1) Trang chính
     [
       '/', '/about', '/contact', '/privacy', '/terms',
       '/signals', '/altcoins', '/crypto-exchanges',
       '/best-crypto-apps', '/insurance', '/crypto-market', '/guides',
     ].forEach(p => push(p));
 
-    // 2) Bài viết: chỉ xuất dạng /<chuyen-muc>/<slug>
+    // 2) Bài viết theo data/*.json
     // signals
     readJsonSafe('signals.json').forEach(it => {
       const loc = buildPath('/signals', it.slug || it.id);
       push(loc, toISO(it.date || it.createdAt));
     });
 
-    // altcoins (+ seccoin gộp vào altcoins/)
+    // altcoins (+ seccoin)
     [...readJsonSafe('altcoins.json'), ...readJsonSafe('seccoin.json')].forEach(it => {
       const loc = buildPath('/altcoins', it.slug || it.path);
       push(loc, toISO(it.date));
     });
 
-    // crypto-exchanges (+ fidelity gộp về crypto-exchanges/)
+    // crypto-exchanges (+ fidelity)
     [...readJsonSafe('cryptoexchanges.json'), ...readJsonSafe('fidelity.json')].forEach(it => {
       const loc = buildPath('/crypto-exchanges', it.slug || it.path);
       push(loc, toISO(it.date));
@@ -108,7 +113,7 @@ module.exports = {
       push(loc, toISO(it.date));
     });
 
-    // crypto-market (news.json -> /crypto-market/<slug>, KHÔNG phân trang)
+    // crypto-market (news.json)
     readJsonSafe('news.json').forEach(it => {
       const loc = buildPath('/crypto-market', it.slug || it.path);
       push(loc, toISO(it.date));
