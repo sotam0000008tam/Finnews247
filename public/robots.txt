@@ -15,3 +15,4 @@ Allow: /ads.txt
 
 # Sitemap index
 Sitemap: https://www.finnews247.com/sitemap.xml
+Sitemap: https://www.finnews247.com/image-sitemap.xml
