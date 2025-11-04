@@ -2,7 +2,7 @@
 import "../styles/globals.css";
 import Layout from "../components/Layout";
 import { DefaultSeo } from "next-seo";
-import SEO from "../next-seo.config";
+import SEO from "../next-seo.config.js";
 import Script from "next/script";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
@@ -11,7 +11,7 @@ import Head from "next/head";
 export default function App({ Component, pageProps }) {
   const router = useRouter();
 
-  // ✅ Route change tracking cho GA4
+  // ✅ Route change tracking cho GA4 (Pages Router)
   useEffect(() => {
     const handleRouteChange = (url) => {
       if (window.gtag) {
@@ -55,18 +55,15 @@ export default function App({ Component, pageProps }) {
           content="Akkp3qaq0RfqlqI75Qw8nhIIiu21X7vMBIkV0yfahj0"
         />
         {/*
-          We intentionally do not set a global canonical URL here.  Each page
-          defines its own canonical tag via the NextSeo component.  Adding
-          a canonical link globally causes duplicate <link rel="canonical">
-          tags which confuse search engines.  See individual pages for
-          canonical definitions.
+          KHÔNG đặt canonical toàn cục ở đây.
+          Mỗi trang chi tiết tự set canonical qua NextSeo/ArticleSeo.
         */}
       </Head>
 
       {/* SEO mặc định toàn site */}
       <DefaultSeo {...SEO} />
 
-      {/* Layout gốc */}
+      {/* Layout gốc của site */}
       <Layout title="FinNews">
         <Component {...pageProps} />
       </Layout>

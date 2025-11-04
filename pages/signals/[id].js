@@ -4,6 +4,16 @@ import Link from "next/link";
 import Script from "next/script";
 import { useState } from "react";
 
+/* ================= Const & helpers (shared) ================= */
+const BASE = "https://www.finnews247.com";
+const toAbs = (u) => {
+  if (!u) return null;
+  if (u.startsWith("http")) return u;
+  if (u.startsWith("//")) return `https:${u}`;
+  if (u.startsWith("/")) return `${BASE}${u}`;
+  return `${BASE}/${u.replace(/^\.\//, "")}`;
+};
+
 /* ================= Helpers (client) ================= */
 function resolveImage(src) {
   if (!src) return null;
@@ -216,11 +226,9 @@ export async function getServerSideProps({ params }) {
         _ts: parseTs(p.date, p.updatedAt),
       }))
       .filter((x) => x.slug);
-    // sort mới → cũ trong từng cat
     byCat[c] = arr.sort((a, b) => b._ts - a._ts);
   }
 
-  // coverage: 1 bài mới nhất / cat
   const seen = new Set();
   const coverage = [];
   for (const c of SIX_CATS) {
@@ -230,13 +238,11 @@ export async function getServerSideProps({ params }) {
       coverage.push(top);
     }
   }
-  // phần còn lại từ pool 6 trang
   const poolAll = SIX_CATS.flatMap((c) => byCat[c] || []);
   const rest = poolAll.filter((p) => p.slug && !seen.has(p.slug)).sort((a, b) => b._ts - a._ts);
 
   const LATEST_LIMIT = 10;
   const latestSiteRaw = coverage.concat(rest).slice(0, LATEST_LIMIT);
-  // sort LẠI toàn cục mới → cũ (để thứ tự hiển thị đúng tuyệt đối)
   const latestSite = latestSiteRaw.sort((a, b) => b._ts - a._ts).map(({ _ts, ...rest }) => rest);
 
   return { props: { signal, latestSignals, latestSite } };
@@ -268,23 +274,46 @@ export default function SignalDetailPage({
   } = signal;
 
   const imgUrl = image || null;
+  const ogAbs = toAbs(imgUrl) || `${BASE}/logo.png`;
   const pageTitle = `${pair} ${type} Signal — Entry ${entry}, Target ${target}, Stoploss ${stoploss}`;
   const pageDesc =
     excerpt ||
     `Crypto trading signal for ${pair} — Entry ${entry}, Target ${target}, Stoploss ${stoploss}.`;
+
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    mainEntityOfPage: `${BASE}/signals/${id}`,
+    headline: pageTitle,
+    description: pageDesc,
+    image: ogAbs ? [ogAbs] : undefined,
+    datePublished: date || undefined,
+    dateModified: date || undefined,
+    author: [{ "@type": "Organization", name: "FinNews247" }],
+    publisher: {
+      "@type": "Organization",
+      name: "FinNews247",
+      logo: { "@type": "ImageObject", url: `${BASE}/logo.png` },
+    },
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
       <NextSeo
         title={pageTitle}
         description={pageDesc}
-        canonical={`https://www.finnews247.com/signals/${id}`}
+        canonical={`${BASE}/signals/${id}`}
         openGraph={{
           title: pageTitle,
           description: pageDesc,
-          url: `https://www.finnews247.com/signals/${id}`,
-          images: [{ url: imgUrl || "https://www.finnews247.com/logo.png" }],
+          url: `${BASE}/signals/${id}`,
+          images: [{ url: ogAbs, width: 1200, height: 630 }],
         }}
+        twitter={{ cardType: "summary_large_image" }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
 
       <div className="grid md:grid-cols-12 gap-8">
@@ -300,7 +329,7 @@ export default function SignalDetailPage({
 
           <header className="mb-6">
             <h1 className="text-2xl md:text-3xl font-bold">
-              {pair} — {type}
+              {pair} — {prettyType(type)}
             </h1>
             {date && <p className="text-gray-600 mt-1">{date}</p>}
             {excerpt && <p className="mt-2">{fixMojibake(excerpt)}</p>}
@@ -386,7 +415,7 @@ export default function SignalDetailPage({
             <div className="text-sm text-gray-500">No detailed content provided for this signal.</div>
           )}
 
-          {/* Latest Signals (đÃ SORT DESC theo date) */}
+          {/* Latest Signals */}
           <section className="mt-10">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-lg font-semibold">Latest Signals</h3>
@@ -423,7 +452,7 @@ export default function SignalDetailPage({
           </div>
         </div>
 
-        {/* SIDEBAR: Latest on FinNews247 (phủ 6 trang chính, SORT DESC toàn cục) */}
+        {/* SIDEBAR: Latest on FinNews247 */}
         <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
           <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
             <div className="px-4 py-3 border-b dark:border-gray-700">

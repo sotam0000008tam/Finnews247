@@ -1,7 +1,9 @@
-﻿import fs from "fs";
+﻿// pages/best-crypto-apps/[slug].jsx
+import fs from "fs";
 import path from "path";
 import Link from "next/link";
-import { NextSeo } from "next-seo";
+import ArticleSeo from "../../components/ArticleSeo";
+import ArticleHero from "../../components/ArticleHero";
 
 /* ===== Helpers ===== */
 const stripHtml = (html = "") =>
@@ -18,7 +20,7 @@ const firstImage = (html = "") =>
 const pickThumb = (p, f = "/images/dummy/altcoins64.jpg") =>
   p?.thumb || p?.ogImage || p?.image || firstImage(p?.content || p?.body || "") || f;
 
-/* Map URL theo _cat/category — GIỐNG Altcoin */
+/* Map URL theo _cat/category — giống Altcoin */
 const buildUrl = (p) => {
   if (p?.href) return p.href;
   const s = String(p?.slug || "").replace(/^\//, "");
@@ -140,7 +142,7 @@ function SideMiniItem({ item }) {
 }
 
 /* ===== PAGE ===== */
-export default function DetailPage({ post, related = [], latest = [], signalsLatest = [] }) {
+export default function BestAppsPostPage({ post, related = [], latest = [], signalsLatest = [] }) {
   if (!post) {
     return (
       <div className="container mx-auto px-4 py-6">
@@ -150,32 +152,35 @@ export default function DetailPage({ post, related = [], latest = [], signalsLat
     );
   }
 
-  const canonical = `https://www.finnews247.com/best-crypto-apps/${post.slug}`;
-  const pageTitle = `${post.title} | FinNews247`;
-  const description =
-    (post.excerpt && stripHtml(post.excerpt)) ||
-    stripHtml(post.content || post.body || "").slice(0, 160);
-  const ogImage =
-    post.ogImage || post.image || firstImage(post.content || post.body || "") || "https://www.finnews247.com/logo.png";
-  const hero = post.image || ogImage || firstImage(post.content || post.body || "");
+  // 👉 Đường dẫn cho SEO để ArticleSeo tạo canonical/OG/JSON-LD chính xác (@type=Article)
+  const pathForSeo = `/best-crypto-apps/${post.slug}`;
+
+  const hero =
+    post.image || post.ogImage || firstImage(post.content || post.body || "");
+
   const author =
-    (post.author ||
+    (
+      post.author ||
       post.authorName ||
       post.author_name ||
       post.by ||
       post.byline ||
       post?.meta?.author ||
       post?.source?.author ||
-      "").trim() || guessAuthor(post);
+      ""
+    ).trim() || guessAuthor(post);
+
+  // Sắp xếp latest mới → cũ
+  const latestSorted = [...(latest || [])].sort(
+    (a, b) =>
+      (Date.parse(b.date || b.updatedAt || "") || 0) -
+      (Date.parse(a.date || a.updatedAt || "") || 0)
+  );
 
   return (
     <>
-      <NextSeo
-        title={pageTitle}
-        description={description}
-        canonical={canonical}
-        openGraph={{ title: pageTitle, description, url: canonical, images: [{ url: ogImage }] }}
-      />
+      {/* ✅ SEO theo bài: ảnh OG tuyệt đối, JSON-LD Article */}
+      <ArticleSeo post={post} path={pathForSeo} />
 
       <div className="container mx-auto px-4 py-6">
         {/* Breadcrumb */}
@@ -208,12 +213,8 @@ export default function DetailPage({ post, related = [], latest = [], signalsLat
               </div>
             </div>
 
-            {/* HERO */}
-            {hero && (
-              <div className="article-hero my-3">
-                <img src={hero} alt={post.title} loading="lazy" />
-              </div>
-            )}
+            {/* ✅ HERO tối ưu LCP */}
+            {hero && <ArticleHero src={hero} alt={post.title} />}
 
             {/* Content */}
             <div
@@ -258,8 +259,8 @@ export default function DetailPage({ post, related = [], latest = [], signalsLat
                 <h3 className="text-sm font-semibold">Latest on FinNews247</h3>
               </div>
               <ul className="divide-y dark:divide-gray-800">
-                {latest.length ? (
-                  latest.map((it) => (
+                {latestSorted.length ? (
+                  latestSorted.map((it) => (
                     <li key={(it.slug || it.title) + "-latest"}>
                       <SideMiniItem item={it} />
                     </li>
@@ -330,7 +331,7 @@ export async function getServerSideProps({ params }) {
   }
   const related = relatedPool.slice(0, 8);
 
-  /* Latest: phủ mỗi chuyên mục, KHÔNG 'tax' */
+  /* Latest: phủ mỗi chuyên mục */
   const cats = [
     "crypto-market",
     "altcoins",

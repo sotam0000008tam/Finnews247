@@ -1,7 +1,9 @@
+// pages/insurance/[slug].jsx
 import fs from "fs";
 import path from "path";
 import Link from "next/link";
-import { NextSeo } from "next-seo";
+import ArticleSeo from "../../components/ArticleSeo";
+import ArticleHero from "../../components/ArticleHero";
 
 /* ===== Helpers ===== */
 const stripHtml = (html = "") =>
@@ -117,14 +119,8 @@ export default function DetailPage({ post, related = [], latest = [], signalsLat
     );
   }
 
-  const canonical = `https://www.finnews247.com/insurance/${post.slug}`;
-  const pageTitle = `${post.title} | FinNews247`;
-  const description =
-    (post.excerpt && stripHtml(post.excerpt)) ||
-    stripHtml(post.content || post.body || "").slice(0, 160);
-  const ogImage =
-    post.ogImage || post.image || firstImage(post.content || post.body || "") || "https://www.finnews247.com/logo.png";
-  const hero = post.image || ogImage || firstImage(post.content || post.body || "");
+  const pathForSeo = `/insurance/${post.slug}`;
+  const hero = post.image || post.ogImage || firstImage(post.content || post.body || "");
   const author =
     (post.author ||
       post.authorName ||
@@ -143,12 +139,8 @@ export default function DetailPage({ post, related = [], latest = [], signalsLat
 
   return (
     <>
-      <NextSeo
-        title={pageTitle}
-        description={description}
-        canonical={canonical}
-        openGraph={{ title: pageTitle, description, url: canonical, images: [{ url: ogImage }] }}
-      />
+      {/* ✅ SEO: OG image tuyệt đối + canonical + JSON-LD Article */}
+      <ArticleSeo post={post} path={pathForSeo} />
 
       <div className="container mx-auto px-4 py-6">
         {/* Breadcrumb */}
@@ -168,24 +160,9 @@ export default function DetailPage({ post, related = [], latest = [], signalsLat
               <p className="text-sm text-gray-500">{post.date || post.updatedAt}</p>
             )}
 
-            {/* Author pill */}
-            <div className="mt-2 mb-1 flex justify-end">
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] uppercase tracking-wide text-gray-500">Written by:</span>
-                <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-xs">
-                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor" aria-hidden="true">
-                    <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z" />
-                  </svg>
-                  <span className="font-medium">{author}</span>
-                </span>
-              </div>
-            </div>
-
-            {/* HERO */}
+            {/* ✅ HERO tối ưu LCP */}
             {hero && (
-              <div className="article-hero my-3">
-                <img src={hero} alt={post.title} loading="lazy" />
-              </div>
+              <ArticleHero src={hero} alt={post.title} />
             )}
 
             {/* Content */}

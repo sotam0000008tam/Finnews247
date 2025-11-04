@@ -1,7 +1,9 @@
-﻿import fs from "fs";
+﻿// pages/crypto-exchanges/[slug].jsx
+import fs from "fs";
 import path from "path";
 import Link from "next/link";
-import { NextSeo } from "next-seo";
+import ArticleSeo from "../../components/ArticleSeo";
+import ArticleHero from "../../components/ArticleHero";
 
 /* ===== Helpers (đồng bộ mẫu Altcoin) ===== */
 const stripHtml = (html = "") =>
@@ -141,7 +143,7 @@ function SideMiniItem({ item }) {
 }
 
 /* ===== PAGE ===== */
-export default function DetailPage({ post, related = [], latest = [], signalsLatest = [] }) {
+export default function ExchangesPostPage({ post, related = [], latest = [], signalsLatest = [] }) {
   if (!post) {
     return (
       <div className="container mx-auto px-4 py-6">
@@ -151,25 +153,25 @@ export default function DetailPage({ post, related = [], latest = [], signalsLat
     );
   }
 
-  const canonical = `https://www.finnews247.com/crypto-exchanges/${post.slug}`;
-  const pageTitle = `${post.title} | FinNews247`;
-  const description =
-    (post.excerpt && stripHtml(post.excerpt)) ||
-    stripHtml(post.content || post.body || "").slice(0, 160);
-  const ogImage =
-    post.ogImage || post.image || firstImage(post.content || post.body || "") || "https://www.finnews247.com/logo.png";
-  const hero = post.image || ogImage || firstImage(post.content || post.body || "");
+  // 👉 Đường dẫn để ArticleSeo tạo canonical/OG/JSON-LD chính xác
+  const pathForSeo = `/crypto-exchanges/${post.slug}`;
+
+  const hero =
+    post.image || post.ogImage || firstImage(post.content || post.body || "");
+
   const author =
-    (post.author ||
+    (
+      post.author ||
       post.authorName ||
       post.author_name ||
       post.by ||
       post.byline ||
       post?.meta?.author ||
       post?.source?.author ||
-      "").trim() || guessAuthor(post);
+      ""
+    ).trim() || guessAuthor(post);
 
-  // Sort latest mới → cũ (đồng bộ best-crypto-apps)
+  // Sort latest mới → cũ
   const latestSorted = [...(latest || [])].sort(
     (a, b) =>
       (Date.parse(b.date || b.updatedAt || "") || 0) -
@@ -178,12 +180,8 @@ export default function DetailPage({ post, related = [], latest = [], signalsLat
 
   return (
     <>
-      <NextSeo
-        title={pageTitle}
-        description={description}
-        canonical={canonical}
-        openGraph={{ title: pageTitle, description, url: canonical, images: [{ url: ogImage }] }}
-      />
+      {/* ✅ SEO theo bài: ảnh OG tuyệt đối, JSON-LD Article */}
+      <ArticleSeo post={post} path={pathForSeo} />
 
       <div className="container mx-auto px-4 py-6">
         {/* Breadcrumb */}
@@ -216,12 +214,8 @@ export default function DetailPage({ post, related = [], latest = [], signalsLat
               </div>
             </div>
 
-            {/* HERO */}
-            {hero && (
-              <div className="article-hero my-3">
-                <img src={hero} alt={post.title} loading="lazy" />
-              </div>
-            )}
+            {/* ✅ HERO tối ưu LCP */}
+            {hero && <ArticleHero src={hero} alt={post.title} />}
 
             {/* Content */}
             <div

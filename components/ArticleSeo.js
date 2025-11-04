@@ -1,5 +1,7 @@
 // components/ArticleSeo.js
 import { NextSeo } from "next-seo";
+import Head from "next/head";
+import { useRouter } from "next/router";
 
 /** Helpers nội bộ */
 function stripHtml(html = "") {
@@ -22,42 +24,56 @@ function extractFirstImage(html = "") {
   return m ? m[1] : null;
 }
 
+/** URL tuyệt đối */
+const SITE = "https://www.finnews247.com";
+const toAbs = (u) => (!u ? undefined : u.startsWith("http") ? u : `${SITE}${u}`);
+
 /**
- * ArticleSeo: Nhúng NextSeo + JSON-LD Article + Breadcrumb cho 1 bài.
- * - post: { title, excerpt, content/body, image/ogImage, slug, date/updatedAt, author, category }
- * - path: đường dẫn tuyệt đối của bài, ví dụ "/altcoins/sec-coin-regulatory-roadmap"
+ * ArticleSeo: NextSeo + JSON-LD Article/NewsArticle + Breadcrumb
  */
-export default function ArticleSeo({ post, path }) {
-  const base = "https://www.finnews247.com";
-  const url = `${base}${path || ""}`;
+export default function ArticleSeo({ post = {}, path = "" }) {
+  const router = useRouter();
+  const normPath = String(path || router?.asPath || "");
+  const url = `${SITE}${normPath}`;
+
   const title = post?.title ? `${post.title} | FinNews247` : "FinNews247";
   const rawDesc =
-    post?.excerpt?.trim() ||
+    (post?.excerpt && post.excerpt.trim()) ||
     stripHtml(post?.content || post?.body || "");
   const description = truncate(rawDesc, 160);
+
+  // Ảnh ưu tiên: ogImage -> image -> ảnh đầu tiên trong content
   const ogImage =
     post?.ogImage ||
     post?.image ||
     extractFirstImage(post?.content || post?.body || "");
-  const datePublished = post?.date || post?.updatedAt || undefined;
+  const ogAbs = toAbs(ogImage);
+
+  const datePublished = post?.date || post?.publishedAt || post?.updatedAt || undefined;
+  const dateModified =
+    post?.updatedAt || post?.modifiedAt || datePublished || undefined;
+
   const authorName = post?.author?.name || post?.author || "FinNews247";
+
+  // NewsArticle nếu là chuyên mục tin
+  const isNews = normPath.startsWith("/crypto-market");
 
   const articleJsonLd = {
     "@context": "https://schema.org",
-    "@type": "Article",
+    "@type": isNews ? "NewsArticle" : "Article",
     mainEntityOfPage: url,
     headline: post?.title || "FinNews247",
-    description,
-    image: ogImage ? [ogImage] : undefined,
+    description: description || undefined,
+    image: ogAbs ? [ogAbs] : undefined,
     datePublished,
-    dateModified: datePublished,
+    dateModified,
     author: [{ "@type": "Person", name: authorName }],
     publisher: {
       "@type": "Organization",
       name: "FinNews247",
       logo: {
         "@type": "ImageObject",
-        url: "https://www.finnews247.com/logo.png",
+        url: `${SITE}/logo.png`,
       },
     },
   };
@@ -66,20 +82,13 @@ export default function ArticleSeo({ post, path }) {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: base,
-      },
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
       post?.category
         ? {
             "@type": "ListItem",
             position: 2,
             name: post.category,
-            item: `${base}/${String(post.category)
-              .toLowerCase()
-              .replace(/\s+/g, "-")}`,
+            item: `${SITE}/${String(post.category).toLowerCase().replace(/\s+/g, "-")}`,
           }
         : null,
       {
@@ -98,20 +107,24 @@ export default function ArticleSeo({ post, path }) {
         description={description}
         canonical={url}
         openGraph={{
+          url,
           title,
           description,
-          url,
-          images: ogImage ? [{ url: ogImage }] : undefined,
+          type: isNews ? "article" : "website",
+          images: ogAbs ? [{ url: ogAbs }] : undefined,
         }}
+        twitter={{ cardType: "summary_large_image" }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
+      <Head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        />
+      </Head>
     </>
   );
 }

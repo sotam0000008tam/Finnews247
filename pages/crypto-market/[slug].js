@@ -1,7 +1,9 @@
-﻿import fs from "fs";
+﻿// pages/crypto-market/[slug].jsx
+import fs from "fs";
 import path from "path";
 import Link from "next/link";
-import { NextSeo } from "next-seo";
+import ArticleSeo from "../../components/ArticleSeo";
+import ArticleHero from "../../components/ArticleHero";
 
 /* ===== Helpers ===== */
 const stripHtml = (html = "") =>
@@ -117,38 +119,22 @@ export default function DetailPage({ post, related = [], latest = [], signalsLat
     );
   }
 
-  const canonical = `https://www.finnews247.com/crypto-market/${post.slug}`;
-  const pageTitle = `${post.title} | FinNews247`;
-  const description =
-    (post.excerpt && stripHtml(post.excerpt)) ||
-    stripHtml(post.content || post.body || "").slice(0, 160);
-  const ogImage =
-    post.ogImage || post.image || firstImage(post.content || post.body || "") || "https://www.finnews247.com/logo.png";
-  const hero = post.image || ogImage || firstImage(post.content || post.body || "");
+  // 👉 Đường dẫn để ArticleSeo tạo canonical/OG/JSON-LD (NewsArticle) chính xác
+  const pathForSeo = `/crypto-market/${post.slug}`;
+
+  const hero = post.image || post.ogImage || firstImage(post.content || post.body || "");
   const author =
-    (post.author ||
-      post.authorName ||
-      post.author_name ||
-      post.by ||
-      post.byline ||
-      post?.meta?.author ||
-      post?.source?.author ||
-      "").trim() || guessAuthor(post);
+    (post.author || post.authorName || post.author_name || post.by || post.byline || post?.meta?.author || post?.source?.author || "").trim()
+    || guessAuthor(post);
 
   const latestSorted = [...(latest || [])].sort(
-    (a, b) =>
-      (Date.parse(b.date || b.updatedAt || "") || 0) -
-      (Date.parse(a.date || a.updatedAt || "") || 0)
+    (a, b) => (Date.parse(b.date || b.updatedAt || "") || 0) - (Date.parse(a.date || a.updatedAt || "") || 0)
   );
 
   return (
     <>
-      <NextSeo
-        title={pageTitle}
-        description={description}
-        canonical={canonical}
-        openGraph={{ title: pageTitle, description, url: canonical, images: [{ url: ogImage }] }}
-      />
+      {/* ✅ SEO: ảnh OG tuyệt đối + JSON-LD NewsArticle */}
+      <ArticleSeo post={post} path={pathForSeo} />
 
       <div className="container mx-auto px-4 py-6">
         {/* Breadcrumb */}
@@ -164,57 +150,24 @@ export default function DetailPage({ post, related = [], latest = [], signalsLat
           {/* MAIN */}
           <article className="md:col-span-9">
             <h1 className="text-2xl md:text-3xl font-bold">{post.title}</h1>
-            {(post.date || post.updatedAt) && (
-              <p className="text-sm text-gray-500">{post.date || post.updatedAt}</p>
-            )}
+            {(post.date || post.updatedAt) && <p className="text-sm text-gray-500">{post.date || post.updatedAt}</p>}
 
-            {/* Author pill */}
-            <div className="mt-2 mb-1 flex justify-end">
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] uppercase tracking-wide text-gray-500">Written by:</span>
-                <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-xs">
-                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor" aria-hidden="true">
-                    <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z" />
-                  </svg>
-                  <span className="font-medium">{author}</span>
-                </span>
-              </div>
-            </div>
-
-            {/* HERO */}
-            {hero && (
-              <div className="article-hero my-3">
-                <img src={hero} alt={post.title} loading="lazy" />
-              </div>
-            )}
+            {/* ✅ HERO tối ưu LCP */}
+            {hero && <ArticleHero src={hero} alt={post.title} />}
 
             {/* Content */}
-            <div
-              className="prose lg:prose-xl max-w-none post-body"
-              dangerouslySetInnerHTML={{ __html: post.content || post.body || "" }}
-            />
+            <div className="prose lg:prose-xl max-w-none post-body" dangerouslySetInnerHTML={{ __html: post.content || post.body || "" }} />
 
             {/* More from Crypto & Market */}
             <div className="mt-8">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-lg font-semibold">More from Crypto & Market</h3>
-                <Link href="/crypto-market" className="text-sm text-sky-600 hover:underline">
-                  View all
-                </Link>
+                <Link href="/crypto-market" className="text-sm text-sky-600 hover:underline">View all</Link>
               </div>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {(related || []).slice(0, 6).map((it) => (
-                  <Link
-                    key={it.slug}
-                    href={`/crypto-market/${it.slug}`}
-                    className="block rounded-lg border p-3 hover:bg-gray-50 dark:hover:bg-gray-800"
-                  >
-                    <img
-                      src={pickThumb(it)}
-                      alt={it.title}
-                      className="w-full h-40 object-cover rounded-md mb-2"
-                      loading="lazy"
-                    />
+                  <Link key={it.slug} href={`/crypto-market/${it.slug}`} className="block rounded-lg border p-3 hover:bg-gray-50 dark:hover:bg-gray-800">
+                    <img src={pickThumb(it)} alt={it.title} className="w-full h-40 object-cover rounded-md mb-2" loading="lazy" />
                     <div className="font-medium line-clamp-2">{it.title}</div>
                   </Link>
                 ))}
@@ -225,7 +178,6 @@ export default function DetailPage({ post, related = [], latest = [], signalsLat
           {/* SIDEBAR */}
           <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
             <TradingSignalsCompact items={signalsLatest} />
-
             <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
               <div className="px-4 py-3 border-b dark:border-gray-700">
                 <h3 className="text-sm font-semibold">Latest on FinNews247</h3>

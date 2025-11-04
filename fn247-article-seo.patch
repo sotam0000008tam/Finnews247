@@ -1,0 +1,43 @@
+--- a/components/ArticleSeo.js
++++ b/components/ArticleSeo.js
+@@
+- const base = "https://www.finnews247.com";
++ const base = "https://www.finnews247.com";
++ const toAbs = (u) => (!u ? undefined : u.startsWith("http") ? u : `${base}${u}`);
+@@
+- const ogImage =
++ const ogImage =
+   post?.ogImage ||
+   post?.image ||
+   extractFirstImage(post?.content || post?.body || "");
++ const ogAbs = toAbs(ogImage);
+@@
+- <NextSeo
++ <NextSeo
+     title={title}
+     description={description}
+     canonical={url}
+-    openGraph={{ title, description, url, images: ogImage ? [{ url: ogImage }] : undefined }}
++    openGraph={{ title, description, url, images: ogAbs ? [{ url: ogAbs }] : undefined }}
+   />
+@@
+- const articleJsonLd = {
++ const isNews = (path || "").startsWith("/crypto-market");
++ const articleJsonLd = {
+   "@context": "https://schema.org",
+-  "@type": "Article",
++  "@type": isNews ? "NewsArticle" : "Article",
+   mainEntityOfPage: url,
+   headline: post?.title || "FinNews247",
+   description,
+-  image: ogImage ? [ogImage] : undefined,
++  image: ogAbs ? [ogAbs] : undefined,
+   datePublished,
+   dateModified: datePublished,
+   author: [{ "@type": "Person", name: authorName }],
+   publisher: {
+     "@type": "Organization",
+     name: "FinNews247",
+     logo: { "@type": "ImageObject", url: "https://www.finnews247.com/logo.png" },
+   },
+ };

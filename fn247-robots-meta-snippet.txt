@@ -1,0 +1,2 @@
+/* Add inside <Head> of pages/_document.js */
+<meta name="robots" content="max-image-preview:large" />
