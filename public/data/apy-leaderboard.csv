@@ -1,0 +1,6 @@
+Platform/Pool,Chain,Asset,APY (%),Compounding? (Y/N),Lockup (days),TVL (USD),Risk Notes,Source URL,Last Checked (YYYY-MM-DD)
+Lido Staking,Ethereum,ETH,,Y,0,,Smart-contract; LSD depeg,https://lido.fi/,11/6/2025
+Aave v3 USDC,Polygon,USDC,,Y,0,,Lending protocol risk,https://app.aave.com/,11/6/2025
+Curve stETH/ETH,Ethereum,stETH-ETH LP,,N,0,,Impermanent loss; pool imbalance,https://curve.fi/,11/6/2025
+Binance Earn Flexible,CEX,USDT,,Y,0,,Exchange custody risk,https://www.binance.com/earn,11/6/2025
+Raydium RAY-USDC,Solana,RAY-USDC LP,,N,0,,DEX/IL risk on Solana,https://raydium.io/,11/6/2025

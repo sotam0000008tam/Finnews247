@@ -4,6 +4,7 @@ import path from "path";
 import Link from "next/link";
 import ArticleSeo from "../../components/ArticleSeo";
 import ArticleHero from "../../components/ArticleHero";
+import Head from "next/head"; // NEW
 
 /* ===== Helpers ===== */
 const stripHtml = (html = "") =>
@@ -63,6 +64,9 @@ const typeColor = (t = "") =>
   String(t).toLowerCase() === "long"
     ? "bg-green-100 text-green-700 ring-green-200"
     : "bg-red-100 text-red-700 ring-red-200";
+
+// NEW: helper để nhúng JSON-LD gọn
+const toJsonLd = (obj) => ({ __html: JSON.stringify(obj) });
 
 function TradingSignalsCompact({ items = [] }) {
   return (
@@ -139,10 +143,71 @@ export default function DetailPage({ post, related = [], latest = [], signalsLat
       (Date.parse(a.date || a.updatedAt || "") || 0)
   );
 
+  // NEW: chỉ gắn Dataset + FAQ cho đúng bài apy-leaderboard
+  const IS_APY = String(post.slug || "").toLowerCase() === "apy-leaderboard";
+  const SITE = "https://www.finnews247.com"; // khớp với ArticleSeo
+  const canonical = `${SITE}/guides/${post.slug}`;
+  const dateModified =
+    post.updatedAt || post.date || new Date().toISOString().slice(0, 10);
+  const datasetLd = {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "name": "FinNews247 APY Leaderboard",
+    "description": (post.excerpt || stripHtml(post.content || "")).slice(0, 300),
+    "url": canonical,
+    "keywords": ["APY","staking","DeFi","lending","liquidity pool","yield"],
+    "dateModified": dateModified,
+    "creator": { "@type": "Organization", "name": "FinNews247" },
+    "distribution": [{
+      "@type": "DataDownload",
+      "encodingFormat": "text/csv",
+      "contentUrl": `${SITE}/data/apy-leaderboard.csv`
+    }],
+    "license": "https://creativecommons.org/licenses/by/4.0/"
+  };
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Why is APY different from APR?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "APR is nominal and excludes compounding; APY reflects effective yield after compounding. When a platform lists APR, estimate APY using (1 + APR/n)^n - 1, where n is the compounding frequency."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does higher TVL always mean safer?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. TVL is a helpful signal for adoption/liquidity but it does not eliminate smart-contract, governance, or custody risks. Always review audits, docs and operational history."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can auto-compounding match the posted APY?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Only if compounding costs (fees/slippage) are negligible. Otherwise realized APY is lower than the posted figure. Start small and measure your net returns."
+        }
+      }
+    ]
+  };
+
   return (
     <>
       {/* ✅ SEO: ảnh OG tuyệt đối + canonical đúng */}
       <ArticleSeo post={post} path={pathForSeo} />
+
+      {/* NEW: Schema Dataset + FAQ dành riêng cho apy-leaderboard */}
+      {IS_APY && (
+        <Head>
+          <script type="application/ld+json" dangerouslySetInnerHTML={toJsonLd(datasetLd)} />
+          <script type="application/ld+json" dangerouslySetInnerHTML={toJsonLd(faqLd)} />
+        </Head>
+      )}
 
       <div className="container mx-auto px-4 py-6">
         {/* Breadcrumb */}
@@ -298,8 +363,7 @@ export async function getServerSideProps({ params }) {
       .map((p) => ({ ...p, _cat: cat }));
     arr.sort(
       (a, b) =>
-        (Date.parse(b.date || b.updatedAt) || 0) -
-        (Date.parse(a.date || a.updatedAt) || 0)
+        (Date.parse(b.date || b.updatedAt) || 0) - (Date.parse(a.date || a.updatedAt) || 0)
     );
     byCat[cat] = arr;
   }
@@ -320,15 +384,13 @@ export async function getServerSideProps({ params }) {
     .filter((p) => p?.slug && !seen.has(p.slug))
     .sort(
       (a, b) =>
-        (Date.parse(b.date || b.updatedAt) || 0) -
-        (Date.parse(a.date || a.updatedAt) || 0)
+        (Date.parse(b.date || b.updatedAt) || 0) - (Date.parse(a.date || a.updatedAt) || 0)
     );
 
   const latestRaw = coverage.concat(rest).slice(0, LATEST_LIMIT);
   const latest = latestRaw.sort(
     (a, b) =>
-      (Date.parse(b.date || b.updatedAt) || 0) -
-      (Date.parse(a.date || a.updatedAt) || 0)
+      (Date.parse(b.date || b.updatedAt) || 0) - (Date.parse(a.date || a.updatedAt) || 0)
   );
 
   const { latestSignals } = await import("../../lib/sidebar.server");
