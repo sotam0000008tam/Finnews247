@@ -2,14 +2,12 @@
 const fs = require('fs');
 const path = require('path');
 
-// BẮT BUỘC: always UTC để Google hiểu đúng ngày/giờ
 process.env.TZ = 'Etc/UTC';
 
-const SITE = 'https://www.finnews247.com';
-const BUILD_TS = Date.now();
-const BUILD_ISO = new Date(BUILD_TS).toISOString();
+const SITE =
+  (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.finnews247.com').replace(/\/+$/, '');
 
-// --- helpers ---
+// ---------- helpers ----------
 function readJsonSafe(filename) {
   try {
     const p = path.join(process.cwd(), 'data', filename);
@@ -19,179 +17,126 @@ function readJsonSafe(filename) {
     return [];
   }
 }
+
 function cleanSlug(slug) {
   if (!slug) return '';
   let s = String(slug).trim().replace(/^\/+/, '');
-  s = s.replace(/^news\//i, '');
-  s = s.replace(/^crypto-market\//i, '');
+  s = s.replace(/^news\//i, '').replace(/^crypto-market\//i, '');
   return s;
 }
 function buildPath(base, slug) {
   const s = cleanSlug(slug);
   if (!s) return null;
-  return `/${base.replace(/^\/+/, '')}/${s}`.replace(/\/{2,}/g, '/');
-}
-function onlyDateString(v) {
-  return typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v);
-}
-function hashSlug(s = '') {
-  // djb2 simple hash → ổn định giữa các build
-  let h = 5381;
-  for (let i = 0; i < s.length; i++) h = ((h << 5) + h) + s.charCodeAt(i);
-  return Math.abs(h);
-}
-function isoSmart(dateLike, slugOrLoc) {
-  if (!dateLike) return undefined;
-  const d = new Date(dateLike);
-  // Nếu parse được và có time → giữ nguyên
-  if (!Number.isNaN(d.getTime()) && !onlyDateString(String(dateLike))) {
-    return d.toISOString();
-  }
-  // Nếu chỉ có "YYYY-MM-DD"
-  if (onlyDateString(String(dateLike))) {
-    const base = new Date(dateLike + 'T00:00:00.000Z');
-    // Nếu là NGÀY HÔM NAY → dùng giờ build (để sitemap thể hiện mới thực sự)
-    const todayUTC = new Date(BUILD_TS).toISOString().slice(0, 10);
-    if (String(dateLike) === todayUTC) return BUILD_ISO;
-    // Cũ hơn hôm nay → gắn giờ/phút ổn định theo seed (tránh đổi mỗi build)
-    const seed = hashSlug(slugOrLoc || String(dateLike));
-    const hour = seed % 24;
-    const min = Math.floor(seed / 97) % 60;
-    base.setUTCHours(hour, min, 0, 0);
-    return base.toISOString();
-  }
-  // Trường hợp parse fail → undefined
-  return undefined;
+  return `/${String(base).replace(/^\/+/, '')}/${s}`.replace(/\/{2,}/g, '/');
 }
 
-function firstImageFromHtml(html = '') {
-  const m = String(html).match(/<img[^>]+src=["']([^"']+)["']/i);
-  return m ? m[1] : null;
+// lastmod with jitter (nếu chỉ có yyyy-mm-dd)
+function toISOWithJitter(d, slug = '') {
+  if (!d) return undefined;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(d)) {
+    let h = 0;
+    for (const ch of String(slug)) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+    const minutes = h % 600; // 0..599 (~10h)
+    const dt = new Date(`${d}T00:00:00.000Z`);
+    dt.setUTCMinutes(minutes);
+    return dt.toISOString();
+  }
+  const t = new Date(d);
+  return Number.isNaN(t.getTime()) ? undefined : t.toISOString();
 }
-function pickImage(p) {
-  return p?.thumb || p?.ogImage || p?.image || firstImageFromHtml(p?.content || p?.body || '');
-}
-function absImg(src) {
-  if (!src) return null;
-  if (/^https?:\/\//i.test(src)) return src;
-  if (src.startsWith('/')) return `${SITE}${src}`;
-  return `${SITE}/images/${src}`;
+function lastmodOf(it = {}) {
+  const d = it.date || it.updatedAt || it.publishedAt || it.createdAt || undefined;
+  const iso = toISOWithJitter(d, it.slug || it.path || it.id || '');
+  // fallback: build - 12h để tránh đồng loạt “giờ build”
+  return iso || new Date(Date.now() - 12 * 3600 * 1000).toISOString();
 }
 
+function pushUrl(out, seen, loc, lastmod, priority) {
+  if (!loc) return;
+  const clean = loc.replace(/\/{2,}/g, '/');
+  if (seen.has(clean)) return;
+  seen.add(clean);
+
+  out.push({
+    loc: clean,
+    changefreq: 'daily',
+    priority: priority ?? (clean === '/' ? 1.0 : 0.7),
+    lastmod: lastmod || new Date().toISOString(),
+    // ❌ KHÔNG set images ở sitemap chính
+  });
+}
+
+// ---------- config ----------
 module.exports = {
   siteUrl: SITE,
-
-  // Một file duy nhất: /sitemap.xml
-  generateIndexSitemap: false,
+  generateIndexSitemap: false,          // 1 file sitemap.xml duy nhất
   sitemapBaseFileName: 'sitemap',
-
-  // Dùng robots.txt thủ công
-  generateRobotsTxt: false,
-
+  generateRobotsTxt: false,             // dùng public/robots.txt thủ công
   changefreq: 'daily',
   priority: 0.7,
 
-  // Không quét auto; chỉ xuất những gì mình cung cấp
+  // Không quét auto, chỉ dùng additionalPaths
   exclude: ['/*', '/**/*'],
 
-  // (không dùng vì exclude tất cả, nhưng để an toàn)
   transform: async (_config, url) => ({
     loc: url,
     changefreq: 'daily',
     priority: url === '/' ? 1.0 : 0.7,
-    lastmod: BUILD_ISO,
+    lastmod: new Date().toISOString(),
   }),
 
   additionalPaths: async () => {
     const out = [];
     const seen = new Set();
 
-    const push = ({ loc, lastmod, priority, image }) => {
-      if (!loc) return;
-      const clean = loc.replace(/\/{2,}/g, '/');
-      if (seen.has(clean)) return;
-      seen.add(clean);
-
-      const images = image ? [{ loc: absImg(image) }].filter(Boolean) : undefined;
-
-      out.push({
-        loc: clean,
-        changefreq: 'daily',
-        priority: priority ?? (clean === '/' ? 1.0 : 0.7),
-        lastmod: lastmod ?? new Date(BUILD_TS - 86400000).toISOString(), // fallback "cách đây 1 ngày"
-        ...(images && { images }),
-      });
-    };
-
-    // 1) Trang chính
+    // Trang chính
     [
       '/', '/about', '/contact', '/privacy', '/terms',
       '/signals', '/altcoins', '/crypto-exchanges',
       '/best-crypto-apps', '/insurance', '/crypto-market', '/guides',
-    ].forEach((p) => push({ loc: p, lastmod: BUILD_ISO }));
-
-    // 2) Bài viết từ data/*.json (gắn ảnh vào sitemap chính)
-    const collect = (file, base, dateKeys = ['date', 'updatedAt', 'publishedAt', 'createdAt']) => {
-      readJsonSafe(file).forEach((it) => {
-        const slug = it.slug || it.path || it.id;
-        const loc = buildPath(base, slug);
-        const dateLike = dateKeys.map((k) => it[k]).find(Boolean);
-        const lastmod = isoSmart(dateLike, slug || loc);
-        const image = pickImage(it);
-        push({ loc, lastmod, image });
-      });
-    };
+    ].forEach(p => pushUrl(out, seen, p));
 
     // signals
-    collect('signals.json', '/signals', ['date', 'updatedAt', 'publishedAt', 'createdAt']);
-    // altcoins (+ seccoin)
-    [...readJsonSafe('altcoins.json'), ...readJsonSafe('seccoin.json')].forEach((it) => {
-      const slug = it.slug || it.path;
-      const loc = buildPath('/altcoins', slug);
-      const lastmod = isoSmart(it.date || it.updatedAt, slug || loc);
-      const image = pickImage(it);
-      push({ loc, lastmod, image });
-    });
-    // crypto-exchanges (+ fidelity)
-    [...readJsonSafe('cryptoexchanges.json'), ...readJsonSafe('fidelity.json')].forEach((it) => {
-      const slug = it.slug || it.path;
-      const loc = buildPath('/crypto-exchanges', slug);
-      const lastmod = isoSmart(it.date || it.updatedAt, slug || loc);
-      const image = pickImage(it);
-      push({ loc, lastmod, image });
-    });
+    for (const it of readJsonSafe('signals.json')) {
+      const loc = buildPath('/signals', it.slug || it.id);
+      pushUrl(out, seen, loc, lastmodOf(it));
+    }
+
+    // altcoins + seccoin
+    for (const it of [...readJsonSafe('altcoins.json'), ...readJsonSafe('seccoin.json')]) {
+      const loc = buildPath('/altcoins', it.slug || it.path);
+      pushUrl(out, seen, loc, lastmodOf(it));
+    }
+
+    // crypto-exchanges + fidelity
+    for (const it of [...readJsonSafe('cryptoexchanges.json'), ...readJsonSafe('fidelity.json')]) {
+      const loc = buildPath('/crypto-exchanges', it.slug || it.path);
+      pushUrl(out, seen, loc, lastmodOf(it));
+    }
+
     // best-crypto-apps
-    readJsonSafe('bestapps.json').forEach((it) => {
-      const slug = it.slug || it.path;
-      const loc = buildPath('/best-crypto-apps', slug);
-      const lastmod = isoSmart(it.date || it.updatedAt, slug || loc);
-      const image = pickImage(it);
-      push({ loc, lastmod, image });
-    });
+    for (const it of readJsonSafe('bestapps.json')) {
+      const loc = buildPath('/best-crypto-apps', it.slug || it.path);
+      pushUrl(out, seen, loc, lastmodOf(it));
+    }
+
     // insurance
-    readJsonSafe('insurance.json').forEach((it) => {
-      const slug = it.slug || it.path;
-      const loc = buildPath('/insurance', slug);
-      const lastmod = isoSmart(it.date || it.updatedAt, slug || loc);
-      const image = pickImage(it);
-      push({ loc, lastmod, image });
-    });
-    // crypto-market (news.json)
-    readJsonSafe('news.json').forEach((it) => {
-      const slug = it.slug || it.path;
-      const loc = buildPath('/crypto-market', slug);
-      const lastmod = isoSmart(it.date || it.updatedAt, slug || loc);
-      const image = pickImage(it);
-      push({ loc, lastmod, image });
-    });
+    for (const it of readJsonSafe('insurance.json')) {
+      const loc = buildPath('/insurance', it.slug || it.path);
+      pushUrl(out, seen, loc, lastmodOf(it));
+    }
+
+    // crypto-market (news)
+    for (const it of readJsonSafe('news.json')) {
+      const loc = buildPath('/crypto-market', it.slug || it.path);
+      pushUrl(out, seen, loc, lastmodOf(it));
+    }
+
     // guides
-    readJsonSafe('guides.json').forEach((it) => {
-      const slug = it.slug || it.path;
-      const loc = buildPath('/guides', slug);
-      const lastmod = isoSmart(it.date || it.updatedAt, slug || loc);
-      const image = pickImage(it);
-      push({ loc, lastmod, image });
-    });
+    for (const it of readJsonSafe('guides.json')) {
+      const loc = buildPath('/guides', it.slug || it.path);
+      pushUrl(out, seen, loc, lastmodOf(it));
+    }
 
     return out;
   },

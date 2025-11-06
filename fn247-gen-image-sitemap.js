@@ -1,16 +1,11 @@
 // fn247-gen-image-sitemap.js
-/* Generate public/image-sitemap.xml by following exactly the URLs produced by next-sitemap (sitemap.xml).
- * - Reuses next-sitemap.config.js -> additionalPaths() as the source of truth for page URLs
- * - Extracts images from JSON data + HTML content
- * - Ensures ABSOLUTE URLs on your own host (https://www.finnews247.com/images/...)
- */
-
 const fs = require('fs');
 const path = require('path');
-const { URL } = require('url');
 
-const SITE = 'https://www.finnews247.com';
-const PUB = path.join(process.cwd(), 'public');
+process.env.TZ = 'Etc/UTC';
+
+const SITE =
+  (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.finnews247.com').replace(/\/+$/, '');
 
 function readJsonSafe(filename) {
   try {
@@ -21,189 +16,97 @@ function readJsonSafe(filename) {
     return [];
   }
 }
-
-function extractImgsFromHtml(html = '') {
+function isAbs(u = '') {
+  return /^https?:\/\//i.test(u) || u.startsWith('//');
+}
+function toAbs(u) {
+  if (!u) return undefined;
+  let s = String(u).trim();
+  if (s.startsWith('//')) return `https:${s}`;
+  if (isAbs(s)) return s;
+  if (!s.startsWith('/')) s = `/${s}`;
+  s = s.replace(/\/{2,}/g, '/');
+  return `${SITE}${s}`;
+}
+function firstImgs(html = '') {
   const out = [];
-  if (!html || typeof html !== 'string') return out;
   const re = /<img[^>]+src=["']([^"']+)["']/gi;
   let m;
-  while ((m = re.exec(html))) {
-    out.push(m[1]);
-  }
+  while ((m = re.exec(String(html)))) out.push(m[1]);
   return out;
 }
+function pickImages(it = {}) {
+  const arr = [];
+  if (it.ogImage) arr.push(it.ogImage);
+  if (it.image) arr.push(it.image);
+  arr.push(...firstImgs(it.content || it.body || ''));
 
-function toAbsoluteOnHost(src) {
-  if (!src) return null;
-  let s = String(src).trim();
-
-  // already absolute
-  if (/^https?:\/\//i.test(s)) {
-    try {
-      const u = new URL(s);
-      // chỉ giữ ảnh thuộc domain chính
-      if (u.hostname.replace(/^www\./, '') !== 'finnews247.com') return null;
-      return u.href;
-    } catch {
-      return null;
-    }
+  const seen = new Set();
+  const valids = [];
+  for (const u of arr) {
+    const abs = toAbs(u);
+    if (!abs) continue;
+    if (!abs.startsWith(SITE + '/')) continue; // chỉ host của mình
+    if (seen.has(abs)) continue;
+    seen.add(abs);
+    valids.push(abs);
   }
-
-  // relative → chuẩn hóa về /images/*
-  s = s.replace(/^\.{1,2}\//, ''); // ./images/x → images/x
-  if (!s.startsWith('/')) s = '/' + s;
-
-  // chỉ index thư mục /images
-  if (!/^\/images\//i.test(s)) return null;
-
-  return SITE + s;
+  return valids;
 }
-
-function uniq(arr) {
-  return Array.from(new Set(arr));
+function cleanSlug(slug) {
+  if (!slug) return '';
+  let s = String(slug).trim().replace(/^\/+/, '');
+  s = s.replace(/^news\//i, '').replace(/^crypto-market\//i, '');
+  return s;
 }
-
-function buildXml(urlEntries) {
-  const head =
-    `<?xml version="1.0" encoding="UTF-8"?>\n` +
-    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n` +
-    `        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n`;
-
-  const body = urlEntries
-    .map(({ loc, images }) => {
-      const imgs = (images || [])
-        .map((im) => `    <image:image><image:loc>${im}</image:loc></image:image>`)
-        .join('\n');
-      return `  <url>\n    <loc>${loc}</loc>\n${imgs}\n  </url>`;
-    })
-    .join('\n');
-
-  const tail = `\n</urlset>\n`;
-  return head + body + tail;
+function pageUrl(base, slugOrId) {
+  const s = cleanSlug(slugOrId);
+  if (!s) return null;
+  const p = `/${String(base).replace(/^\/+/, '')}/${s}`.replace(/\/{2,}/g, '/');
+  return `${SITE}${p}`;
 }
+function escapeXml(s = '') {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function addEntries(out, base, items) {
+  for (const it of items) {
+    const url = pageUrl(base, it.slug || it.path || it.id);
+    if (!url) continue;
+    const imgs = pickImages(it);
+    if (!imgs.length) continue; // Không có ảnh → bỏ qua entry
 
-// ---- load all data pools once
-const DATA = {
-  signals: readJsonSafe('signals.json'),
-  altcoins: readJsonSafe('altcoins.json'),
-  seccoin: readJsonSafe('seccoin.json'),
-  cryptoexchanges: readJsonSafe('cryptoexchanges.json'),
-  fidelity: readJsonSafe('fidelity.json'),
-  bestapps: readJsonSafe('bestapps.json'),
-  insurance: readJsonSafe('insurance.json'),
-  news: readJsonSafe('news.json'),
-  guides: readJsonSafe('guides.json'),
-};
-
-function findPostByPathname(pathname) {
-  // pathname examples:
-  // /crypto-market/slug
-  // /altcoins/slug
-  // /crypto-exchanges/slug
-  // /best-crypto-apps/slug
-  // /insurance/slug
-  // /guides/slug
-  // /signals/{id-or-slug}
-  const parts = pathname.replace(/^\/+/, '').split('/');
-  const cat = parts[0] || '';
-  const slug = parts[1] || '';
-
-  const bySlug = (arr) => arr.find((p) => String(p.slug || '').toLowerCase() === slug.toLowerCase());
-
-  switch (cat) {
-    case 'crypto-market':
-      return bySlug(DATA.news);
-    case 'altcoins':
-      return bySlug(DATA.altcoins) || bySlug(DATA.seccoin);
-    case 'crypto-exchanges':
-      return bySlug(DATA.cryptoexchanges) || bySlug(DATA.fidelity);
-    case 'best-crypto-apps':
-      return bySlug(DATA.bestapps);
-    case 'insurance':
-      return bySlug(DATA.insurance);
-    case 'guides':
-      return bySlug(DATA.guides);
-    case 'signals':
-      // signals có thể là id hoặc slug
-      return (
-        DATA.signals.find((p) => String(p.slug || p.id).toLowerCase() === slug.toLowerCase()) ||
-        DATA.signals.find((p) => String(p.id) === slug)
-      );
-    default:
-      return null;
+    const lines = [];
+    lines.push('  <url>');
+    lines.push(`    <loc>${escapeXml(url)}</loc>`);
+    for (const img of imgs) {
+      lines.push('    <image:image>');
+      lines.push(`      <image:loc>${escapeXml(img)}</image:loc>`);
+      lines.push('    </image:image>');
+    }
+    lines.push('  </url>');
+    out.push(lines.join('\n'));
   }
 }
 
-function collectImagesForPost(post) {
-  if (!post) return [];
-  const candidates = [];
+(function main() {
+  const chunks = [];
+  const header = [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<urlset',
+    '  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"',
+    '  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"',
+    '>',
+  ].join('\n');
 
-  // các field trực tiếp
-  ['image', 'ogImage', 'thumb'].forEach((k) => {
-    if (post[k]) candidates.push(post[k]);
-  });
+  addEntries(chunks, '/crypto-market', readJsonSafe('news.json'));
+  addEntries(chunks, '/altcoins', [...readJsonSafe('altcoins.json'), ...readJsonSafe('seccoin.json')]);
+  addEntries(chunks, '/crypto-exchanges', [...readJsonSafe('cryptoexchanges.json'), ...readJsonSafe('fidelity.json')]);
+  addEntries(chunks, '/best-crypto-apps', readJsonSafe('bestapps.json'));
+  addEntries(chunks, '/insurance', readJsonSafe('insurance.json'));
+  addEntries(chunks, '/guides', readJsonSafe('guides.json'));
+  addEntries(chunks, '/signals', readJsonSafe('signals.json'));
 
-  // HTML content fields
-  [
-    'content',
-    'body',
-    'excerpt',
-    'intro',
-    'marketContext',
-    'technicalAnalysis',
-    'riskStrategy',
-  ].forEach((k) => {
-    if (post[k]) {
-      candidates.push(...extractImgsFromHtml(String(post[k])));
-    }
-  });
-
-  // chuẩn hóa → absolute + lọc domain đúng
-  const abs = candidates
-    .map(toAbsoluteOnHost)
-    .filter(Boolean);
-
-  // bỏ trùng
-  return uniq(abs);
-}
-
-async function main() {
-  // Lấy URL list trực tiếp từ next-sitemap.config.js để BÁM SÁT sitemap.xml
-  const cfg = require('./next-sitemap.config.js');
-  const pages = await cfg.additionalPaths();
-
-  const entries = [];
-  let totalImages = 0;
-
-  for (const p of pages) {
-    let loc = p.loc;
-    if (!/^https?:\/\//i.test(loc)) {
-      // additionalPaths của next-sitemap trả loc dạng "/path"
-      loc = SITE.replace(/\/+$/, '') + loc;
-    }
-    const u = new URL(loc);
-    const post = findPostByPathname(u.pathname);
-    const images = collectImagesForPost(post);
-
-    if (images.length) {
-      totalImages += images.length;
-      entries.push({ loc, images });
-    } else {
-      // vẫn thêm <url> để image-sitemap bám y chang URL, nhưng không có <image:image> thì cũng OK
-      entries.push({ loc, images: [] });
-    }
-  }
-
-  const xml = buildXml(entries);
-  if (!fs.existsSync(PUB)) fs.mkdirSync(PUB, { recursive: true });
-  const outFile = path.join(PUB, 'image-sitemap.xml');
-  fs.writeFileSync(outFile, xml, 'utf8');
-
-  console.log(`[image-sitemap] URLs: ${entries.length}, images: ${totalImages}`);
-  console.log(`[image-sitemap] wrote: ${outFile}`);
-}
-
-main().catch((e) => {
-  console.error('[image-sitemap] ERROR:', e);
-  process.exit(1);
-});
+  const xml = [header, ...chunks, '</urlset>'].join('\n');
+  fs.writeFileSync(path.join(process.cwd(), 'public', 'image-sitemap.xml'), xml, 'utf8');
+  console.log(`image-sitemap.xml entries: ${chunks.length}`);
+})();
