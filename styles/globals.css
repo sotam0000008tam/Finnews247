@@ -16,7 +16,26 @@ h1, h2, h3, h4, h5, h6 {
   @apply font-semibold text-gray-900 dark:text-gray-100;
 }
 
-.container { @apply max-w-7xl mx-auto; }
+/* ===== Container rules =====
+   - Mặc định mọi .container giữ 7xl (1280px)
+   - Nhưng nếu phần tử có cả .container + .container-1600 => ép 1600px
+*/
+.container {
+  margin-left: auto;
+  margin-right: auto;
+}
+.container:not(.container-1600) {
+  max-width: 80rem; /* ~ tailwind max-w-7xl */
+}
+.container.container-1600 {
+  max-width: 1600px !important;
+  width: 100%;
+  padding-left: 1rem;   /* ~px-4 */
+  padding-right: 1rem;
+}
+@media (min-width: 1024px) { /* lg */
+  .container.container-1600 { padding-left: 1.5rem; padding-right: 1.5rem; } /* ~lg:px-6 */
+}
 
 /* ✅ UNIVERSAL image safety */
 img { max-width: 100%; height: auto; display: block; }
@@ -59,7 +78,23 @@ header.sticky.top-10 .container img[alt="FinNews Logo"] { max-height: 36px; heig
 .fn-mini img { width:45px; height:45px; object-fit:cover; border-radius:0.5rem; flex-shrink:0; }
 .fn-mini .title { font-size:0.9rem; line-height:1.25; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
 .fn-mini .date { font-size:0.75rem; color:#6b7280; margin-top:2px; }
+
 /* Sidebar mini item – chống tràn chồng chữ */
 .sidebar-scope .group { align-items: flex-start; }
 .sidebar-scope img { flex: 0 0 45px; width:45px; height:45px; object-fit: cover; border-radius: 8px; }
 .sidebar-scope .min-w-0 { min-width: 0; }
+
+/* ===== Force 100% base on all browsers ===== */
+html, :root {
+  font-size: 100% !important;              /* 16px mặc định */
+  -webkit-text-size-adjust: 100% !important;
+  text-size-adjust: 100% !important;
+}
+
+body {
+  font-size: 1rem !important;              /* 1rem = 16px */
+  line-height: 1.5;
+}
+
+/* Nếu trang nào dùng .prose (typography) thì tránh bị bóp còn 65ch */
+.prose { max-width: 100%; }

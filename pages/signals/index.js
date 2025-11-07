@@ -74,7 +74,7 @@ import TopStaking from "../../components/TopStaking";
 
 export default function SignalsPage({ signals = [], latest = [] }) {
   return (
-    <div className="container 2xl:max-w-[1600px] mx-auto px-4 py-6">
+    <div className="container 2xl:max-w-[1600px] mx-auto px-4 py-6 container-1600">
       <NextSeo
         title="Trading Signals | FinNews247"
         description="Latest crypto trading signals with entry, target, and stoploss."

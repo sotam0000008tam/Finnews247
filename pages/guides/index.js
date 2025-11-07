@@ -174,7 +174,7 @@ export default function GuidesIndex({
   const description = "Crypto guides & reviews.";
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto px-4 py-6 container-1600">
       <NextSeo
         title={title}
         description={description}

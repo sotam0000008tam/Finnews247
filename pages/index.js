@@ -131,8 +131,8 @@ export default function Home({
       />
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-        {/* Sidebar (trái) */}
-        <aside className="md:col-span-4 w-full space-y-6">
+        {/* Sidebar (trái) — nhỏ lại: span 3 */}
+        <aside className="md:col-span-3 w-full space-y-6">
           <TradingSignalsBoxMini />
           <TopExchanges variant="sidebar" />
           <BestWallets variant="sidebar" />
@@ -141,8 +141,8 @@ export default function Home({
           <LatestMini items={latestAll} />
         </aside>
 
-        {/* Main (phải) */}
-        <main className="md:col-span-8 space-y-12">
+        {/* Main (phải) — to hơn: span 9 */}
+        <main className="md:col-span-9 space-y-12">
           <TradingSignalsBoxMain />
 
           <section>
@@ -197,7 +197,6 @@ export default function Home({
             <h2 className="text-2xl font-semibold mb-4">Crypto & Market News</h2>
             <div className="grid md:grid-cols-2 gap-6">
               {newsPosts.map((p) => (
-                // Nếu thích direct path: đổi thành `/crypto-market/${p.slug}`
                 <PostCard key={p.slug} post={{ ...p, href: `/${p.slug}` }} />
               ))}
             </div>

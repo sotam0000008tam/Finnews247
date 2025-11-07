@@ -175,7 +175,7 @@ export default function AltcoinsIndex({
   const description = "Altcoin research and analysis.";
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto px-4 py-6 container-1600">
       <NextSeo
         title={title}
         description={description}
