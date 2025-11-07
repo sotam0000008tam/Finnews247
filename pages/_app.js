@@ -11,16 +11,28 @@ import Head from "next/head";
 export default function App({ Component, pageProps }) {
   const router = useRouter();
 
-  // ✅ Route change tracking cho GA4 (Pages Router)
+  // GA4 + báo trang mới cho AdSense Auto Ads khi đổi route (SPA)
   useEffect(() => {
     const handleRouteChange = (url) => {
+      // GA4 page_view
       if (window.gtag) {
-        window.gtag("config", "G-ZGX7X6B6GY", {
-          page_path: url,
-        });
+        window.gtag("config", "G-ZGX7X6B6GY", { page_path: url });
+      }
+      // AdSense Auto Ads: thông báo trang mới để nó tự đánh lại vị trí
+      try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      } catch (e) {
+        // nuốt lỗi nếu script chưa sẵn sàng
       }
     };
+
     router.events.on("routeChangeComplete", handleRouteChange);
+
+    // gọi một lần sau mount để chắc chắn Auto Ads được kích hoạt ở trang đầu
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch {}
+
     return () => {
       router.events.off("routeChangeComplete", handleRouteChange);
     };
@@ -28,7 +40,7 @@ export default function App({ Component, pageProps }) {
 
   return (
     <>
-      {/* Google Analytics 4 */}
+      {/* GA4 */}
       <Script
         strategy="afterInteractive"
         src="https://www.googletagmanager.com/gtag/js?id=G-ZGX7X6B6GY"
@@ -41,29 +53,23 @@ export default function App({ Component, pageProps }) {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-ZGX7X6B6GY', {
-              page_path: window.location.pathname,
-            });
+            gtag('config', 'G-ZGX7X6B6GY', { page_path: window.location.pathname });
           `,
         }}
       />
 
-      {/* ✅ Google Search Console verification */}
+      {/* Google Search Console (nếu cần) */}
       <Head>
         <meta
           name="google-site-verification"
           content="Akkp3qaq0RfqlqI75Qw8nhIIiu21X7vMBIkV0yfahj0"
         />
-        {/*
-          KHÔNG đặt canonical toàn cục ở đây.
-          Mỗi trang chi tiết tự set canonical qua NextSeo/ArticleSeo.
-        */}
       </Head>
 
-      {/* SEO mặc định toàn site */}
+      {/* SEO mặc định */}
       <DefaultSeo {...SEO} />
 
-      {/* Layout gốc của site */}
+      {/* Layout chung */}
       <Layout title="FinNews">
         <Component {...pageProps} />
       </Layout>
