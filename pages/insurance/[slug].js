@@ -1,11 +1,11 @@
 // pages/insurance/[slug].jsx
+import ArticleSeo from "../../components/ArticleSeo";
+import ArticleHero from "../../components/ArticleHero";
 import fs from "fs";
 import path from "path";
 import Link from "next/link";
-import ArticleSeo from "../../components/ArticleSeo";
-import ArticleHero from "../../components/ArticleHero";
 
-/* ===== Helpers ===== */
+/* ===== Helpers (y như trang Altcoins) ===== */
 const stripHtml = (html = "") =>
   String(html)
     .replace(/<script[\s\S]*?<\/script>/gi, "")
@@ -25,7 +25,6 @@ const buildUrl = (p) => {
   const s = String(p?.slug || "").replace(/^\//, "");
   if (!s) return "#";
   const c = String(p?._cat || p?.category || "").toLowerCase();
-
   if (c.includes("sec-coin") || c.includes("seccoin")) return `/altcoins/${s}`;
   if (c.includes("altcoin")) return `/altcoins/${s}`;
   if (c.includes("fidelity")) return `/crypto-exchanges/${s}`;
@@ -33,8 +32,7 @@ const buildUrl = (p) => {
   if (c.includes("app") || c.includes("wallet")) return `/best-crypto-apps/${s}`;
   if (c.includes("insurance")) return `/insurance/${s}`;
   if (c.includes("guide") || c.includes("review")) return `/guides/${s}`;
-  if (c.includes("market") || c.includes("news") || c.includes("crypto-market"))
-    return `/crypto-market/${s}`;
+  if (c.includes("market") || c.includes("news") || c.includes("crypto-market")) return `/crypto-market/${s}`;
   return `/guides/${s}`;
 };
 
@@ -58,11 +56,12 @@ function guessAuthor(post) {
   return m && m[1] ? m[1].trim().replace(/\s{2,}/g, " ") : "FinNews247 Team";
 }
 
-const prettyType = (t = "") => (String(t).toLowerCase() === "long" ? "Long" : "Short");
+const prettyType = (t = "") =>
+  (String(t).toLowerCase() === "long" ? "Long" : "Short");
 const typeColor = (t = "") =>
-  String(t).toLowerCase() === "long"
+  (String(t).toLowerCase() === "long"
     ? "bg-green-100 text-green-700 ring-green-200"
-    : "bg-red-100 text-red-700 ring-red-200";
+    : "bg-red-100 text-red-700 ring-red-200");
 
 function TradingSignalsCompact({ items = [] }) {
   return (
@@ -76,11 +75,26 @@ function TradingSignalsCompact({ items = [] }) {
         <ul className="divide-y dark:divide-gray-800">
           {items.map((s) => (
             <li key={s.id}>
-              <Link href={`/signals/${s.id}`} className="block px-3 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition">
+              <Link
+                href={`/signals/${s.id}`}
+                className="block px-3 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition"
+              >
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-medium truncate">{s.pair || s.title}</span>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full ring-1 ${typeColor(s.type)}`}>{prettyType(s.type)}</span>
-                  {s.date && <span className="ml-auto text-[11px] text-gray-500">{s.date}</span>}
+                  <span className="text-xs font-medium truncate">
+                    {s.pair || s.title}
+                  </span>
+                  <span
+                    className={`text-[10px] px-2 py-0.5 rounded-full ring-1 ${typeColor(
+                      s.type
+                    )}`}
+                  >
+                    {prettyType(s.type)}
+                  </span>
+                  {s.date && (
+                    <span className="ml-auto text-[11px] text-gray-500">
+                      {s.date}
+                    </span>
+                  )}
                 </div>
               </Link>
             </li>
@@ -88,7 +102,9 @@ function TradingSignalsCompact({ items = [] }) {
         </ul>
       )}
       <div className="px-3 py-2">
-        <Link href="/signals" className="text-sm text-sky-600 hover:underline">View all signals →</Link>
+        <Link href="/signals" className="text-sm text-sky-600 hover:underline">
+          View all signals →
+        </Link>
       </div>
     </section>
   );
@@ -98,38 +114,53 @@ function SideMiniItem({ item }) {
   const href = buildUrl(item);
   const img = pickThumb(item);
   return (
-    <Link href={href} className="group flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition">
-      <img src={img} alt={item?.title || "post"} className="w-[45px] h-[45px] rounded-md object-cover border dark:border-gray-700 shrink-0" loading="lazy" />
+    <Link
+      href={href}
+      className="group flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+    >
+      <img
+        src={img}
+        alt={item?.title || "post"}
+        className="w-[45px] h-[45px] rounded-md object-cover border dark:border-gray-700 shrink-0"
+        loading="lazy"
+      />
       <div className="min-w-0">
-        <div className="text-sm leading-snug line-clamp-2 group-hover:underline">{item?.title || "Untitled"}</div>
-        {(item?.date || item?.updatedAt) && <div className="text-xs text-gray-500 mt-0.5">{item?.date || item?.updatedAt}</div>}
+        <div className="text-sm leading-snug line-clamp-2 group-hover:underline">
+          {item?.title || "Untitled"}
+        </div>
+        {(item?.date || item?.updatedAt) && (
+          <div className="text-xs text-gray-500 mt-0.5">
+            {item?.date || item?.updatedAt}
+          </div>
+        )}
       </div>
     </Link>
   );
 }
 
-/* ===== PAGE ===== */
-export default function DetailPage({ post, related = [], latest = [], signalsLatest = [] }) {
-  if (!post) {
+/* ===== Page: Insurance Post ===== */
+export default function InsurancePostPage({ post, related = [], latest = [], signalsLatest = [] }) {
+  if (!post)
     return (
       <div className="container mx-auto px-4 py-6">
         <h1 className="text-2xl font-bold mb-3">404 - Not Found</h1>
         <p>The article you are looking for does not exist.</p>
       </div>
     );
-  }
 
   const pathForSeo = `/insurance/${post.slug}`;
   const hero = post.image || post.ogImage || firstImage(post.content || post.body || "");
   const author =
-    (post.author ||
+    (
+      post.author ||
       post.authorName ||
       post.author_name ||
       post.by ||
       post.byline ||
       post?.meta?.author ||
       post?.source?.author ||
-      "").trim() || guessAuthor(post);
+      ""
+    ).trim() || guessAuthor(post);
 
   const latestSorted = [...(latest || [])].sort(
     (a, b) =>
@@ -139,7 +170,6 @@ export default function DetailPage({ post, related = [], latest = [], signalsLat
 
   return (
     <>
-      {/* ✅ SEO: OG image tuyệt đối + canonical + JSON-LD Article */}
       <ArticleSeo post={post} path={pathForSeo} />
 
       <div className="container mx-auto px-4 py-6">
@@ -160,10 +190,28 @@ export default function DetailPage({ post, related = [], latest = [], signalsLat
               <p className="text-sm text-gray-500">{post.date || post.updatedAt}</p>
             )}
 
-            {/* ✅ HERO tối ưu LCP */}
-            {hero && (
-              <ArticleHero src={hero} alt={post.title} />
-            )}
+            {/* 🔶 Byline y hệt Altcoins */}
+            <div className="mt-2 mb-1 flex justify-end">
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] uppercase tracking-wide text-gray-500">
+                  Written by:
+                </span>
+                <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-xs">
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-3.5 h-3.5"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z" />
+                  </svg>
+                  <span className="font-medium">{author}</span>
+                </span>
+              </div>
+            </div>
+
+            {/* HERO */}
+            {hero && <ArticleHero src={hero} alt={post.title} />}
 
             {/* Content */}
             <div
@@ -223,7 +271,7 @@ export default function DetailPage({ post, related = [], latest = [], signalsLat
         </div>
       </div>
 
-      {/* Ép thumbnail sidebar 45x45 */}
+      {/* ép thumbnail sidebar 45x45 */}
       <style jsx global>{`
         .sidebar-scope img {
           width: 45px !important;
@@ -283,11 +331,11 @@ export async function getServerSideProps({ params }) {
   /* Latest: coverage 6 trang chính */
   const groups = {
     "crypto-market": ["news.json"],
-    "altcoins": ["altcoins.json", "seccoin.json"],
+    altcoins: ["altcoins.json", "seccoin.json"],
     "crypto-exchanges": ["cryptoexchanges.json", "fidelity.json"],
     "best-crypto-apps": ["bestapps.json"],
-    "insurance": ["insurance.json"],
-    "guides": ["guides.json"],
+    insurance: ["insurance.json"],
+    guides: ["guides.json"],
   };
 
   const byCat = {};
