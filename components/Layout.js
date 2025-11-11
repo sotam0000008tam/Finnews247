@@ -14,7 +14,7 @@ export default function Layout({ children, title }) {
     "/crypto-exchanges/[slug]","/best-crypto-apps/[slug]","/crypto-market/[slug]",
   ]);
   const isArticle = ARTICLE_PATHS.has(router.pathname);
-  const isInsuranceArticle = router.pathname === "/insurance/[slug]";
+  const isInsuranceArticle = false; // disabled to avoid hiding content blocks that help Auto Ads
 
   useEffect(() => {
     if (!isInsuranceArticle || typeof window === "undefined") return;
@@ -74,7 +74,7 @@ export default function Layout({ children, title }) {
       {/* Nội dung chính */}
       <main
         className={[
-          "flex-1 container 2xl:max-w-[1600px] mx-auto px-4 lg:px-6 py-8",
+          "flex-1 container mx-auto px-4 lg:px-6 py-8",
           isArticle ? "is-article" : "",
           isInsuranceArticle ? "is-insurance-article" : "",
         ].join(" ")}

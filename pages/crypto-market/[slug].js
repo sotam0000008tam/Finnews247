@@ -5,7 +5,7 @@ import fs from "fs";
 import path from "path";
 import Link from "next/link";
 
-/* ===== Helpers (y như trang Altcoins) ===== */
+/* ===================== Helpers chung ===================== */
 const stripHtml = (html = "") =>
   String(html)
     .replace(/<script[\s\S]*?<\/script>/gi, "")
@@ -57,12 +57,13 @@ function guessAuthor(post) {
 }
 
 const prettyType = (t = "") =>
-  (String(t).toLowerCase() === "long" ? "Long" : "Short");
+  String(t).toLowerCase() === "long" ? "Long" : "Short";
 const typeColor = (t = "") =>
-  (String(t).toLowerCase() === "long"
+  String(t).toLowerCase() === "long"
     ? "bg-green-100 text-green-700 ring-green-200"
-    : "bg-red-100 text-red-700 ring-red-200");
+    : "bg-red-100 text-red-700 ring-red-200";
 
+/* ===================== UI blocks ===================== */
 function TradingSignalsCompact({ items = [] }) {
   return (
     <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
@@ -138,7 +139,7 @@ function SideMiniItem({ item }) {
   );
 }
 
-/* ===== Page: Crypto-Market Post ===== */
+/* ===================== Page ===================== */
 export default function MarketPostPage({ post, related = [], latest = [], signalsLatest = [] }) {
   if (!post)
     return (
@@ -190,7 +191,7 @@ export default function MarketPostPage({ post, related = [], latest = [], signal
               <p className="text-sm text-gray-500">{post.date || post.updatedAt}</p>
             )}
 
-            {/* 🔶 Byline (giống Altcoins) */}
+            {/* Byline */}
             <div className="mt-2 mb-1 flex justify-end">
               <div className="flex items-center gap-2">
                 <span className="text-[11px] uppercase tracking-wide text-gray-500">
@@ -219,7 +220,7 @@ export default function MarketPostPage({ post, related = [], latest = [], signal
               dangerouslySetInnerHTML={{ __html: post.content || post.body || "" }}
             />
 
-            {/* More from Market */}
+            {/* More from Crypto & Market */}
             <div className="mt-8">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-lg font-semibold">More from Crypto & Market</h3>
@@ -286,7 +287,7 @@ export default function MarketPostPage({ post, related = [], latest = [], signal
   );
 }
 
-/* ===== GSSP ===== */
+/* ===================== GSSP ===================== */
 export async function getServerSideProps({ params }) {
   const read = (file) => {
     try {
@@ -297,8 +298,8 @@ export async function getServerSideProps({ params }) {
     }
   };
 
-  // Market posts thường đọc từ news.json trong dự án này
-  const own = [].concat(read("news.json")).filter(Boolean).flat();
+  // 1) Bài thuộc Crypto & Market: đọc trực tiếp news.json
+  const own = (read("news.json") || []).filter(Boolean);
 
   const post =
     own.find(
@@ -307,10 +308,11 @@ export async function getServerSideProps({ params }) {
 
   if (!post) return { notFound: true };
 
-  // related by tag/date
+  // 2) related theo tag/date
   const currentTags = (post.tags || post.keywords || []).map((t) => String(t).toLowerCase());
   const tagSet = new Set(currentTags);
   let relatedPool = own.filter((p) => p.slug && p.slug !== post.slug);
+
   if (currentTags.length) {
     relatedPool = relatedPool
       .map((p) => {
@@ -330,7 +332,37 @@ export async function getServerSideProps({ params }) {
   }
   const related = relatedPool.slice(0, 8);
 
-  // Latest coverage (giống altcoins)
+  // 3) Sidebar Latest (mỗi cat ≥1 bài + bù 4 bài mới, có khử trùng signature)
+  const norm = (s = "") =>
+    String(s).normalize("NFKD").replace(/\p{Diacritic}/gu, "").toLowerCase().trim();
+
+  const normalizeSlugish = (raw = "") =>
+    String(raw)
+      .trim()
+      .replace(/^https?:\/\/[^/]+/i, "")
+      .replace(/\?.*$/, "")
+      .replace(/#.*/, "")
+      .replace(/^\/+|\/+$/g, "")
+      .toLowerCase();
+
+  const signature = (p = {}) => {
+    const k1 = normalizeSlugish(p.slug || p.href || p.url || p.guid || "");
+    const k2 = norm(stripHtml(p.title || "")).replace(/[^a-z0-9]+/g, " ").trim();
+    const k3 = String(p.date || p.updatedAt || "").slice(0, 10);
+    const k4 = norm(stripHtml((p.excerpt || "").slice(0, 120)));
+    return [k1, k2, k3, k4].filter(Boolean).join("|");
+  };
+
+  const uniqBySignature = (arr = []) => {
+    const m = new Map();
+    for (const p of arr || []) {
+      const sig = signature(p);
+      if (!sig) continue;
+      if (!m.has(sig)) m.set(sig, p);
+    }
+    return Array.from(m.values());
+  };
+
   const groups = {
     "crypto-market": ["news.json"],
     altcoins: ["altcoins.json", "seccoin.json"],
@@ -341,45 +373,55 @@ export async function getServerSideProps({ params }) {
   };
 
   const byCat = {};
+  const parseD = (d) => {
+    const t = Date.parse(d);
+    return Number.isNaN(t) ? 0 : t;
+  };
+
   for (const [cat, files] of Object.entries(groups)) {
     const arr = files
       .flatMap((f) => read(f) || [])
-      .map((p) => ({ ...p, _cat: cat }));
-    arr.sort(
-      (a, b) =>
-        (Date.parse(b.date || b.updatedAt) || 0) -
-        (Date.parse(a.date || a.updatedAt) || 0)
+      .map((p) => ({ ...p, _cat: cat }))
+      .filter((x) => x && (x.slug || x.title));
+
+    byCat[cat] = uniqBySignature(arr).sort(
+      (a, b) => parseD(b.date || b.updatedAt) - parseD(a.date || a.updatedAt)
     );
-    byCat[cat] = arr;
   }
 
   const LATEST_LIMIT = 10;
-  const seen = new Set([post.slug, ...related.map((r) => r.slug)]);
+  const seen = new Set([signature(post), ...related.map(signature)].filter(Boolean));
   const coverage = [];
+
+  // mỗi cat 1 bài mới nhất chưa trùng signature
   for (const cat of Object.keys(groups)) {
-    const pick = byCat[cat]?.find((x) => x?.slug && !seen.has(x.slug));
+    const pick = (byCat[cat] || []).find((p) => {
+      const sig = signature(p);
+      return sig && !seen.has(sig);
+    });
     if (pick) {
-      seen.add(pick.slug);
+      const sig = signature(pick);
+      seen.add(sig);
       coverage.push(pick);
     }
   }
+
+  // bù thêm mới toàn site (không trùng)
   const poolAll = Object.values(byCat).flat();
-  const rest = poolAll
-    .filter((p) => p?.slug && !seen.has(p.slug))
-    .sort(
-      (a, b) =>
-        (Date.parse(b.date || b.updatedAt) || 0) -
-        (Date.parse(a.date || a.updatedAt) || 0)
+  const rest = poolAll.filter((p) => {
+    const sig = signature(p);
+    return sig && !seen.has(sig);
+    }).sort(
+      (a, b) => parseD(b.date || b.updatedAt) - parseD(a.date || a.updatedAt)
     );
+
   const latestRaw = coverage.concat(rest).slice(0, LATEST_LIMIT);
-  const latest = latestRaw.sort(
-    (a, b) =>
-      (Date.parse(b.date || b.updatedAt) || 0) -
-      (Date.parse(a.date || a.updatedAt) || 0)
+  const latest = uniqBySignature(latestRaw).sort(
+    (a, b) => parseD(b.date || b.updatedAt) - parseD(a.date || a.updatedAt)
   );
 
   const { latestSignals } = await import("../../lib/sidebar.server");
   const signalsLatest = latestSignals(5);
 
-  return { props: { post, related, latest, signalsLatest } };
+  return { props: { post, related, latest, signalsLatest} };
 }

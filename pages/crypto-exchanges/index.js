@@ -1,7 +1,7 @@
 ﻿import Link from "next/link";
 import { NextSeo } from "next-seo";
 
-/* ===== Helpers chung ===== */
+/* ===== Helpers ===== */
 const stripHtml = (h = "") =>
   String(h)
     .replace(/<script[\s\S]*?<\/script>/gi, "")
@@ -16,31 +16,29 @@ const firstImage = (h = "") =>
 const pickThumb = (p, f = "/images/dummy/altcoins64.jpg") =>
   p?.thumb || p?.ogImage || p?.image || firstImage(p?.content || p?.body || "") || f;
 
-const hrefEx = (slug) => `/crypto-exchanges/${String(slug || "").replace(/^\//, "")}`;
+const hrefEx = (slug) =>
+  `/crypto-exchanges/${String(slug || "").replace(/^\//, "")}`;
 
-/* Map link sidebar Latest theo _cat/category — GIỐNG Altcoin */
+/* Map link sidebar Latest */
 const hrefMixed = (p) => {
   if (p?.href) return p.href;
   const s = String(p?.slug || "").replace(/^\//, "");
   if (!s) return "#";
   const c = String(p?._cat || p?.category || "").toLowerCase();
 
-  // ✅ consolidated mapping (giữ nguyên như Altcoin)
-  if (c.includes("sec-coin") || c.includes("sec coin") || c.includes("seccoin"))
-    return `/altcoins/${s}`;
+  if (c.includes("sec-coin") || c.includes("seccoin")) return `/altcoins/${s}`;
   if (c.includes("altcoin")) return `/altcoins/${s}`;
-  if (c.includes("fidelity")) return `/crypto-exchanges/${s}`;
-  if (c.includes("exchange")) return `/crypto-exchanges/${s}`;
+  if (c.includes("fidelity") || c.includes("exchange"))
+    return `/crypto-exchanges/${s}`;
   if (c.includes("app") || c.includes("wallet")) return `/best-crypto-apps/${s}`;
-  if (c.includes("insurance")) return `/insurance/${s}`;
-  if (c.includes("tax") || c.includes("compliance")) return `/tax/${s}`;
+  if (c.includes("insurance") || c.includes("tax")) return `/insurance/${s}`;
   if (c.includes("guide") || c.includes("review")) return `/guides/${s}`;
   if (c.includes("market") || c.includes("news") || c.includes("crypto-market"))
     return `/crypto-market/${s}`;
   return `/guides/${s}`;
 };
 
-/* ===== Trading Signals block (compact, KHÔNG thumbnail — giống trang chủ) ===== */
+/* ===== Signals compact ===== */
 const prettyType = (t = "") =>
   String(t).toLowerCase() === "long" ? "Long" : "Short";
 const typeColor = (t = "") =>
@@ -97,7 +95,7 @@ function TradingSignalsCompact({ items = [] }) {
   );
 }
 
-/* ===== Card danh sách chính ===== */
+/* ===== Card ===== */
 function Card({ item }) {
   const href = hrefEx(item.slug);
   const img = pickThumb(item);
@@ -134,7 +132,7 @@ function Card({ item }) {
   );
 }
 
-/* ===== Item nhỏ Latest ===== */
+/* ===== Mini Latest ===== */
 function SideMiniItem({ item }) {
   const href = hrefMixed(item);
   const img = pickThumb(item);
@@ -188,7 +186,6 @@ export default function ExchangesIndex({
       </div>
 
       <div className="grid md:grid-cols-12 gap-8">
-        {/* MAIN */}
         <section className="md:col-span-9">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {(items || []).map((it) => (
@@ -200,7 +197,8 @@ export default function ExchangesIndex({
             <div className="flex items-center justify-center gap-2 mt-6">
               {Array.from({ length: totalPages }).map((_, i) => {
                 const p = i + 1;
-                const href = p === 1 ? "/crypto-exchanges" : `/crypto-exchanges/page/${p}`;
+                const href =
+                  p === 1 ? "/crypto-exchanges" : `/crypto-exchanges/page/${p}`;
                 const active = p === page;
                 return (
                   <Link
@@ -221,10 +219,9 @@ export default function ExchangesIndex({
           )}
         </section>
 
-        {/* SIDEBAR: Trading Signals (compact) + Latest */}
+        {/* SIDEBAR */}
         <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
           <TradingSignalsCompact items={signalsLatest} />
-
           <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
             <div className="px-4 py-3 border-b dark:border-gray-700">
               <h3 className="text-sm font-semibold">Latest on FinNews247</h3>
@@ -240,7 +237,6 @@ export default function ExchangesIndex({
         </aside>
       </div>
 
-      {/* ép ảnh chỉ áp dụng cho block Latest; Trading Signals không có <img> */}
       <style jsx global>{`
         .sidebar-scope img {
           width: 45px !important;
@@ -257,71 +253,72 @@ export default function ExchangesIndex({
 
 /* ===== SSR ===== */
 export async function getServerSideProps() {
-  const { readCat } = await import("../../lib/serverCat");
+  const { readCat, readMany } = await import("../../lib/serverCat");
   const { latestSignals } = await import("../../lib/sidebar.server");
 
-  // danh sách bài crypto-exchanges
-  const posts = readCat("crypto-exchanges");
-  posts.sort(
-    (a, b) =>
-      (Date.parse(b.date || b.updatedAt) || 0) -
-      (Date.parse(a.date || a.updatedAt) || 0)
+  const parseD = (d) => {
+    const t = Date.parse(d);
+    return Number.isNaN(t) ? 0 : t;
+  };
+  const uniqBySlug = (arr = []) => {
+    const seen = new Set();
+    const out = [];
+    for (const p of arr || []) {
+      const s = String(p?.slug || "").trim().toLowerCase();
+      if (!s || seen.has(s)) continue;
+      seen.add(s);
+      out.push(p);
+    }
+    return out;
+  };
+
+  // Exchanges = crypto-exchanges + fidelity
+  const posts = uniqBySlug(readMany(["crypto-exchanges", "fidelity"])).sort(
+    (a, b) => parseD(b.date || b.updatedAt) - parseD(a.date || a.updatedAt)
   );
   const PAGE_SIZE = 30;
   const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));
   const items = posts.slice(0, PAGE_SIZE);
 
-  // build Latest: đảm bảo ≥1 bài từ MỖI chuyên mục, rồi sort mới->cũ
-  const cats = [
-    "crypto-market",
-    "altcoins",
-    "crypto-exchanges",
-    "best-crypto-apps",
-    "insurance",
-    "guides",
-    "tax",
-    "fidelity",
-    "sec-coin",
-  ];
+  // Sidebar Latest (đúng 6 nhóm)
+  const groups = {
+    "crypto-market": ["crypto-market"],
+    altcoins: ["altcoins"],
+    "crypto-exchanges": ["crypto-exchanges", "fidelity"],
+    "best-crypto-apps": ["best-crypto-apps"],
+    insurance: ["insurance", "tax"],
+    guides: ["guides"],
+  };
+
   const byCat = {};
-  for (const c of cats) {
-    const arr = (readCat(c) || []).map((p) => ({ ...p, _cat: c }));
-    arr.sort(
-      (a, b) =>
-        (Date.parse(b.date || b.updatedAt) || 0) -
-        (Date.parse(a.date || a.updatedAt) || 0)
-    );
-    byCat[c] = arr;
+  for (const [cat, keys] of Object.entries(groups)) {
+    const arr =
+      keys.length === 1
+        ? readCat(keys[0])
+        : uniqBySlug(readMany(keys));
+    byCat[cat] = arr
+      .map((p) => ({ ...p, _cat: cat }))
+      .sort(
+        (a, b) => parseD(b.date || b.updatedAt) - parseD(a.date || a.updatedAt)
+      );
   }
+
+  const coverage = Object.keys(groups)
+    .map((cat) => byCat[cat]?.[0])
+    .filter(Boolean);
+
+  const poolAll = Object.values(byCat).flat();
+  const seenSlug = new Set(coverage.map((x) => String(x.slug).toLowerCase()));
+  const rest = poolAll.filter(
+    (p) => p?.slug && !seenSlug.has(String(p.slug).toLowerCase())
+  );
 
   const LATEST_LIMIT = 10;
-  const seen = new Set();
-  const coverage = [];
-  for (const c of cats) {
-    const top = byCat[c]?.[0];
-    if (top && top.slug && !seen.has(top.slug)) {
-      seen.add(top.slug);
-      coverage.push(top);
-    }
-  }
-
-  const poolAll = cats.flatMap((c) => byCat[c] || []);
-  const rest = poolAll
-    .filter((p) => p?.slug && !seen.has(p.slug))
-    .sort(
-      (a, b) =>
-        (Date.parse(b.date || b.updatedAt) || 0) -
-        (Date.parse(a.date || a.updatedAt) || 0)
-    );
-
   const latestRaw = coverage.concat(rest).slice(0, LATEST_LIMIT);
-  const latest = latestRaw.sort(
-    (a, b) =>
-      (Date.parse(b.date || b.updatedAt) || 0) -
-      (Date.parse(a.date || a.updatedAt) || 0)
+  const latest = uniqBySlug(latestRaw).sort(
+    (a, b) => parseD(b.date || b.updatedAt) - parseD(a.date || a.updatedAt)
   );
 
   const signalsLatest = latestSignals(5);
-
   return { props: { items, latest, page: 1, totalPages, signalsLatest } };
 }

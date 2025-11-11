@@ -82,7 +82,7 @@ export default function PostView({ catKey, post, related = [], latest = [] }) {
             )}
 
             {/* Nội dung bài */}
-            <div className="prose lg:prose-xl max-w-none post-body" dangerouslySetInnerHTML={{ __html: post.content }} />
+            <div className="prose lg:prose-lg max-w-3xl post-body" dangerouslySetInnerHTML={{ __html: post.content }} />
 
             {/* More from category */}
             <div className="mt-8">

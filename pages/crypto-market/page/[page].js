@@ -1,7 +1,7 @@
 ﻿import Link from "next/link";
 import { NextSeo } from "next-seo";
 
-/* ===== Helpers chung ===== */
+/* ===== Helpers ===== */
 const stripHtml = (h = "") =>
   String(h)
     .replace(/<script[\s\S]*?<\/script>/gi, "")
@@ -9,14 +9,6 @@ const stripHtml = (h = "") =>
     .replace(/<[^>]+>/g, " ")
     .replace(/\s+/g, " ")
     .trim();
-
-const truncate = (s = "", n = 140) => {
-  if (!s) return "";
-  if (s.length <= n) return s;
-  const cut = s.slice(0, n);
-  const i = cut.lastIndexOf(" ");
-  return (i > 80 ? cut.slice(0, i) : cut) + "…";
-};
 
 const firstImage = (h = "") =>
   (String(h).match(/<img[^>]+src=["']([^"']+)["']/i) || [])[1] || null;
@@ -31,7 +23,6 @@ const hrefMixed = (p) => {
   const s = String(p?.slug || "").replace(/^\//, "");
   if (!s) return "#";
   const c = String(p?._cat || p?.category || "").toLowerCase();
-
   if (c.includes("sec-coin") || c.includes("sec coin") || c.includes("seccoin"))
     return `/altcoins/${s}`;
   if (c.includes("altcoin")) return `/altcoins/${s}`;
@@ -45,9 +36,8 @@ const hrefMixed = (p) => {
   return `/guides/${s}`;
 };
 
-/* ===== Trading Signals block (compact) ===== */
-const prettyType = (t = "") =>
-  String(t).toLowerCase() === "long" ? "Long" : "Short";
+/* ===== Signals (compact) ===== */
+const prettyType = (t = "") => (String(t).toLowerCase() === "long" ? "Long" : "Short");
 const typeColor = (t = "") =>
   String(t).toLowerCase() === "long"
     ? "bg-green-100 text-green-700 ring-green-200"
@@ -59,7 +49,6 @@ function TradingSignalsCompact({ items = [] }) {
       <div className="px-4 py-3 border-b dark:border-gray-800">
         <h3 className="text-sm font-semibold">📈 Trading Signals</h3>
       </div>
-
       {items.length === 0 ? (
         <div className="px-4 py-3 text-xs text-gray-500">No signals.</div>
       ) : (
@@ -71,28 +60,17 @@ function TradingSignalsCompact({ items = [] }) {
                 className="block px-3 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition"
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-medium truncate">
-                    {s.pair || s.title}
-                  </span>
-                  <span
-                    className={`text-[10px] px-2 py-0.5 rounded-full ring-1 ${typeColor(
-                      s.type
-                    )}`}
-                  >
+                  <span className="text-xs font-medium truncate">{s.pair || s.title}</span>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full ring-1 ${typeColor(s.type)}`}>
                     {prettyType(s.type)}
                   </span>
-                  {s.date && (
-                    <span className="ml-auto text-[11px] text-gray-500">
-                      {s.date}
-                    </span>
-                  )}
+                  {s.date && <span className="ml-auto text-[11px] text-gray-500">{s.date}</span>}
                 </div>
               </Link>
             </li>
           ))}
         </ul>
       )}
-
       <div className="px-3 py-2">
         <Link href="/signals" className="text-sm text-sky-600 hover:underline">
           View all signals →
@@ -102,7 +80,7 @@ function TradingSignalsCompact({ items = [] }) {
   );
 }
 
-/* ===== Card & Latest item ===== */
+/* ===== Card ===== */
 function Card({ item }) {
   const href = hrefMk(item.slug);
   const img = pickThumb(item);
@@ -111,26 +89,18 @@ function Card({ item }) {
       href={href}
       className="group block rounded-xl overflow-hidden border bg-white dark:bg-gray-900 hover:shadow-md transition"
     >
-      {img && (
-        <img
-          src={img}
-          alt={item?.title || "post"}
-          className="w-full h-48 object-cover"
-          loading="lazy"
-        />
-      )}
+      {img && <img src={img} alt={item?.title || "post"} className="w-full h-48 object-cover" loading="lazy" />}
       <div className="p-3">
         <div className="font-semibold leading-snug line-clamp-2 group-hover:underline">
           {item?.title || "Untitled"}
         </div>
         {(item?.date || item?.updatedAt) && (
-          <div className="text-xs text-gray-500 mt-1">
-            {item.date || item.updatedAt}
-          </div>
+          <div className="text-xs text-gray-500 mt-1">{item.date || item.updatedAt}</div>
         )}
         {item?.excerpt && (
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-2">
-            {truncate(stripHtml(item.excerpt), 120)}
+            {stripHtml(item.excerpt).slice(0, 120)}
+            {stripHtml(item.excerpt).length > 120 ? "…" : ""}
           </p>
         )}
       </div>
@@ -142,10 +112,7 @@ function SideMiniItem({ item }) {
   const href = hrefMixed(item);
   const img = pickThumb(item);
   return (
-    <Link
-      href={href}
-      className="group flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition"
-    >
+    <Link href={href} className="group flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition">
       <img
         src={img}
         alt={item?.title || "post"}
@@ -153,47 +120,28 @@ function SideMiniItem({ item }) {
         loading="lazy"
       />
       <div className="min-w-0">
-        <div className="text-sm leading-snug line-clamp-2 group-hover:underline">
-          {item?.title || "Untitled"}
-        </div>
-        {(item?.date || item?.updatedAt) && (
-          <div className="text-xs text-gray-500 mt-0.5">
-            {item?.date || item?.updatedAt}
-          </div>
-        )}
+        <div className="text-sm leading-snug line-clamp-2 group-hover:underline">{item?.title || "Untitled"}</div>
+        {(item?.date || item?.updatedAt) && <div className="text-xs text-gray-500 mt-0.5">{item?.date || item?.updatedAt}</div>}
       </div>
     </Link>
   );
 }
 
-export default function MarketPage({
-  items = [],
-  latest = [],
-  page = 1,
-  totalPages = 1,
-  signalsLatest = [],
-}) {
-  const title = "Crypto Market";
-  const canonical = `https://www.finnews247.com/crypto-market${
-    page > 1 ? `/page/${page}` : ""
-  }`;
+/* ===== Page ===== */
+export default function MarketPage({ items = [], latest = [], page = 1, totalPages = 1, signalsLatest = [] }) {
+  const title = "Crypto & Market";
+  const canonical = page > 1 ? `https://www.finnews247.com/crypto-market/page/${page}` : "https://www.finnews247.com/crypto-market";
   const description = "Crypto market news & analysis.";
 
   return (
-    <div className="container mx-auto px-4 py-6">
-      <NextSeo
-        title={title}
-        description={description}
-        canonical={canonical}
-        openGraph={{ title, description, url: canonical }}
-      />
+    <div className="container mx-auto px-4 py-6 container-1600">
+      <NextSeo title={title} description={description} canonical={canonical} openGraph={{ title, description, url: canonical }} />
 
       <div className="mb-4">
         <h1 className="text-2xl md:text-3xl font-bold">{title}</h1>
       </div>
 
       <div className="grid md:grid-cols-12 gap-8">
-        {/* MAIN */}
         <section className="md:col-span-9">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {(items || []).map((it) => (
@@ -213,9 +161,7 @@ export default function MarketPage({
                     href={href}
                     className={
                       "px-3 py-1 rounded border " +
-                      (active
-                        ? "bg-gray-900 text-white border-gray-900"
-                        : "hover:bg-gray-50 dark:hover:bg-gray-800")
+                      (active ? "bg-gray-900 text-white border-gray-900" : "hover:bg-gray-50 dark:hover:bg-gray-800")
                     }
                   >
                     {p}
@@ -226,7 +172,6 @@ export default function MarketPage({
           )}
         </section>
 
-        {/* SIDEBAR: Trading Signals (compact) + Latest */}
         <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
           <TradingSignalsCompact items={signalsLatest} />
 
@@ -259,67 +204,107 @@ export default function MarketPage({
   );
 }
 
-/* ===== SSR ===== */
+/* ===== GSSP ===== */
 export async function getServerSideProps({ params }) {
   const { readCat } = await import("../../../lib/serverCat");
   const { latestSignals } = await import("../../../lib/sidebar.server");
 
-  const posts = readCat("crypto-market");
-  const PAGE_SIZE = 30;
+  /* === Utils de-dup & sort === */
+  const norm = (s = "") =>
+    String(s).normalize("NFKD").replace(/\p{Diacritic}/gu, "").toLowerCase().trim();
 
-  const raw = parseInt(params.page, 10) || 1;
+  const normalizeSlugish = (raw = "") =>
+    String(raw)
+      .trim()
+      .replace(/^https?:\/\/[^/]+/i, "")
+      .replace(/\?.*$/, "")
+      .replace(/#.*/, "")
+      .replace(/^\/+|\/+$/g, "")
+      .toLowerCase();
+
+  const signature = (p = {}) => {
+    const k1 = normalizeSlugish(p.slug || p.href || p.url || p.guid || "");
+    const k2 = norm(stripHtml(p.title || "")).replace(/[^a-z0-9]+/g, " ").trim();
+    const k3 = String(p.date || p.updatedAt || "").slice(0, 10);
+    const k4 = norm(stripHtml((p.excerpt || "").slice(0, 120)));
+    return [k1, k2, k3, k4].filter(Boolean).join("|");
+  };
+
+  const uniqBySignature = (arr = []) => {
+    const m = new Map();
+    for (const p of arr || []) {
+      const sig = signature(p);
+      if (!sig) continue;
+      if (!m.has(sig)) m.set(sig, p);
+    }
+    return Array.from(m.values());
+  };
+
+  const parsePage = (x) => {
+    const n = Number(x?.page) || 1;
+    return n < 1 ? 1 : n;
+  };
+
+  /* === DATA: only news.json via readCat("crypto-market") === */
+  const postsRaw = readCat("crypto-market") || [];
+  const posts = uniqBySignature(postsRaw).sort(
+    (a, b) => (Date.parse(b.date || b.updatedAt) || 0) - (Date.parse(a.date || a.updatedAt) || 0)
+  );
+
+  const PAGE_SIZE = 30;
+  const page = parsePage(params);
   const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));
-  const page = Math.min(Math.max(1, raw), totalPages);
   const start = (page - 1) * PAGE_SIZE;
   const items = posts.slice(start, start + PAGE_SIZE);
 
-  // Latest có coverage mỗi chuyên mục (KHÔNG 'tax')
-  const cats = [
-    "crypto-market",
-    "altcoins",
-    "crypto-exchanges",
-    "best-crypto-apps",
-    "insurance",
-    "guides",
-    "fidelity",
-    "sec-coin",
-  ];
+  /* === LATEST (giống trang [slug]) === */
+  const cats = ["crypto-market", "altcoins", "crypto-exchanges", "best-crypto-apps", "insurance", "guides"];
+
+  // loader cho mỗi cat (gộp fidelity vào exchanges, gộp tax vào insurance)
+  const catLoad = (name) => {
+    if (name === "crypto-exchanges") {
+      const ex = readCat("crypto-exchanges") || [];
+      const fi = readCat("fidelity") || [];
+      return uniqBySignature([...ex, ...fi]);
+    }
+    if (name === "insurance") {
+      const ins = readCat("insurance") || [];
+      const tax = readCat("tax") || [];
+      return uniqBySignature([...ins, ...tax]);
+    }
+    return uniqBySignature(readCat(name) || []);
+  };
+
   const byCat = {};
   for (const c of cats) {
-    const arr = (readCat(c) || []).map((p) => ({ ...p, _cat: c }));
-    arr.sort(
-      (a, b) =>
-        (Date.parse(b.date || b.updatedAt) || 0) -
-        (Date.parse(a.date || a.updatedAt) || 0)
-    );
+    const arr = (catLoad(c) || []).map((p) => ({ ...p, _cat: c }));
+    arr.sort((x, y) => (Date.parse(y.date || y.updatedAt) || 0) - (Date.parse(x.date || x.updatedAt) || 0));
     byCat[c] = arr;
   }
 
-  const LATEST_LIMIT = 10;
-  const seen = new Set();
+  const seen = new Set(items.map(signature)); // tránh lặp với items đang hiển thị
   const coverage = [];
   for (const c of cats) {
-    const top = byCat[c]?.[0];
-    if (top && top.slug && !seen.has(top.slug)) {
-      seen.add(top.slug);
-      coverage.push(top);
+    const pick = (byCat[c] || []).find((p) => {
+      const sig = signature(p);
+      return sig && !seen.has(sig);
+    });
+    if (pick) {
+      seen.add(signature(pick));
+      coverage.push(pick);
     }
   }
 
   const poolAll = cats.flatMap((c) => byCat[c] || []);
-  const rest = poolAll
-    .filter((p) => p?.slug && !seen.has(p.slug))
-    .sort(
-      (a, b) =>
-        (Date.parse(b.date || b.updatedAt) || 0) -
-        (Date.parse(a.date || a.updatedAt) || 0)
-    );
+  const rest = poolAll.filter((p) => {
+    const sig = signature(p);
+    return sig && !seen.has(sig);
+  });
 
+  const LATEST_LIMIT = 10;
   const latestRaw = coverage.concat(rest).slice(0, LATEST_LIMIT);
-  const latest = latestRaw.sort(
-    (a, b) =>
-      (Date.parse(b.date || b.updatedAt) || 0) -
-      (Date.parse(a.date || a.updatedAt) || 0)
+  const latest = uniqBySignature(latestRaw).sort(
+    (x, y) => (Date.parse(y.date || y.updatedAt) || 0) - (Date.parse(x.date || x.updatedAt) || 0)
   );
 
   const signalsLatest = latestSignals(5);
