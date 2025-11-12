@@ -55,7 +55,7 @@ export default function WalletsPage() {
         <span>Wallets</span>
       </nav>
 
-      <article className="prose max-w-none">
+      <article className="prose max-w-3xl">
         <h1>Best Crypto Wallets in 2025: Hardware vs. Hot Wallets, DeFi Safety, and Recovery Hygiene</h1>
 
         <p>

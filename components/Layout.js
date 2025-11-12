@@ -16,12 +16,7 @@ export default function Layout({ children, title }) {
   const isArticle = ARTICLE_PATHS.has(router.pathname);
   const isInsuranceArticle = false; // disabled to avoid hiding content blocks that help Auto Ads
 
-  useEffect(() => {
-    if (!isInsuranceArticle || typeof window === "undefined") return;
-    const scope =
-      document.querySelector("main.is-insurance-article .post-scope") ||
-      document.querySelector(".post-scope");
-    if (!scope) return;
+  if (!scope) return;
 
     const hrefPatterns = ["crypto-exchanges","best-crypto-apps","staking"];
     const textPatterns = ["Top Exchanges","Best Crypto Wallets","Top Staking"];

@@ -7,6 +7,7 @@ import Script from "next/script";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import AutoAdsRescan from "../components/AutoAdsRescan";
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
@@ -33,7 +34,7 @@ export default function App({ Component, pageProps }) {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
     } catch {}
 
-    return () => {
+    return (<> <AutoAdsRescan /> ) => {
       router.events.off("routeChangeComplete", handleRouteChange);
     };
   }, [router.events]);
