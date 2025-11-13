@@ -1,5 +1,6 @@
 ﻿import Link from "next/link";
 import { NextSeo } from "next-seo";
+import CategoryIntro from "../../../components/CategoryIntro";
 
 /* helpers dùng y như file trên, chỉ đổi href builder */
 const stripHtml = (h = "") => String(h).replace(/<script[\s\S]*?<\/script>/gi, "").replace(/<style[\s\S]*?<\/style>/gi, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();

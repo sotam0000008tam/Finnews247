@@ -1,5 +1,6 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { NextSeo } from "next-seo";
+import CategoryIntro from "../../components/CategoryIntro";
 
 /* ===== Helpers chung ===== */
 const stripHtml = (h = "") =>
