@@ -22,7 +22,7 @@ export default function ArticleHero({
     // the content and prevents large blank margins on wide screens.
     <figure
       className="article-hero my-4"
-      style={{ maxWidth: '46rem', marginLeft: 'auto', marginRight: 'auto' }}
+      style={{ maxWidth: '56rem', marginLeft: 'auto', marginRight: 'auto' }}
     >
       <img
         src={src}
