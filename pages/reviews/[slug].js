@@ -94,7 +94,7 @@ export default function ReviewDetail() {
       </div>
 
       {/* Main content */}
-      <div className="prose dark:prose-invert max-w-3xl mt-6">
+      <div className="prose dark:prose-invert max-w-none mt-6">
         <p>{review.content}</p>
       </div>
 

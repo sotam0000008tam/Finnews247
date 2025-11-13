@@ -1,3 +1,4 @@
+import CategoryIntro from "../components/CategoryIntro";
 ﻿import Link from "next/link";
 import { NextSeo } from "next-seo";
 

@@ -1,3 +1,4 @@
+import CategoryIntro from "../components/CategoryIntro";
 // pages/market/index.js
 import fs from "fs";
 import path from "path";

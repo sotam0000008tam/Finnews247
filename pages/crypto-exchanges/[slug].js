@@ -219,7 +219,7 @@ export default function ExchangesPostPage({ post, related = [], latest = [], sig
 
             {/* Content */}
             <div
-              className="prose lg:prose-lg max-w-3xl post-body"
+              className="prose lg:prose-xl max-w-none post-body"
               dangerouslySetInnerHTML={{ __html: post.content || post.body || "" }}
             />
 

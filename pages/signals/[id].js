@@ -378,16 +378,16 @@ export default function SignalDetailPage({
             disclaimer) ? (
             <>
               {intro && (
-                <section className="prose max-w-3xl mb-8" dangerouslySetInnerHTML={{ __html: String(intro) }} />
+                <section className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: String(intro) }} />
               )}
               {marketContext && (
-                <section className="prose max-w-3xl mb-8" dangerouslySetInnerHTML={{ __html: String(marketContext) }} />
+                <section className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: String(marketContext) }} />
               )}
               {technicalAnalysis && (
-                <section className="prose max-w-3xl mb-8" dangerouslySetInnerHTML={{ __html: String(technicalAnalysis) }} />
+                <section className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: String(technicalAnalysis) }} />
               )}
               {riskStrategy && (
-                <section className="prose max-w-3xl mb-8" dangerouslySetInnerHTML={{ __html: String(riskStrategy) }} />
+                <section className="prose max-w-none mb-8" dangerouslySetInnerHTML={{ __html: String(riskStrategy) }} />
               )}
               {Array.isArray(faq) && faq.length > 0 && (
                 <section className="mb-8">
@@ -410,7 +410,7 @@ export default function SignalDetailPage({
               )}
             </>
           ) : content ? (
-            <section className="prose max-w-3xl" dangerouslySetInnerHTML={{ __html: String(content) }} />
+            <section className="prose max-w-none" dangerouslySetInnerHTML={{ __html: String(content) }} />
           ) : (
             <div className="text-sm text-gray-500">No detailed content provided for this signal.</div>
           )}

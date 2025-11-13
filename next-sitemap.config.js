@@ -18,34 +18,12 @@ function readJsonSafe(filename) {
   }
 }
 
-// chuẩn hóa slug: bỏ domain, bỏ tiền tố category cũ để ghép base mới
 function cleanSlug(slug) {
   if (!slug) return '';
-  let s = String(slug).trim();
-
-  // bỏ domain nếu slug là full URL
-  s = s.replace(/^https?:\/\/[^/]+/i, '');
-
-  // bỏ slash đầu/cuối
-  s = s.replace(/^\/+/, '').replace(/\/+$/, '');
-
-  // bỏ tiền tố category lịch sử để không thành /insurance/tax/foo
-  s = s
-    .replace(/^news\//i, '')
-    .replace(/^crypto-market\//i, '')
-    .replace(/^altcoins\//i, '')
-    .replace(/^seccoin\//i, '')
-    .replace(/^crypto-exchanges\//i, '')
-    .replace(/^fidelity\//i, '')
-    .replace(/^best-crypto-apps\//i, '')
-    .replace(/^insurance\//i, '')
-    .replace(/^tax\//i, '')
-    .replace(/^guides\//i, '')
-    .replace(/^signals\//i, '');
-
+  let s = String(slug).trim().replace(/^\/+/, '');
+  s = s.replace(/^news\//i, '').replace(/^crypto-market\//i, '');
   return s;
 }
-
 function buildPath(base, slug) {
   const s = cleanSlug(slug);
   if (!s) return null;
@@ -66,7 +44,6 @@ function toISOWithJitter(d, slug = '') {
   const t = new Date(d);
   return Number.isNaN(t.getTime()) ? undefined : t.toISOString();
 }
-
 function lastmodOf(it = {}) {
   const d = it.date || it.updatedAt || it.publishedAt || it.createdAt || undefined;
   const iso = toISOWithJitter(d, it.slug || it.path || it.id || '');
@@ -85,7 +62,7 @@ function pushUrl(out, seen, loc, lastmod, priority) {
     changefreq: 'daily',
     priority: priority ?? (clean === '/' ? 1.0 : 0.7),
     lastmod: lastmod || new Date().toISOString(),
-    // không đính kèm images cho sitemap chính
+    // ❌ KHÔNG set images ở sitemap chính
   });
 }
 
@@ -143,8 +120,8 @@ module.exports = {
       pushUrl(out, seen, loc, lastmodOf(it));
     }
 
-    // ✅ Insurance & Tax (gộp)
-    for (const it of [...readJsonSafe('insurance.json'), ...readJsonSafe('tax.json')]) {
+    // insurance
+    for (const it of readJsonSafe('insurance.json')) {
       const loc = buildPath('/insurance', it.slug || it.path);
       pushUrl(out, seen, loc, lastmodOf(it));
     }
