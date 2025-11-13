@@ -116,7 +116,7 @@ export default function SignalsPage({ signals = [], latest = [] }) {
 
           {/* === 3 MỤC như SIDEBAR TRANG CHỦ === */}
           <section className="mt-12">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               <TopExchanges variant="sidebar" />
               <BestWallets variant="sidebar" />
               <TopStaking variant="sidebar" />

@@ -24,6 +24,9 @@ export default function Document() {
       <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossOrigin="anonymous" />
 <link rel="preconnect" href="https://googleads.g.doubleclick.net" crossOrigin="anonymous" />
 <meta name="google-adsense-account" content="ca-pub-5515217135736755" />
+<link rel="preconnect" href="https://pagead2.googlesyndication.com" crossOrigin="anonymous" />
+<link rel="preconnect" href="https://googleads.g.doubleclick.net" crossOrigin="anonymous" />
+<meta name="google-adsense-account" content="ca-pub-5515217135736755" />
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5515217135736755" crossOrigin="anonymous"></script>
 </Head>
       <body>
