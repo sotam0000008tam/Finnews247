@@ -7,7 +7,6 @@ import Script from "next/script";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import AutoAdsRescan from "../components/AutoAdsRescan";
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
@@ -71,7 +70,6 @@ export default function App({ Component, pageProps }) {
       <DefaultSeo {...SEO} />
 
       {/* Layout chung */}
-      <AutoAdsRescan />
       <Layout title="FinNews">
         <Component {...pageProps} />
       </Layout>

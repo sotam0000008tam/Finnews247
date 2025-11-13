@@ -14,7 +14,7 @@ export default function CategoryRail() {
   return (
     <section className="mt-10">
       <h3 className="text-lg font-semibold mb-3">Explore Categories</h3>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {CATS.map((c) => (
           <Link
             key={c.href}

@@ -21,7 +21,7 @@ function ItemRow({ item }) {
       href={url}
       className="group flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
     >
-      <div className="relative w-10 h-10 shrink-0 rounded-md  bg-gray-100 dark:bg-gray-800">
+      <div className="relative w-10 h-10 shrink-0 rounded-md overflow-hidden bg-gray-100 dark:bg-gray-800">
         <Image src={img} alt={item?.title || "post"} fill sizes="40px" className="object-cover" />
       </div>
       <div className="min-w-0">

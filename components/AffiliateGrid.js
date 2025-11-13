@@ -8,7 +8,7 @@ export default function AffiliateGrid({ title, items = [] }) {
       <div className="flex items-baseline justify-between mb-3">
         <h2 className="text-lg font-semibold">{title}</h2>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {items.map((it, idx) => (
           <AffiliateCard key={idx} item={it} />
         ))}

@@ -5,7 +5,7 @@ import fs from "fs";
 import path from "path";
 import Link from "next/link";
 
-/* ===== Helpers y hệt các trang [slug] khác ===== */
+/* ===== Helpers (y như trang Altcoins) ===== */
 const stripHtml = (html = "") =>
   String(html)
     .replace(/<script[\s\S]*?<\/script>/gi, "")
@@ -30,7 +30,7 @@ const buildUrl = (p) => {
   if (c.includes("fidelity")) return `/crypto-exchanges/${s}`;
   if (c.includes("exchange")) return `/crypto-exchanges/${s}`;
   if (c.includes("app") || c.includes("wallet")) return `/best-crypto-apps/${s}`;
-  if (c.includes("insurance") || c.includes("tax") || c.includes("compliance")) return `/insurance/${s}`;
+  if (c.includes("insurance")) return `/insurance/${s}`;
   if (c.includes("guide") || c.includes("review")) return `/guides/${s}`;
   if (c.includes("market") || c.includes("news") || c.includes("crypto-market")) return `/crypto-market/${s}`;
   return `/guides/${s}`;
@@ -65,7 +65,7 @@ const typeColor = (t = "") =>
 
 function TradingSignalsCompact({ items = [] }) {
   return (
-    <section className="rounded-xl border bg-white dark:bg-gray-900 ">
+    <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
       <div className="px-4 py-3 border-b dark:border-gray-800">
         <h3 className="text-sm font-semibold">📈 Trading Signals</h3>
       </div>
@@ -75,11 +75,26 @@ function TradingSignalsCompact({ items = [] }) {
         <ul className="divide-y dark:divide-gray-800">
           {items.map((s) => (
             <li key={s.id}>
-              <Link href={`/signals/${s.id}`} className="block px-3 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition">
+              <Link
+                href={`/signals/${s.id}`}
+                className="block px-3 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition"
+              >
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-medium truncate">{s.pair || s.title}</span>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full ring-1 ${typeColor(s.type)}`}>{prettyType(s.type)}</span>
-                  {s.date && <span className="ml-auto text-[11px] text-gray-500">{s.date}</span>}
+                  <span className="text-xs font-medium truncate">
+                    {s.pair || s.title}
+                  </span>
+                  <span
+                    className={`text-[10px] px-2 py-0.5 rounded-full ring-1 ${typeColor(
+                      s.type
+                    )}`}
+                  >
+                    {prettyType(s.type)}
+                  </span>
+                  {s.date && (
+                    <span className="ml-auto text-[11px] text-gray-500">
+                      {s.date}
+                    </span>
+                  )}
                 </div>
               </Link>
             </li>
@@ -87,7 +102,9 @@ function TradingSignalsCompact({ items = [] }) {
         </ul>
       )}
       <div className="px-3 py-2">
-        <Link href="/signals" className="text-sm text-sky-600 hover:underline">View all signals →</Link>
+        <Link href="/signals" className="text-sm text-sky-600 hover:underline">
+          View all signals →
+        </Link>
       </div>
     </section>
   );
@@ -97,26 +114,39 @@ function SideMiniItem({ item }) {
   const href = buildUrl(item);
   const img = pickThumb(item);
   return (
-    <Link href={href} className="group flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition">
-      <img src={img} alt={item?.title || "post"} className="w-[45px] h-[45px] rounded-md object-cover border dark:border-gray-700 shrink-0" loading="lazy" />
+    <Link
+      href={href}
+      className="group flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+    >
+      <img
+        src={img}
+        alt={item?.title || "post"}
+        className="w-[45px] h-[45px] rounded-md object-cover border dark:border-gray-700 shrink-0"
+        loading="lazy"
+      />
       <div className="min-w-0">
-        <div className="text-sm leading-snug line-clamp-2 group-hover:underline">{item?.title || "Untitled"}</div>
-        {(item?.date || item?.updatedAt) && <div className="text-xs text-gray-500 mt-0.5">{item?.date || item?.updatedAt}</div>}
+        <div className="text-sm leading-snug line-clamp-2 group-hover:underline">
+          {item?.title || "Untitled"}
+        </div>
+        {(item?.date || item?.updatedAt) && (
+          <div className="text-xs text-gray-500 mt-0.5">
+            {item?.date || item?.updatedAt}
+          </div>
+        )}
       </div>
     </Link>
   );
 }
 
-/* ===== Page: Insurance & Tax Post ===== */
-export default function InsuranceTaxPost({ post, related = [], latest = [], signalsLatest = [] }) {
-  if (!post) {
+/* ===== Page: Insurance Post ===== */
+export default function InsurancePostPage({ post, related = [], latest = [], signalsLatest = [] }) {
+  if (!post)
     return (
       <div className="container mx-auto px-4 py-6">
         <h1 className="text-2xl font-bold mb-3">404 - Not Found</h1>
         <p>The article you are looking for does not exist.</p>
       </div>
     );
-  }
 
   const pathForSeo = `/insurance/${post.slug}`;
   const hero = post.image || post.ogImage || firstImage(post.content || post.body || "");
@@ -143,27 +173,36 @@ export default function InsuranceTaxPost({ post, related = [], latest = [], sign
       <ArticleSeo post={post} path={pathForSeo} />
 
       <div className="container mx-auto px-4 py-6">
+        {/* Breadcrumb */}
         <nav className="text-sm text-gray-500 mb-4">
           <Link href="/">Home</Link>
           <span className="mx-2">/</span>
-          <Link href="/insurance">Insurance & Tax</Link>
+          <Link href="/insurance">Crypto Insurance</Link>
           <span className="mx-2">/</span>
           <span className="text-gray-700 dark:text-gray-300 line-clamp-1">{post.title}</span>
         </nav>
 
         <div className="grid md:grid-cols-12 gap-8">
+          {/* MAIN */}
           <article className="md:col-span-9">
             <h1 className="text-2xl md:text-3xl font-bold">{post.title}</h1>
             {(post.date || post.updatedAt) && (
               <p className="text-sm text-gray-500">{post.date || post.updatedAt}</p>
             )}
 
-            {/* Byline */}
+            {/* 🔶 Byline y hệt Altcoins */}
             <div className="mt-2 mb-1 flex justify-end">
               <div className="flex items-center gap-2">
-                <span className="text-[11px] uppercase tracking-wide text-gray-500">Written by:</span>
+                <span className="text-[11px] uppercase tracking-wide text-gray-500">
+                  Written by:
+                </span>
                 <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-xs">
-                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor" aria-hidden="true">
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-3.5 h-3.5"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
                     <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z" />
                   </svg>
                   <span className="font-medium">{author}</span>
@@ -171,22 +210,36 @@ export default function InsuranceTaxPost({ post, related = [], latest = [], sign
               </div>
             </div>
 
+            {/* HERO */}
             {hero && <ArticleHero src={hero} alt={post.title} />}
 
+            {/* Content */}
             <div
               className="prose lg:prose-xl max-w-none post-body"
               dangerouslySetInnerHTML={{ __html: post.content || post.body || "" }}
             />
 
+            {/* More from Insurance */}
             <div className="mt-8">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg font-semibold">More from Insurance & Tax</h3>
-                <Link href="/insurance" className="text-sm text-sky-600 hover:underline">View all</Link>
+                <h3 className="text-lg font-semibold">More from Crypto Insurance</h3>
+                <Link href="/insurance" className="text-sm text-sky-600 hover:underline">
+                  View all
+                </Link>
               </div>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {(related || []).slice(0, 6).map((it) => (
-                  <Link key={it.slug} href={`/insurance/${it.slug}`} className="block rounded-lg border p-3 hover:bg-gray-50 dark:hover:bg-gray-800">
-                    <img src={pickThumb(it)} alt={it.title} className="w-full h-40 object-cover rounded-md mb-2" loading="lazy" />
+                  <Link
+                    key={it.slug}
+                    href={`/insurance/${it.slug}`}
+                    className="block rounded-lg border p-3 hover:bg-gray-50 dark:hover:bg-gray-800"
+                  >
+                    <img
+                      src={pickThumb(it)}
+                      alt={it.title}
+                      className="w-full h-40 object-cover rounded-md mb-2"
+                      loading="lazy"
+                    />
                     <div className="font-medium line-clamp-2">{it.title}</div>
                   </Link>
                 ))}
@@ -194,16 +247,20 @@ export default function InsuranceTaxPost({ post, related = [], latest = [], sign
             </div>
           </article>
 
+          {/* SIDEBAR */}
           <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
             <TradingSignalsCompact items={signalsLatest} />
-            <section className="rounded-xl border bg-white dark:bg-gray-900 ">
+
+            <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
               <div className="px-4 py-3 border-b dark:border-gray-700">
                 <h3 className="text-sm font-semibold">Latest on FinNews247</h3>
               </div>
               <ul className="divide-y dark:divide-gray-800">
                 {latestSorted.length ? (
                   latestSorted.map((it) => (
-                    <li key={(it.slug || it.title) + "-latest"}><SideMiniItem item={it} /></li>
+                    <li key={(it.slug || it.title) + "-latest"}>
+                      <SideMiniItem item={it} />
+                    </li>
                   ))
                 ) : (
                   <li className="px-4 py-3 text-xs text-gray-500">No recent posts.</li>
@@ -214,6 +271,7 @@ export default function InsuranceTaxPost({ post, related = [], latest = [], sign
         </div>
       </div>
 
+      {/* ép thumbnail sidebar 45x45 */}
       <style jsx global>{`
         .sidebar-scope img {
           width: 45px !important;
@@ -228,7 +286,7 @@ export default function InsuranceTaxPost({ post, related = [], latest = [], sign
   );
 }
 
-/* ===== GSSP: đọc CẢ insurance.json + tax.json để tránh 404 ===== */
+/* ===== GSSP ===== */
 export async function getServerSideProps({ params }) {
   const read = (file) => {
     try {
@@ -239,32 +297,22 @@ export async function getServerSideProps({ params }) {
     }
   };
 
-  // GỘP NGUỒN CHÍNH CHO TRANG NÀY
-  const own = []
-    .concat(read("insurance.json"), read("tax.json"))
-    .filter(Boolean)
-    .flat();
+  const own = [].concat(read("insurance.json")).filter(Boolean).flat();
 
   const post =
     own.find(
       (p) => (p.slug || "").toLowerCase() === (params.slug || "").toLowerCase()
     ) || null;
-
   if (!post) return { notFound: true };
 
-  // related theo tag/date
-  const currentTags = (post.tags || post.keywords || []).map((t) =>
-    String(t).toLowerCase()
-  );
+  // Related theo tag/date
+  const currentTags = (post.tags || post.keywords || []).map((t) => String(t).toLowerCase());
   const tagSet = new Set(currentTags);
   let relatedPool = own.filter((p) => p.slug && p.slug !== post.slug);
-
   if (currentTags.length) {
     relatedPool = relatedPool
       .map((p) => {
-        const tags = (p.tags || p.keywords || []).map((t) =>
-          String(t).toLowerCase()
-        );
+        const tags = (p.tags || p.keywords || []).map((t) => String(t).toLowerCase());
         const score = tags.filter((t) => tagSet.has(t)).length;
         const d = Date.parse(p.date || p.updatedAt) || 0;
         return { p, s: score, d };
@@ -280,28 +328,26 @@ export async function getServerSideProps({ params }) {
   }
   const related = relatedPool.slice(0, 8);
 
-  // Sidebar Latest (mỗi cat ≥1 bài + bù 4 bài mới)
+  /* Latest: coverage 6 trang chính */
   const groups = {
     "crypto-market": ["news.json"],
     altcoins: ["altcoins.json", "seccoin.json"],
     "crypto-exchanges": ["cryptoexchanges.json", "fidelity.json"],
     "best-crypto-apps": ["bestapps.json"],
-    insurance: ["insurance.json", "tax.json"], // ✅ gộp cho Insurance & Tax
+    insurance: ["insurance.json"],
     guides: ["guides.json"],
-  };
-
-  const parseD = (d) => {
-    const t = Date.parse(d);
-    return Number.isNaN(t) ? 0 : t;
   };
 
   const byCat = {};
   for (const [cat, files] of Object.entries(groups)) {
     const arr = files
       .flatMap((f) => read(f) || [])
-      .map((p) => ({ ...p, _cat: cat }))
-      .filter((x) => x && (x.slug || x.title))
-      .sort((a, b) => parseD(b.date || b.updatedAt) - parseD(a.date || a.updatedAt));
+      .map((p) => ({ ...p, _cat: cat }));
+    arr.sort(
+      (a, b) =>
+        (Date.parse(b.date || b.updatedAt) || 0) -
+        (Date.parse(a.date || a.updatedAt) || 0)
+    );
     byCat[cat] = arr;
   }
 
@@ -315,12 +361,22 @@ export async function getServerSideProps({ params }) {
       coverage.push(pick);
     }
   }
+
   const poolAll = Object.values(byCat).flat();
   const rest = poolAll
     .filter((p) => p?.slug && !seen.has(p.slug))
-    .sort((a, b) => parseD(b.date || b.updatedAt) - parseD(a.date || a.updatedAt));
+    .sort(
+      (a, b) =>
+        (Date.parse(b.date || b.updatedAt) || 0) -
+        (Date.parse(a.date || a.updatedAt) || 0)
+    );
+
   const latestRaw = coverage.concat(rest).slice(0, LATEST_LIMIT);
-  const latest = latestRaw.sort((a, b) => parseD(b.date || b.updatedAt) - parseD(a.date || a.updatedAt));
+  const latest = latestRaw.sort(
+    (a, b) =>
+      (Date.parse(b.date || b.updatedAt) || 0) -
+      (Date.parse(a.date || a.updatedAt) || 0)
+  );
 
   const { latestSignals } = await import("../../lib/sidebar.server");
   const signalsLatest = latestSignals(5);

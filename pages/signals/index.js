@@ -90,7 +90,7 @@ export default function SignalsPage({ signals = [], latest = [] }) {
       <div className="grid md:grid-cols-12 gap-6">
         {/* MAIN */}
         <section className="md:col-span-9">
-          <div className="rounded-xl border bg-white dark:bg-gray-900 ">
+          <div className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
             <div className="px-4 py-3 border-b dark:border-gray-800">
               <h1 className="text-lg font-semibold">📊 All Trading Signals</h1>
               <p className="text-sm text-gray-600 mt-1">
@@ -116,7 +116,7 @@ export default function SignalsPage({ signals = [], latest = [] }) {
 
           {/* === 3 MỤC như SIDEBAR TRANG CHỦ === */}
           <section className="mt-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <TopExchanges variant="sidebar" />
               <BestWallets variant="sidebar" />
               <TopStaking variant="sidebar" />
@@ -126,7 +126,7 @@ export default function SignalsPage({ signals = [], latest = [] }) {
 
         {/* SIDEBAR: Latest (phủ 6 chuyên mục, mới→cũ) */}
         <aside className="md:col-span-3">
-          <div className="rounded-xl border bg-white dark:bg-gray-900 ">
+          <div className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
             <div className="px-4 py-3 border-b dark:border-gray-800">
               <h2 className="text-base font-semibold">📰 Latest on FinNews247</h2>
             </div>

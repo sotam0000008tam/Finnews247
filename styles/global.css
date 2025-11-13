@@ -52,27 +52,3 @@ img { max-width: 100%; height: auto; display: block; }
 
 /* Ensure any sidebar scope thumbnails respect 45x45 */
 .sidebar-scope img { width:45px !important; height:45px !important; object-fit:cover !important; border-radius:0.5rem !important; }
-
-
-/* === Auto Ads: article column narrow (site-wide) === */
-.is-article .post-scope .prose,
-.is-article .post-scope,
-.is-article article,
-.is-article article.prose,
-.is-article .entry-content,
-.is-article .content,
-.is-article .single-entry,
-.is-article .markdown-body {
-  max-width: 46rem !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-}
-.is-article img,
-.is-article picture img {
-  display:block; width:100% !important; height:auto !important; max-width:100% !important;
-}
-.is-article main,
-.is-article .container,
-.is-article .content-wrap {
-  overflow: visible !important;
-}

@@ -69,7 +69,7 @@ const typeColor = (t = "") =>
 
 function TradingSignalsCompact({ items = [] }) {
   return (
-    <section className="rounded-xl border bg-white dark:bg-gray-900 ">
+    <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
       <div className="px-4 py-3 border-b dark:border-gray-800">
         <h3 className="text-sm font-semibold">📈 Trading Signals</h3>
       </div>
@@ -230,7 +230,7 @@ export default function BestAppsPostPage({ post, related = [], latest = [], sign
                   View all
                 </Link>
               </div>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {(related || []).slice(0, 6).map((it) => (
                   <Link
                     key={it.slug}
@@ -254,7 +254,7 @@ export default function BestAppsPostPage({ post, related = [], latest = [], sign
           <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
             <TradingSignalsCompact items={signalsLatest} />
 
-            <section className="rounded-xl border bg-white dark:bg-gray-900 ">
+            <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
               <div className="px-4 py-3 border-b dark:border-gray-700">
                 <h3 className="text-sm font-semibold">Latest on FinNews247</h3>
               </div>
