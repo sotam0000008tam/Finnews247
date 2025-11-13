@@ -67,7 +67,7 @@ export default function FidDetail({post,related=[],latest=[]}){
 
           <div className="mt-8">
             <div className="flex items-center justify-between mb-3"><h3 className="text-lg font-semibold">More from {cname.title}</h3><Link href={cname.base} className="text-sm text-sky-600 hover:underline">View all</Link></div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
               {(related||[]).slice(0,6).map((it)=>(
                 <Link key={it.slug} href={hrefFid(it.slug)} className="block rounded-lg border p-3 hover:bg-gray-50 dark:hover:bg-gray-800">
                   <img src={pickThumb(it)} alt={it.title} className="w-full h-40 object-cover rounded-md mb-2" loading="lazy"/>
@@ -79,7 +79,7 @@ export default function FidDetail({post,related=[],latest=[]}){
         </article>
 
         <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
-          <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
+          <section className="rounded-xl border bg-white dark:bg-gray-900 ">
             <div className="px-4 py-3 border-b dark:border-gray-700"><h3 className="text-sm font-semibold">Latest on FinNews247</h3></div>
             <ul className="divide-y dark:divide-gray-800">
               {latest.length? latest.map(it=>(<li key={(it.slug||it.title)+"-latest"}><SideMiniItem item={it}/></li>)) : (<li className="px-4 py-3 text-xs text-gray-500">No recent posts.</li>)}

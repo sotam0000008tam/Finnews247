@@ -70,7 +70,7 @@ export default function ReviewDetail() {
         />
       )}
 
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
         {/* Pros */}
         <div className="bg-green-50 dark:bg-green-900 p-4 rounded-lg">
           <h2 className="text-lg font-semibold text-green-700 dark:text-green-300 mb-2">✅ Pros</h2>

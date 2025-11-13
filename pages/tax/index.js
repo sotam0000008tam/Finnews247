@@ -40,7 +40,7 @@ function Card({ item }) {
   const href = hrefTax(item.slug);
   const img = pickThumb(item);
   return (
-    <Link href={href} className="group block rounded-xl overflow-hidden border bg-white dark:bg-gray-900 hover:shadow-md transition">
+    <Link href={href} className="group block rounded-xl  border bg-white dark:bg-gray-900 hover:shadow-md transition">
       {img && <img src={img} alt={item?.title || "post"} className="w-full h-48 object-cover" loading="lazy" />}
       <div className="p-3">
         <div className="font-semibold leading-snug line-clamp-2 group-hover:underline">{item?.title || "Untitled"}</div>
@@ -103,7 +103,7 @@ export default function TaxIndex({ items = [], latest = [], page = 1, totalPages
         </section>
 
         <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
-          <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
+          <section className="rounded-xl border bg-white dark:bg-gray-900 ">
             <div className="px-4 py-3 border-b dark:border-gray-700"><h3 className="text-sm font-semibold">Latest on FinNews247</h3></div>
             <ul className="divide-y dark:divide-gray-800">
               {latest.length ? (latest ?? []).map((it) => (<li key={(it.slug || it.title) + "-latest"}><SideMiniItem item={it} /></li>))

@@ -22,7 +22,7 @@ export default function CryptoTicker() {
   }, []);
 
   return (
-    <div className="bg-black text-white overflow-hidden whitespace-nowrap border-b border-gray-800 relative">
+    <div className="bg-black text-white  whitespace-nowrap border-b border-gray-800 relative">
       <div className="flex animate-marquee">
         {/* Lặp coin list 2 lần để nối tiếp nhau */}
         {[...coins, ...coins].map((coin, idx) => (

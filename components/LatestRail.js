@@ -9,7 +9,7 @@ export default function LatestRail({ title = "Latest on FinNews247", items = [] 
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-lg font-semibold">{title}</h3>
       </div>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
         {items.slice(0, 6).map((it) => {
           const href = buildUrl(it);
           const img = pickThumb(it);

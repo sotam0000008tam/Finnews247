@@ -336,7 +336,7 @@ export default function SignalDetailPage({
           </header>
 
           {/* Levels */}
-          <div className="grid md:grid-cols-3 gap-4 mb-6">
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
             <div className="p-4 border rounded-xl bg-white dark:bg-gray-900">
               <div className="text-gray-500 text-sm">Entry</div>
               <div className="text-lg font-semibold text-yellow-600">{entry}</div>
@@ -352,8 +352,8 @@ export default function SignalDetailPage({
           </div>
 
           {/* Chart + Image */}
-          <div className="grid md:grid-cols-3 gap-6 mb-10">
-            <div className="md:col-span-2 border rounded-xl overflow-hidden bg-white dark:bg-gray-900">
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 mb-10">
+            <div className="md:col-span-2 border rounded-xl  bg-white dark:bg-gray-900">
               <TVChart symbol={toTradingViewSymbol(pair)} height={520} />
             </div>
             <div className="border rounded-xl p-3 bg-white dark:bg-gray-900">
@@ -423,7 +423,7 @@ export default function SignalDetailPage({
                 View all
               </Link>
             </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
               {(latestSignals || []).map((it) => (
                 <Link
                   key={it.id}
@@ -454,7 +454,7 @@ export default function SignalDetailPage({
 
         {/* SIDEBAR: Latest on FinNews247 */}
         <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
-          <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
+          <section className="rounded-xl border bg-white dark:bg-gray-900 ">
             <div className="px-4 py-3 border-b dark:border-gray-700">
               <h3 className="text-sm font-semibold">Latest on FinNews247</h3>
             </div>

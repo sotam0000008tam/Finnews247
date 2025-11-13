@@ -1,7 +1,7 @@
+// components/Layout.js
 import Head from "next/head";
-import CryptoTicker from "./CryptoTicker";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import CryptoTicker from "./CryptoTicker";
 import Header from "./Header";
 import Footer from "./Footer";
 
@@ -9,47 +9,22 @@ export default function Layout({ children, title }) {
   const router = useRouter();
 
   const ARTICLE_PATHS = new Set([
-    "/[slug]","/altcoins/[slug]","/posts/[slug]","/market/[slug]",
-    "/crypto/[slug]","/guides/[slug]","/news/[slug]","/insurance/[slug]",
-    "/crypto-exchanges/[slug]","/best-crypto-apps/[slug]","/crypto-market/[slug]",
+    "/[slug]",
+    "/altcoins/[slug]",
+    "/posts/[slug]",
+    "/market/[slug]",
+    "/crypto/[slug]",
+    "/guides/[slug]",
+    "/news/[slug]",
+    "/insurance/[slug]",
+    "/crypto-exchanges/[slug]",
+    "/best-crypto-apps/[slug]",
+    "/crypto-market/[slug]",
+    "/reviews/[slug]",
+    "/tax/[slug]",
+    "/sec-coin/[slug]",
   ]);
   const isArticle = ARTICLE_PATHS.has(router.pathname);
-  const isInsuranceArticle = router.pathname === "/insurance/[slug]";
-
-  useEffect(() => {
-    if (!isInsuranceArticle || typeof window === "undefined") return;
-    const scope =
-      document.querySelector("main.is-insurance-article .post-scope") ||
-      document.querySelector(".post-scope");
-    if (!scope) return;
-
-    const hrefPatterns = ["crypto-exchanges","best-crypto-apps","staking"];
-    const textPatterns = ["Top Exchanges","Best Crypto Wallets","Top Staking"];
-
-    const anchors = Array.from(scope.querySelectorAll("a"));
-    anchors.forEach((a) => {
-      const href = (a.getAttribute("href") || "").toLowerCase();
-      const txt = (a.textContent || "").trim().toLowerCase();
-      const hitHref = hrefPatterns.some((p) => href.includes(p));
-      const hitText = textPatterns.some((t) => txt.includes(t.toLowerCase()));
-      if (hitHref || hitText) {
-        let node =
-          a.closest("li, p, div, section, aside, figure, .wp-block-group, .wp-block-buttons, .cta, .promo, .after-article, .related") || a.parentElement;
-        if (node) {
-          node.style.display = "none";
-          const prev = node.previousElementSibling;
-          if (prev && /^(H2|H3|H4|P)$/i.test(prev.tagName) && (prev.textContent || "").trim().length <= 60) {
-            prev.style.display = "none";
-          }
-        }
-      }
-    });
-
-    scope.querySelectorAll("ul,ol").forEach((list) => {
-      const visibleItems = Array.from(list.children).some((li) => li && (li.offsetParent !== null));
-      if (!visibleItems) list.style.display = "none";
-    });
-  }, [isInsuranceArticle]);
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
@@ -61,48 +36,30 @@ export default function Layout({ children, title }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {/* Ticker cố định */}
+      {/* Fixed ticker */}
       <div className="fixed top-0 left-0 right-0 z-50 w-full">
         <CryptoTicker />
       </div>
-      {/* khoảng chèn đúng bằng chiều cao ticker */}
       <div aria-hidden style={{ height: 30 }} />
 
-      {/* Header */}
       <Header />
 
-      {/* Nội dung chính */}
-      <main
-        className={[
-          "flex-1 container 2xl:max-w-[1600px] mx-auto px-4 lg:px-6 py-8",
-          isArticle ? "is-article" : "",
-          isInsuranceArticle ? "is-insurance-article" : "",
-        ].join(" ")}
-      >
+      {/* No , no 1600px hard cap */}
+      <main className={["flex-1 container mx-auto px-4 lg:px-6 py-8", isArticle ? "is-article" : ""].join(" ")}>
         {isArticle ? <div className="post-scope">{children}</div> : children}
       </main>
 
-      {/* Footer */}
       <Footer />
 
       <style jsx global>{`
         html { font-size: 120%; }
         body { line-height: 1.6; }
-        /* KHÔNG khoá container 1200px nếu muốn 1600px */
-        /* .container { max-width: 1200px; } */
 
-        /* Giới hạn chiều rộng bài viết giống trang chủ (~736px) và căn giữa nội dung */
         .post-scope .prose {
           max-width: 46rem;
-          margin-left: auto;
-          margin-right: auto;
+          margin-left: auto; margin-right: auto;
         }
-        /* Hero trong bài viết cùng chiều rộng với nội dung */
-        .post-scope .article-hero {
-          max-width: 46rem;
-          margin-left: auto;
-          margin-right: auto;
-        }
+
         .post-scope img, .post-scope picture img {
           display:block; width:100% !important; height:auto !important; max-width:100% !important;
         }

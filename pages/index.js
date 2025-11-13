@@ -49,7 +49,7 @@ function hrefOf(p) {
 function LatestMini({ items = [] }) {
   if (!items.length) return null;
   return (
-    <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
+    <section className="rounded-xl border bg-white dark:bg-gray-900 ">
       <div className="px-4 py-3 border-b dark:border-gray-700">
         <h3 className="text-sm font-semibold">Latest on FinNews247</h3>
       </div>

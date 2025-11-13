@@ -98,3 +98,43 @@ body {
 
 /* Nếu trang nào dùng .prose (typography) thì tránh bị bóp còn 65ch */
 .prose { max-width: 100%; }
+
+/*
+ * Tăng khả năng chèn quảng cáo tự động cho các trang bài viết / chi tiết.
+ *
+ * Các trang bài viết được đánh dấu bằng class `is-article` trên phần tử <main>
+ * (được gắn bởi Layout.js). Ở những trang này, thu hẹp chiều rộng của cột
+ * nội dung và đảm bảo hình ảnh/đoạn văn đủ cao để tạo ra nhiều "màn hình cuộn" hơn.
+ * Điều này giúp Google Auto Ads có thêm không gian để chèn các đơn vị
+ * quảng cáo in‑page, tương tự như ở trang chủ.
+ */
+.is-article .post-scope .prose,
+.is-article .post-scope,
+.is-article article,
+.is-article article.prose,
+.is-article .entry-content,
+.is-article .content,
+.is-article .single-entry,
+.is-article .markdown-body {
+  /* Giới hạn chiều rộng xuống ~736px và căn giữa */
+  max-width: 46rem !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Hình ảnh trong trang bài viết luôn co giãn đúng tỉ lệ và chiếm full chiều ngang */
+.is-article img,
+.is-article picture img {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+}
+
+/* Loại bỏ overflow ẩn trên container chính ở các trang bài viết để
+ * chiều cao được tính chính xác cho việc chèn quảng cáo tự động. */
+.is-article main,
+.is-article .container,
+.is-article .content-wrap {
+  overflow: visible !important;
+}
