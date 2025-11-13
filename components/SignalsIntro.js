@@ -1,7 +1,7 @@
 // components/SignalsIntro.js
 export default function SignalsIntro() {
   return (
-    <section className="signals-intro prose lg:prose-lg max-w-3xl mb-12">
+    <section className="signals-intro prose lg:prose-xl max-w-none mb-12">
       <h1>Crypto Trading Signals 2025 – Methodology, FAQs & Disclaimer</h1>
       <p>
         Welcome to the <strong>FinNews Crypto Signals Center</strong>. 

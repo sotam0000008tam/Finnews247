@@ -36,16 +36,15 @@ export default function Layout({ children, title }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {/* Ticker cố định */}
+      {/* Fixed ticker */}
       <div className="fixed top-0 left-0 right-0 z-50 w-full">
         <CryptoTicker />
       </div>
-      {/* khoảng chèn đúng bằng chiều cao ticker */}
       <div aria-hidden style={{ height: 30 }} />
 
       <Header />
 
-      {/* KHÔNG dùng overflow-hidden, KHÔNG giới hạn 1600px */}
+      {/* No , no 1600px hard cap */}
       <main className={["flex-1 container mx-auto px-4 lg:px-6 py-8", isArticle ? "is-article" : ""].join(" ")}>
         {isArticle ? <div className="post-scope">{children}</div> : children}
       </main>
@@ -56,13 +55,11 @@ export default function Layout({ children, title }) {
         html { font-size: 120%; }
         body { line-height: 1.6; }
 
-        /* Hẹp như homepage để trang cao hơn → Auto Ads có nhiều điểm chèn */
         .post-scope .prose {
-          max-width: 46rem; /* ~736px */
+          max-width: 46rem;
           margin-left: auto; margin-right: auto;
         }
 
-        /* Ảnh trong bài viết responsive */
         .post-scope img, .post-scope picture img {
           display:block; width:100% !important; height:auto !important; max-width:100% !important;
         }

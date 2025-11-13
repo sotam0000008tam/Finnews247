@@ -21,7 +21,7 @@ const hrefMixed = (p) => { if (p?.href) return p.href; const s = String(p?.slug 
 const prettyType = (t = "") => (String(t).toLowerCase() === "long" ? "Long" : "Short");
 const typeColor = (t = "") => String(t).toLowerCase() === "long" ? "bg-green-100 text-green-700 ring-green-200" : "bg-red-100 text-red-700 ring-red-200";
 
-function TradingSignalsCompact({ items=[] }){return(<section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
+function TradingSignalsCompact({ items=[] }){return(<section className="rounded-xl border bg-white dark:bg-gray-900 ">
   <div className="px-4 py-3 border-b dark:border-gray-800"><h3 className="text-sm font-semibold">📈 Trading Signals</h3></div>
   {items.length===0?(<div className="px-4 py-3 text-xs text-gray-500">No signals.</div>):(
     <ul className="divide-y dark:divide-gray-800">{items.map(s=>(
@@ -32,7 +32,7 @@ function TradingSignalsCompact({ items=[] }){return(<section className="rounded-
   <div className="px-3 py-2"><Link href="/signals" className="text-sm text-sky-600 hover:underline">View all signals →</Link></div>
 </section>)}
 
-function Card({ item }){const href=hrefAlt(item.slug);const img=pickThumb(item);return(<Link href={href} className="group block rounded-xl overflow-hidden border bg-white dark:bg-gray-900 hover:shadow-md transition">
+function Card({ item }){const href=hrefAlt(item.slug);const img=pickThumb(item);return(<Link href={href} className="group block rounded-xl  border bg-white dark:bg-gray-900 hover:shadow-md transition">
   {img&&<img src={img} alt={item?.title||"post"} className="w-full h-48 object-cover" loading="lazy"/>}
   <div className="p-3"><div className="font-semibold leading-snug line-clamp-2 group-hover:underline">{item?.title||"Untitled"}</div>
     {(item?.date||item?.updatedAt)&&<div className="text-xs text-gray-500 mt-1">{item.date||item.updatedAt}</div>}
@@ -62,7 +62,7 @@ export default function AltcoinsPage({ items=[], latest=[], page=1, totalPages=1
       </section>
       <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
         <TradingSignalsCompact items={signalsLatest}/>
-        <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
+        <section className="rounded-xl border bg-white dark:bg-gray-900 ">
           <div className="px-4 py-3 border-b dark:border-gray-700"><h3 className="text-sm font-semibold">Latest on FinNews247</h3></div>
           <ul className="divide-y dark:divide-gray-800">{(latest??[]).map(it=><li key={(it.slug||it.title)+"-latest"}><SideMiniItem item={it}/></li>)}</ul>
         </section>

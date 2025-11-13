@@ -90,7 +90,7 @@ export default function PostView({ catKey, post, related = [], latest = [] }) {
                 <h3 className="text-lg font-semibold">More from {cat.title}</h3>
                 <Link href={cat.base} className="text-sm text-sky-600 hover:underline">View all</Link>
               </div>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
                 {(related || []).slice(0, 6).map((it) => (
                   <Link key={it.slug} href={buildUrl({ ...it, _cat: catKey })} className="block rounded-lg border p-3 hover:bg-gray-50 dark:hover:bg-gray-800">
                     <img src={pickThumb(it)} alt={it.title} className="w-full h-40 object-cover rounded-md mb-2" />
@@ -103,7 +103,7 @@ export default function PostView({ catKey, post, related = [], latest = [] }) {
 
           {/* Sidebar hẹp 3/12 */}
           <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
-            <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
+            <section className="rounded-xl border bg-white dark:bg-gray-900 ">
               <div className="px-4 py-3 border-b dark:border-gray-700">
                 <h3 className="text-sm font-semibold">Latest on FinNews247</h3>
               </div>

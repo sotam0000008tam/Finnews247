@@ -8,7 +8,7 @@ export default function AffiliateCard({ item }) {
     <div className="group rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 shadow-sm hover:shadow-md transition">
       <div className="flex items-center gap-3">
         {logo ? (
-          <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-lg  bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0">
             <Image src={logo} alt={`${title} logo`} width={40} height={40} />
           </div>
         ) : (

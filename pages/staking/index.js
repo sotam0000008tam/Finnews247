@@ -55,7 +55,7 @@ export default function StakingPage() {
         <span>Staking</span>
       </nav>
 
-      <article className="prose max-w-3xl">
+      <article className="prose max-w-none">
         <h1>Crypto Staking in 2025: Safer Ways to Stake ETH, SOL, and ADA</h1>
 
         <p>

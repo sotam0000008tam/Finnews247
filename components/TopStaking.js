@@ -42,7 +42,7 @@ export default function TopStaking({ variant = "grid", items = STAKING }) {
   return (
     <section className="not-prose">
       <h2 className="text-lg font-semibold mb-3">💎 Top Staking Opportunities</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
         {items.map((s) => (
           <ExtA
             key={s.name}
@@ -50,7 +50,7 @@ export default function TopStaking({ variant = "grid", items = STAKING }) {
             className="group block rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 shadow-sm hover:shadow-md transition"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg  bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
                 <Image src={s.logo} alt={s.name} width={40} height={40} />
               </div>
               <div className="min-w-0">

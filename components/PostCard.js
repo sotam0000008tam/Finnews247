@@ -35,7 +35,7 @@ export default function PostCard({ post = {} }) {
   }
 
   return (
-    <article className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+    <article className="bg-white dark:bg-gray-800 rounded-lg shadow ">
       {post.image && (
         <div className="w-full">
           <img
