@@ -20,10 +20,7 @@ export default function ArticleHero({
     // the prose column for better ad placement.  Constraining the figure to
     // roughly 46rem (~736px) and centering it keeps the hero aligned with
     // the content and prevents large blank margins on wide screens.
-    <figure
-      className="article-hero my-4"
-      style={{ maxWidth: '56rem', marginLeft: 'auto', marginRight: 'auto' }}
-    >
+    <figure className="article-hero my-4">
       <img
         src={src}
         alt={alt || ""}

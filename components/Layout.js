@@ -55,18 +55,13 @@ export default function Layout({ children, title }) {
         html { font-size: 120%; }
         body { line-height: 1.6; }
 
-        .post-scope .prose {
-          max-width: 46rem;
-          margin-left: auto; margin-right: auto;
+        /* Sidebar thumbnails: unify size */
+        .sidebar-scope img {
+          width: 45px !important;
+          height: 45px !important;
+          object-fit: cover !important;
+          display: block !important;
         }
-
-        .post-scope img, .post-scope picture img {
-          display:block; width:100% !important; height:auto !important; max-width:100% !important;
-        }
-        .post-scope span[style*="position:relative"] { display:block !important; width:100% !important; max-width:100% !important; }
-        .post-scope span[style*="position:relative"] > img { width:100% !important; height:auto !important; object-fit:contain; }
-
-        .sidebar-scope img { width:45px !important; height:45px !important; object-fit:cover !important; display:block !important; }
       `}</style>
     </div>
   );
