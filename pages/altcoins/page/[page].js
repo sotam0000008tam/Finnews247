@@ -35,7 +35,8 @@ function Card({ item }){const href=hrefAlt(item.slug);const img=pickThumb(item);
   {img&&<img src={img} alt={item?.title||"post"} className="w-full h-48 object-cover" loading="lazy"/>}
   <div className="p-3"><div className="font-semibold leading-snug line-clamp-2 group-hover:underline">{item?.title||"Untitled"}</div>
     {(item?.date||item?.updatedAt)&&<div className="text-xs text-gray-500 mt-1">{item.date||item.updatedAt}</div>}
-    {item?.excerpt&&<p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-2">{stripHtml(item.excerpt).slice(0,120)}{stripHtml(item.excerpt).length>120?"…":""}</p>}
+    {/* Show a longer snippet so there is more vertical content for AutoAds. */}
+    {item?.excerpt&&<p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-4">{stripHtml(item.excerpt).slice(0,250)}{stripHtml(item.excerpt).length>250?"…":""}</p>}
   </div></Link>)}
 
 function SideMiniItem({ item }){const href=hrefMixed(item);const img=pickThumb(item);return(<Link href={href} className="group flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition">

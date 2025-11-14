@@ -97,10 +97,11 @@ function Card({ item }) {
         {(item?.date || item?.updatedAt) && (
           <div className="text-xs text-gray-500 mt-1">{item.date || item.updatedAt}</div>
         )}
+        {/* Show a longer snippet so there is more vertical content for AutoAds. */}
         {item?.excerpt && (
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-2">
-            {stripHtml(item.excerpt).slice(0, 120)}
-            {stripHtml(item.excerpt).length > 120 ? "…" : ""}
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-4">
+            {stripHtml(item.excerpt).slice(0, 250)}
+            {stripHtml(item.excerpt).length > 250 ? "…" : ""}
           </p>
         )}
       </div>
