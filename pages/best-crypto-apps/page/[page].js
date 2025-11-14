@@ -1,5 +1,6 @@
 ﻿import Link from "next/link";
 import { NextSeo } from "next-seo";
+import PostCard from "../../../components/PostCard";
 
 const stripHtml=(h="")=>String(h).replace(/<script[\s\S]*?<\/script>/gi,"").replace(/<style[\s\S]*?<\/style>/gi,"").replace(/<[^>]+>/g," ").replace(/\s+/g," ").trim();
 const firstImage=(h="")=>(String(h).match(/<img[^>]+src=["']([^"']+)["']/i)||[])[1]||null;
@@ -81,7 +82,7 @@ export default function AppsPage({ items=[], latest=[], page=1, totalPages=1, si
     <div className="mb-4"><h1 className="text-2xl md:text-3xl font-bold">{title}</h1></div>
     <div className="grid md:grid-cols-12 gap-8">
       <section className="md:col-span-9">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">{(items||[]).map(it=><Card key={it.slug||it.title} item={it}/>)}</div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">{(items||[]).map(it=><PostCard key={it.slug||it.title} post={it}/>)}</div>
         {totalPages>1&&(<div className="flex items-center justify-center gap-2 mt-6">
           {Array.from({length:totalPages}).map((_,i)=>{const p=i+1;const href=p===1?"/best-crypto-apps":`/best-crypto-apps/page/${p}`;const active=p===page;
             return(<Link key={p} href={href} className={"px-3 py-1 rounded border "+(active?"bg-gray-900 text-white border-gray-900":"hover:bg-gray-50 dark:hover:bg-gray-800")}>{p}</Link>)})}

@@ -2,6 +2,7 @@
 import fs from "fs";
 import path from "path";
 import Link from "next/link";
+import PostCard from "../../components/PostCard";
 import { NextSeo } from "next-seo";
 import SidebarSignals from "../../components/SidebarSignals";
 
@@ -83,8 +84,8 @@ export default function TaxIndex({ items = [], latest = [], page = 1, totalPages
 
       <div className="grid md:grid-cols-12 gap-8">
         <section className="md:col-span-9">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {(items || []).map((it) => (<Card key={it.slug || it.title} item={it} />))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {(items || []).map((it) => (<PostCard key={it.slug || it.title} post={it} />))}
           </div>
 
           {totalPages > 1 && (
