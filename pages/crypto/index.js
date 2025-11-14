@@ -1,4 +1,3 @@
-import CategoryIntro from "../../components/CategoryIntro";
 // pages/crypto/index.js
 import fs from "fs";
 import path from "path";

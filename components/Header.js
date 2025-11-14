@@ -20,8 +20,11 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    // Header dán dưới CryptoTicker cao 30px
-    <header className="relative w-full bg-white dark:bg-gray-900 sticky top-[30px] left-0 right-0 z-50 shadow-sm">
+    // Header sits underneath the ticker.  Removing the `sticky` and `top`
+    // classes allows Google AdSense to show top anchor ads, which
+    // improves overall ad density.  We keep the relative positioning
+    // and z-index so the header still layers correctly.
+    <header className="relative w-full bg-white dark:bg-gray-900 shadow-sm z-50">
       <div className="container 2xl:max-w-[1600px] mx-auto px-4 lg:px-6">
         {/* Header thấp: giảm py và gap */}
         <div className="grid grid-cols-[auto,1fr,auto] items-center gap-4 py-2 md:py-2.5">

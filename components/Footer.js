@@ -5,7 +5,7 @@ export default function Footer() {
     <footer className="w-full bg-gray-900 text-gray-300 mt-8">
       {/* Giảm chiều cao ~20% (py-10) và bỏ mọi đường viền thừa */}
       <div className="container 2xl:max-w-[1600px] mx-auto px-4 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 md:gap-12 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 items-start">
           <div className="min-w-0 md:justify-self-start text-left">
             <h4 className="text-lg font-semibold text-white mb-4">FinNews247</h4>
             <p className="text-sm leading-relaxed">

@@ -52,37 +52,3 @@ img { max-width: 100%; height: auto; display: block; }
 
 /* Ensure any sidebar scope thumbnails respect 45x45 */
 .sidebar-scope img { width:45px !important; height:45px !important; object-fit:cover !important; border-radius:0.5rem !important; }
-
-
-/* === Auto Ads: article content narrow (site-wide) === */
-/*
-  Limit only the width of the article’s text container rather than the entire
-  grid.  This applies to common classes used in our pages: `.post-body` for
-  Markdown output in dynamic posts, `.post-scope .prose` for pages that
-  explicitly wrap content in a prose container, and other standard CMS
-  wrappers such as `.entry-content`, `.content`, `.single-entry` and
-  `.markdown-body`.  By not targeting `.post-scope` or `article` itself, we
-  avoid shrinking the whole grid (which caused the slug pages to look
-  squeezed).  The max width of 56rem (~896px) keeps lines readable and page
-  height sufficient for Auto Ads to find multiple in‑page slots.
-*/
-/* For article pages, limit the width of text containers (but not `.post-body`).
-   This keeps lines readable without shrinking the entire grid. */
-.is-article .post-scope .prose,
-.is-article .entry-content,
-.is-article .content,
-.is-article .single-entry,
-.is-article .markdown-body {
-  max-width: 56rem !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-}
-.is-article img,
-.is-article picture img {
-  display:block; width:100% !important; height:auto !important; max-width:100% !important;
-}
-.is-article main,
-.is-article .container,
-.is-article .content-wrap {
-  overflow: visible !important;
-}

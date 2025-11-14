@@ -12,28 +12,14 @@ import AutoAdsRescan from "../components/AutoAdsRescan";
 export default function App({ Component, pageProps }) {
   const router = useRouter();
 
-  // GA4 + báo trang mới cho AdSense Auto Ads khi đổi route (SPA)
+  // GA4 page_view cho SPA (chỉ GA4; AutoAdsRescan sẽ lo phần AdSense)
   useEffect(() => {
     const handleRouteChange = (url) => {
-      // GA4 page_view
       if (window.gtag) {
         window.gtag("config", "G-ZGX7X6B6GY", { page_path: url });
       }
-      // AdSense Auto Ads: thông báo trang mới để nó tự đánh lại vị trí
-      try {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
-      } catch (e) {
-        // nuốt lỗi nếu script chưa sẵn sàng
-      }
     };
-
     router.events.on("routeChangeComplete", handleRouteChange);
-
-    // gọi một lần sau mount để chắc chắn Auto Ads được kích hoạt ở trang đầu
-    try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch {}
-
     return () => {
       router.events.off("routeChangeComplete", handleRouteChange);
     };
@@ -70,8 +56,10 @@ export default function App({ Component, pageProps }) {
       {/* SEO mặc định */}
       <DefaultSeo {...SEO} />
 
-      {/* Layout chung */}
+      {/* Auto Ads re-scan cho toàn site (SPA) */}
       <AutoAdsRescan />
+
+      {/* Layout chung */}
       <Layout title="FinNews">
         <Component {...pageProps} />
       </Layout>

@@ -65,7 +65,7 @@ const typeColor = (t = "") =>
 
 function TradingSignalsCompact({ items = [] }) {
   return (
-    <section className="rounded-xl border bg-white dark:bg-gray-900 ">
+    <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
       <div className="px-4 py-3 border-b dark:border-gray-800">
         <h3 className="text-sm font-semibold">📈 Trading Signals</h3>
       </div>
@@ -173,17 +173,19 @@ export default function InsuranceTaxPost({ post, related = [], latest = [], sign
 
             {hero && <ArticleHero src={hero} alt={post.title} />}
 
+
             <div
-              className="prose lg:prose-xl max-w-none post-body"
+              className="prose lg:prose-lg post-body"
               dangerouslySetInnerHTML={{ __html: post.content || post.body || "" }}
             />
+
 
             <div className="mt-8">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-lg font-semibold">More from Insurance & Tax</h3>
                 <Link href="/insurance" className="text-sm text-sky-600 hover:underline">View all</Link>
               </div>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {(related || []).slice(0, 6).map((it) => (
                   <Link key={it.slug} href={`/insurance/${it.slug}`} className="block rounded-lg border p-3 hover:bg-gray-50 dark:hover:bg-gray-800">
                     <img src={pickThumb(it)} alt={it.title} className="w-full h-40 object-cover rounded-md mb-2" loading="lazy" />
@@ -196,7 +198,7 @@ export default function InsuranceTaxPost({ post, related = [], latest = [], sign
 
           <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
             <TradingSignalsCompact items={signalsLatest} />
-            <section className="rounded-xl border bg-white dark:bg-gray-900 ">
+            <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
               <div className="px-4 py-3 border-b dark:border-gray-700">
                 <h3 className="text-sm font-semibold">Latest on FinNews247</h3>
               </div>

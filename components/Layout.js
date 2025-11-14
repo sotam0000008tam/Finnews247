@@ -1,13 +1,14 @@
 // components/Layout.js
 import Head from "next/head";
 import { useRouter } from "next/router";
-import CryptoTicker from "./CryptoTicker";
 import Header from "./Header";
 import Footer from "./Footer";
+import CryptoTicker from "./CryptoTicker";
 
 export default function Layout({ children, title }) {
   const router = useRouter();
 
+  // Các trang bài viết (dùng pattern của Next.js qua router.pathname)
   const ARTICLE_PATHS = new Set([
     "/[slug]",
     "/altcoins/[slug]",
@@ -31,36 +32,94 @@ export default function Layout({ children, title }) {
       <Head>
         <meta charSet="utf-8" />
         <title>{title ? `${title} | FinNews` : "FinNews"}</title>
-        <meta name="description" content="FinNews - Professional finance coverage" />
-        <meta name="google-site-verification" content="Akkp3qaq0RfqlqI75Qw8nhIIiu21X7vMBIkV0yfahj0" />
+        <meta
+          name="description"
+          content="FinNews - Professional finance coverage"
+        />
+        <meta
+          name="google-site-verification"
+          content="Akkp3qaq0RfqlqI75Qw8nhIIiu21X7vMBIkV0yfahj0"
+        />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {/* Fixed ticker */}
-      <div className="fixed top-0 left-0 right-0 z-50 w-full">
+      {/* Ticker placed statically instead of fixed.  This allows
+          Google top anchor ads to appear. */}
+      <div className="w-full">
         <CryptoTicker />
       </div>
-      <div aria-hidden style={{ height: 30 }} />
+      {/* Since the ticker is no longer fixed, we do not need an
+          invisible spacer to offset subsequent content. */}
 
+      {/* Header */}
       <Header />
 
-      {/* No , no 1600px hard cap */}
-      <main className={["flex-1 container mx-auto px-4 lg:px-6 py-8", isArticle ? "is-article" : ""].join(" ")}>
+      {/* Nội dung chính */}
+      <main
+        className={[
+          "flex-1 container mx-auto px-4 lg:px-6 py-8",
+          isArticle ? "is-article" : "",
+        ].join(" ")}
+      >
         {isArticle ? <div className="post-scope">{children}</div> : children}
       </main>
 
+      {/* Footer */}
       <Footer />
 
       <style jsx global>{`
-        html { font-size: 120%; }
-        body { line-height: 1.6; }
+        html {
+          font-size: 120%;
+        }
+        body {
+          line-height: 1.6;
+        }
 
-        /* Sidebar thumbnails: unify size */
+        /* Giữ bố cục gọn, trang dài hơn để Auto Ads có nhiều điểm chèn */
+        /* Không ép container 1600px; để Tailwind container tự xử lý */
+
+        /* NỘI DUNG BÀI VIẾT: mở rộng bề rộng để tăng số đoạn văn,
+           giúp Auto Ads có thêm vị trí chèn quảng cáo.  60rem ≈ 960px. */
+        .post-scope .prose {
+          max-width: 60rem;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        /* Ảnh trong bài viết luôn responsive */
+        .post-scope img,
+        .post-scope picture img {
+          display: block;
+          width: 100% !important;
+          height: auto !important;
+          max-width: 100% !important;
+        }
+        .post-scope span[style*="position:relative"] {
+          display: block !important;
+          width: 100% !important;
+          max-width: 100% !important;
+        }
+        .post-scope span[style*="position:relative"] > img {
+          width: 100% !important;
+          height: auto !important;
+          object-fit: contain;
+        }
+
         .sidebar-scope img {
           width: 45px !important;
           height: 45px !important;
           object-fit: cover !important;
           display: block !important;
+        }
+
+        /* Các khối nội dung bài viết không có class 'post-scope'
+           nhưng có class 'post-body' (nhiều trang viết).  Bỏ giới
+           hạn width mặc định của Tailwind (max-w-3xl) và đặt lại
+           chiều rộng tối đa lớn hơn để tăng không gian cho quảng cáo. */
+        .post-body {
+          max-width: 60rem !important;
+          margin-left: auto !important;
+          margin-right: auto !important;
         }
       `}</style>
     </div>
