@@ -71,6 +71,7 @@ function SignalRow({ s }) {
 import TopExchanges from "../../components/TopExchanges";
 import BestWallets from "../../components/BestWallets";
 import TopStaking from "../../components/TopStaking";
+import PostCard from "../../components/PostCard";
 
 export default function SignalsPage({ signals = [], latest = [] }) {
   return (
@@ -100,17 +101,35 @@ export default function SignalsPage({ signals = [], latest = [] }) {
 
             {signals.length === 0 ? (
               <div className="p-4">
-                <div className="font-medium">Tín hiệu & phân tích giao dịch cập nhật.</div>
+                <div className="font-medium">
+                  Tín hiệu & phân tích giao dịch cập nhật.
+                </div>
                 <div className="text-sm text-gray-600">
                   Chưa có tín hiệu trong <code>data/signals.json</code>.
                 </div>
               </div>
             ) : (
-              <ul className="divide-y dark:divide-gray-800">
-                {signals.map((s) => (
-                  <SignalRow key={s.id} s={s} />
-                ))}
-              </ul>
+              /*
+               * Hiển thị tín hiệu dưới dạng các thẻ bài lớn giống trang index.
+               * Mỗi thẻ bao gồm ảnh, tiêu đề, đoạn trích và liên kết tới trang tín hiệu.
+               * Sử dụng PostCard để tăng chiều cao nội dung, giúp Google Auto Ads nhận diện nhiều vị trí hơn.
+               */
+              <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {signals.map((s) => {
+                  const title = fixMojibake(
+                    s.title || `${s.pair || "Signal"} — ${prettyType(s.type)}`
+                  );
+                  const postObj = {
+                    slug: s.id,
+                    category: "Signals",
+                    date: s.date,
+                    title,
+                    excerpt: s.excerpt,
+                    image: s.thumb,
+                  };
+                  return <PostCard key={s.id} post={postObj} />;
+                })}
+              </div>
             )}
           </div>
 

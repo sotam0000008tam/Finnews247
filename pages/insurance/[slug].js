@@ -189,7 +189,13 @@ export default function InsuranceTaxPost({ post, related = [], latest = [], sign
                 {(related || []).slice(0, 6).map((it) => (
                   <Link key={it.slug} href={`/insurance/${it.slug}`} className="block rounded-lg border p-3 hover:bg-gray-50 dark:hover:bg-gray-800">
                     <img src={pickThumb(it)} alt={it.title} className="w-full h-40 object-cover rounded-md mb-2" loading="lazy" />
-                    <div className="font-medium line-clamp-2">{it.title}</div>
+                    <div className="font-medium">{it.title}</div>
+                    {it.excerpt && (
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-4">
+                        {stripHtml(it.excerpt).slice(0, 250)}
+                        {stripHtml(it.excerpt).length > 250 ? "…" : ""}
+                      </p>
+                    )}
                   </Link>
                 ))}
               </div>
