@@ -91,47 +91,40 @@ export default function SignalsPage({ signals = [], latest = [] }) {
       <div className="grid md:grid-cols-12 gap-6">
         {/* MAIN */}
         <section className="md:col-span-9">
-          <div className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
-            <div className="px-4 py-3 border-b dark:border-gray-800">
-              <h1 className="text-lg font-semibold">📊 All Trading Signals</h1>
-              <p className="text-sm text-gray-600 mt-1">
-                Explore the latest cryptocurrency trading signals with clear entry, target, and stoploss levels.
-              </p>
-            </div>
-
-            {signals.length === 0 ? (
-              <div className="p-4">
-                <div className="font-medium">
-                  Tín hiệu & phân tích giao dịch cập nhật.
-                </div>
-                <div className="text-sm text-gray-600">
-                  Chưa có tín hiệu trong <code>data/signals.json</code>.
-                </div>
-              </div>
-            ) : (
-              /*
-               * Hiển thị tín hiệu dưới dạng các thẻ bài lớn giống trang index.
-               * Mỗi thẻ bao gồm ảnh, tiêu đề, đoạn trích và liên kết tới trang tín hiệu.
-               * Sử dụng PostCard để tăng chiều cao nội dung, giúp Google Auto Ads nhận diện nhiều vị trí hơn.
-               */
-              <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {signals.map((s) => {
-                  const title = fixMojibake(
-                    s.title || `${s.pair || "Signal"} — ${prettyType(s.type)}`
-                  );
-                  const postObj = {
-                    slug: s.id,
-                    category: "Signals",
-                    date: s.date,
-                    title,
-                    excerpt: s.excerpt,
-                    image: s.thumb,
-                  };
-                  return <PostCard key={s.id} post={postObj} />;
-                })}
-              </div>
-            )}
+          {/* Heading & description placed outside of any card wrapper for more flexible layout */}
+          <div className="mb-4">
+            <h1 className="text-2xl md:text-3xl font-bold">📊 All Trading Signals</h1>
+            <p className="text-sm text-gray-600 mt-2">
+              Explore the latest cryptocurrency trading signals with clear entry, target, and stoploss levels.
+            </p>
           </div>
+
+          {signals.length === 0 ? (
+            <div className="p-4">
+              <div className="font-medium">Tín hiệu & phân tích giao dịch cập nhật.</div>
+              <div className="text-sm text-gray-600">
+                Chưa có tín hiệu trong <code>data/signals.json</code>.
+              </div>
+            </div>
+          ) : (
+            /* Hiển thị tín hiệu dưới dạng các thẻ bài lớn giống trang index */
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {signals.map((s) => {
+                const title = fixMojibake(
+                  s.title || `${s.pair || "Signal"} — ${prettyType(s.type)}`
+                );
+                const postObj = {
+                  slug: s.id,
+                  category: "Signals",
+                  date: s.date,
+                  title,
+                  excerpt: s.excerpt,
+                  image: s.thumb,
+                };
+                return <PostCard key={s.id} post={postObj} />;
+              })}
+            </div>
+          )}
 
           {/* === 3 MỤC như SIDEBAR TRANG CHỦ === */}
           <section className="mt-12">

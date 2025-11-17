@@ -233,25 +233,35 @@ export default function BestAppsPostPage({ post, related = [], latest = [], sign
                 </Link>
               </div>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {(related || []).slice(0, 6).map((it) => (
+                {(related || []).slice(0, 9).map((it) => (
                   <Link
                     key={it.slug}
                     href={`/best-crypto-apps/${it.slug}`}
                     className="block rounded-lg border p-3 hover:bg-gray-50 dark:hover:bg-gray-800"
                   >
+                    {/* Thumbnail */}
                     <img
                       src={pickThumb(it)}
                       alt={it.title}
-                      className="w-full h-40 object-cover rounded-md mb-2"
+                      className="w-full h-40 object-cover rounded-md mb-3"
                       loading="lazy"
                     />
-                    <div className="font-medium">{it.title}</div>
+                    {/* Date if available */}
+                    {(it.date || it.updatedAt) && (
+                      <div className="text-xs text-gray-500 mb-1">
+                        {it.date || it.updatedAt}
+                      </div>
+                    )}
+                    {/* Title */}
+                    <h4 className="font-medium mb-1">{it.title}</h4>
+                    {/* Full excerpt */}
                     {it.excerpt && (
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-4">
-                        {stripHtml(it.excerpt).slice(0, 250)}
-                        {stripHtml(it.excerpt).length > 250 ? "…" : ""}
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                        {stripHtml(it.excerpt)}
                       </p>
                     )}
+                    {/* Read more indicator */}
+                    <div className="text-sky-600 text-sm">Read more →</div>
                   </Link>
                 ))}
               </div>
