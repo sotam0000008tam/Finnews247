@@ -111,7 +111,7 @@ function SideMiniItem({ item }) {
 export default function InsuranceTaxPost({ post, related = [], latest = [], signalsLatest = [] }) {
   if (!post) {
     return (
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-4 py-6 container-1600">
         <h1 className="text-2xl font-bold mb-3">404 - Not Found</h1>
         <p>The article you are looking for does not exist.</p>
       </div>
@@ -142,7 +142,7 @@ export default function InsuranceTaxPost({ post, related = [], latest = [], sign
     <>
       <ArticleSeo post={post} path={pathForSeo} />
 
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-4 py-6 container-1600">
         <nav className="text-sm text-gray-500 mb-4">
           <Link href="/">Home</Link>
           <span className="mx-2">/</span>
@@ -175,7 +175,7 @@ export default function InsuranceTaxPost({ post, related = [], latest = [], sign
 
 
             <div
-              className="prose lg:prose-lg post-body"
+              className="prose lg:prose-lg post-body max-w-none"
               dangerouslySetInnerHTML={{ __html: post.content || post.body || "" }}
             />
 
@@ -186,35 +186,16 @@ export default function InsuranceTaxPost({ post, related = [], latest = [], sign
                 <Link href="/insurance" className="text-sm text-sky-600 hover:underline">View all</Link>
               </div>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {(related || []).slice(0, 9).map((it) => (
-                  <Link
-                    key={it.slug}
-                    href={`/insurance/${it.slug}`}
-                    className="block rounded-lg border p-3 hover:bg-gray-50 dark:hover:bg-gray-800"
-                  >
-                    {/* Thumbnail */}
-                    <img
-                      src={pickThumb(it)}
-                      alt={it.title}
-                      className="w-full h-40 object-cover rounded-md mb-3"
-                      loading="lazy"
-                    />
-                    {/* Date if available */}
-                    {(it.date || it.updatedAt) && (
-                      <div className="text-xs text-gray-500 mb-1">
-                        {it.date || it.updatedAt}
-                      </div>
-                    )}
-                    {/* Title */}
-                    <h4 className="font-medium mb-1">{it.title}</h4>
-                    {/* Full excerpt */}
+                {(related || []).slice(0, 6).map((it) => (
+                  <Link key={it.slug} href={`/insurance/${it.slug}`} className="block rounded-lg border p-3 hover:bg-gray-50 dark:hover:bg-gray-800">
+                    <img src={pickThumb(it)} alt={it.title} className="w-full h-40 object-cover rounded-md mb-2" loading="lazy" />
+                    <div className="font-medium">{it.title}</div>
                     {it.excerpt && (
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                        {stripHtml(it.excerpt)}
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-4">
+                        {stripHtml(it.excerpt).slice(0, 250)}
+                        {stripHtml(it.excerpt).length > 250 ? "…" : ""}
                       </p>
                     )}
-                    {/* Read more indicator */}
-                    <div className="text-sky-600 text-sm">Read more →</div>
                   </Link>
                 ))}
               </div>

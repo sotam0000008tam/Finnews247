@@ -33,7 +33,7 @@ function SideMiniItem({item}){const href=hrefMixed(item);const img=pickThumb(ite
 }
 
 export default function FidDetail({post,related=[],latest=[]}){
-  if(!post) return <div className="container mx-auto px-4 py-6"><h1 className="text-2xl font-bold mb-3">404 - Not Found</h1><p>The article you are looking for does not exist.</p></div>;
+  if(!post) return <div className="container mx-auto px-4 py-6 container-1600"><h1 className="text-2xl font-bold mb-3">404 - Not Found</h1><p>The article you are looking for does not exist.</p></div>;
   const cname={base:"/fidelity-crypto", title:"Fidelity Crypto"};
   const canonical=`https://www.finnews247.com${cname.base}/${post.slug}`;
   const pageTitle=`${post.title} | FinNews247`;
@@ -44,7 +44,7 @@ export default function FidDetail({post,related=[],latest=[]}){
 
   return(<>
     <NextSeo title={pageTitle} description={description} canonical={canonical} openGraph={{title:pageTitle,description,url:canonical,images:[{url:ogImage}]}}/>
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto px-4 py-6 container-1600">
       <nav className="text-sm text-gray-500 mb-4"><Link href="/">Home</Link><span className="mx-2">/</span><Link href={cname.base}>{cname.title}</Link><span className="mx-2">/</span><span className="text-gray-700 dark:text-gray-300 line-clamp-1">{post.title}</span></nav>
       <div className="grid md:grid-cols-12 gap-8">
         <article className="md:col-span-9">
@@ -64,30 +64,22 @@ export default function FidDetail({post,related=[],latest=[]}){
           {hero && (<div className="article-hero my-3"><img src={hero} alt={post.title} loading="lazy"/></div>)}
 
 
-          <div className="prose lg:prose-lg post-body" dangerouslySetInnerHTML={{__html:post.content||post.body||""}}/>
+          <div className="prose lg:prose-lg post-body" dangerouslySetInnerHTML={{ __html: post.content || post.body || "" }} />
 
 
           <div className="mt-8">
             <div className="flex items-center justify-between mb-3"><h3 className="text-lg font-semibold">More from {cname.title}</h3><Link href={cname.base} className="text-sm text-sky-600 hover:underline">View all</Link></div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {(related||[]).slice(0,9).map((it)=>(
+              {(related||[]).slice(0,6).map((it)=>(
                 <Link key={it.slug} href={hrefFid(it.slug)} className="block rounded-lg border p-3 hover:bg-gray-50 dark:hover:bg-gray-800">
-                  {/* Thumbnail */}
-                  <img src={pickThumb(it)} alt={it.title} className="w-full h-40 object-cover rounded-md mb-3" loading="lazy"/>
-                  {/* Date if available */}
-                  {(it.date || it.updatedAt) && (
-                    <div className="text-xs text-gray-500 mb-1">{it.date || it.updatedAt}</div>
-                  )}
-                  {/* Title */}
-                  <h4 className="font-medium mb-1">{it.title}</h4>
-                  {/* Full excerpt */}
+                  <img src={pickThumb(it)} alt={it.title} className="w-full h-40 object-cover rounded-md mb-2" loading="lazy"/>
+                  <div className="font-medium">{it.title}</div>
                   {it.excerpt && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                      {stripHtml(it.excerpt)}
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-4">
+                      {stripHtml(it.excerpt).slice(0, 250)}
+                      {stripHtml(it.excerpt).length > 250 ? "…" : ""}
                     </p>
                   )}
-                  {/* Read more indicator */}
-                  <div className="text-sky-600 text-sm">Read more →</div>
                 </Link>
               ))}
             </div>

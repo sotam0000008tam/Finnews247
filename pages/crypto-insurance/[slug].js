@@ -7,7 +7,7 @@ export default function InsuranceDetail({ post }) {
   const desc = post.excerpt;
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto px-4 py-6 container-1600">
       <NextSeo
         title={title}
         description={desc}

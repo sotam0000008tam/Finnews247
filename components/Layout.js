@@ -55,9 +55,12 @@ export default function Layout({ children, title }) {
       <Header />
 
       {/* Nội dung chính */}
+      {/* Main content area. Use the wider container-1600 class for all pages to match
+          the homepage layout. The is-article flag wraps posts in a post-scope so
+          we can target styles without constraining their width. */}
       <main
         className={[
-          "flex-1 container mx-auto px-4 lg:px-6 py-8",
+          "flex-1 container mx-auto px-4 lg:px-6 py-8 container-1600",
           isArticle ? "is-article" : "",
         ].join(" ")}
       >
@@ -78,10 +81,11 @@ export default function Layout({ children, title }) {
         /* Giữ bố cục gọn, trang dài hơn để Auto Ads có nhiều điểm chèn */
         /* Không ép container 1600px; để Tailwind container tự xử lý */
 
-        /* NỘI DUNG BÀI VIẾT: mở rộng bề rộng để tăng số đoạn văn,
-           giúp Auto Ads có thêm vị trí chèn quảng cáo.  60rem ≈ 960px. */
+        /* NỘI DUNG BÀI VIẾT: bỏ giới hạn độ rộng để nội dung sử dụng
+           toàn bộ chiều ngang cột bài viết.  Việc căn giữa đã được
+           xử lý bởi Tailwind container classes. */
         .post-scope .prose {
-          max-width: 60rem;
+          max-width: none;
           margin-left: auto;
           margin-right: auto;
         }
@@ -112,12 +116,10 @@ export default function Layout({ children, title }) {
           display: block !important;
         }
 
-        /* Các khối nội dung bài viết không có class 'post-scope'
-           nhưng có class 'post-body' (nhiều trang viết).  Bỏ giới
-           hạn width mặc định của Tailwind (max-w-3xl) và đặt lại
-           chiều rộng tối đa lớn hơn để tăng không gian cho quảng cáo. */
+        /* Các khối nội dung bài viết sử dụng class 'post-body' (nhiều trang viết).
+           Không giới hạn độ rộng để chúng có thể lấp đầy phần cột bài viết. */
         .post-body {
-          max-width: 60rem !important;
+          max-width: none !important;
           margin-left: auto !important;
           margin-right: auto !important;
         }

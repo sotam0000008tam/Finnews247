@@ -48,7 +48,7 @@ export default function ReviewDetail() {
   if (!review) return <p className="p-6">Review not found.</p>;
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto px-4 py-6 container-1600">
       <NextSeo
         title={`${review.title} | FinNews Reviews`}
         description={review.excerpt}
