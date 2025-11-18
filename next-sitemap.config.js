@@ -131,14 +131,14 @@ module.exports = {
       pushUrl(out, seen, loc, lastmodOf(it));
     }
 
-    // crypto-exchanges + fidelity
-    for (const it of [...readJsonSafe('cryptoexchanges.json'), ...readJsonSafe('fidelity.json')]) {
+    // crypto-exchanges + exchanges + fidelity
+    for (const it of [...readJsonSafe('cryptoexchanges.json'), ...readJsonSafe('exchanges.json'), ...readJsonSafe('fidelity.json')]) {
       const loc = buildPath('/crypto-exchanges', it.slug || it.path);
       pushUrl(out, seen, loc, lastmodOf(it));
     }
 
-    // best-crypto-apps
-    for (const it of readJsonSafe('bestapps.json')) {
+    // best-crypto-apps (bestapps + wallets)
+    for (const it of [...readJsonSafe('bestapps.json'), ...readJsonSafe('wallets.json')]) {
       const loc = buildPath('/best-crypto-apps', it.slug || it.path);
       pushUrl(out, seen, loc, lastmodOf(it));
     }

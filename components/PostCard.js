@@ -2,36 +2,59 @@
 import Link from "next/link";
 
 export default function PostCard({ post = {} }) {
-  let postUrl = `/${post.slug || ""}`;
+  const slug = post.slug || "";
+  let postUrl = `/${slug}`;
 
-  // Route mapping theo category (giữ nguyên như bạn)
-  if (post.category === "Fidelity Crypto") {
-    postUrl = `/fidelity-crypto/${post.slug}`;
-  } else if (post.category === "SEC Coin" || post.category === "Sec Coin") {
-    postUrl = `/sec-coin/${post.slug}`;
-  } else if (post.category === "Best Crypto Apps") {
-    postUrl = `/best-crypto-apps/${post.slug}`;
-  } else if (post.category === "Guides") {
-    postUrl = `/guides/${post.slug}`;
+  const cat = (post.category || "").toLowerCase();
+
+  // 1) Exchanges: gộp Fidelity Crypto + Crypto Exchanges → /crypto-exchanges
+  if (cat === "fidelity crypto" || cat === "crypto exchanges") {
+    postUrl = `/crypto-exchanges/${slug}`;
+
+  // 2) Altcoins: gộp SEC Coin + Altcoins → /altcoins
   } else if (
-    post.category === "Crypto Tax & Compliance" ||
-    post.category === "Crypto Insurance & Risk" ||
-    post.category === "insurance" // ép từ index.js
+    cat === "sec coin" ||
+    cat === "sec-coin" ||
+    cat === "seccoin" ||
+    cat === "altcoins"
   ) {
-    // Gộp Tax + Insurance về chung route /insurance
-    postUrl = `/insurance/${post.slug}`;
-  } else if (post.category === "Crypto Exchanges") {
-    postUrl = `/crypto-exchanges/${post.slug}`;
-  } else if (post.category === "Altcoins") {
-    postUrl = `/altcoins/${post.slug}`;
+    postUrl = `/altcoins/${slug}`;
+
+  // 3) Apps & Wallets → /best-crypto-apps
   } else if (
-    post.category === "Signals" ||
-    post.category === null ||
-    post.category === undefined
+    cat === "best crypto apps" ||
+    cat === "wallets" ||
+    cat === "crypto wallets"
   ) {
-    postUrl = `/signals/${post.slug}`;
-  } else if (post.category === "Wallets" || post.category === "Crypto Wallets") {
-    postUrl = `/best-crypto-apps/${post.slug}`;
+    postUrl = `/best-crypto-apps/${slug}`;
+
+  // 4) Guides & Reviews → /guides
+  } else if (cat === "guides" || cat === "reviews") {
+    postUrl = `/guides/${slug}`;
+
+  // 5) Insurance & Tax → /insurance (1 nhóm)
+  } else if (
+    cat === "crypto tax & compliance" ||
+    cat === "crypto insurance & risk" ||
+    cat === "insurance" ||
+    cat === "tax"
+  ) {
+    postUrl = `/insurance/${slug}`;
+
+  // 6) Crypto & Market (news / market / economy / stocks / crypto) → /crypto-market
+  } else if (
+    cat === "crypto market" ||
+    cat === "market" ||
+    cat === "news" ||
+    cat === "economy" ||
+    cat === "stocks" ||
+    cat === "crypto"
+  ) {
+    postUrl = `/crypto-market/${slug}`;
+
+  // 7) Signals hoặc không có category
+  } else if (cat === "signals" || !post.category) {
+    postUrl = `/signals/${slug}`;
   }
 
   return (
@@ -51,7 +74,9 @@ export default function PostCard({ post = {} }) {
         <div className="text-xs text-gray-500 mb-2">{post.date}</div>
 
         <h3 className="text-lg font-semibold mb-2">
-          <Link href={postUrl} className="hover:underline">{post.title}</Link>
+          <Link href={postUrl} className="hover:underline">
+            {post.title}
+          </Link>
         </h3>
 
         {post.excerpt && (
@@ -60,7 +85,9 @@ export default function PostCard({ post = {} }) {
           </p>
         )}
 
-        <Link href={postUrl} className="text-sky-600 hover:underline text-sm">Read more →</Link>
+        <Link href={postUrl} className="text-sky-600 hover:underline text-sm">
+          Read more →
+        </Link>
       </div>
     </article>
   );
