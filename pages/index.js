@@ -226,7 +226,11 @@ export default function Home({
 }
 
 /** SSG + ISR: build tĩnh và tái tạo định kỳ → giảm serverless request */
-export async function getStaticProps() {
+// Changed from getStaticProps (SSG + ISR) to getServerSideProps (SSR)
+// to ensure that updates to JSON data (in /data) are reflected immediately
+// without needing to rebuild the entire Next.js project. By using
+// getServerSideProps, the data is read at request time from the filesystem.
+export async function getServerSideProps() {
   const SECTION_COUNTS = {
     altcoins: 8,
     exchanges: 8,
@@ -298,6 +302,5 @@ export async function getStaticProps() {
       guidePosts,
       latestAll,
     },
-    revalidate: 900,
   };
 }
