@@ -6,7 +6,7 @@
     "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start -p 3000",
-    "postbuild": "next-sitemap && node ./fn247-gen-image-sitemap.js"
+    "postbuild": "node ./fn247-gen-image-sitemap.js"
   },
   "dependencies": {
     "lucide-react": "^0.543.0",
