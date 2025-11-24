@@ -6,13 +6,6 @@ Disallow: /admin/
 Disallow: /api/
 Allow: /ads.txt
 
-# Google ads-related crawlers
-User-agent: AdsBot-Google
-Allow: /ads.txt
-
-User-agent: Mediapartners-Google
-Allow: /ads.txt
-
 # Sitemap index
 Sitemap: https://www.finnews247.com/sitemap.xml
 Sitemap: https://www.finnews247.com/image-sitemap.xml
