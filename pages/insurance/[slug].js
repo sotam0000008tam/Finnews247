@@ -1,6 +1,9 @@
 // pages/insurance/[slug].jsx
 import ArticleSeo from "../../components/ArticleSeo";
 import ArticleHero from "../../components/ArticleHero";
+// Bring in risk disclaimer and table of contents
+import RiskDisclaimer from "../../components/RiskDisclaimer";
+import TableOfContents from "../../components/TableOfContents";
 import fs from "fs";
 import path from "path";
 import Link from "next/link";
@@ -172,6 +175,10 @@ export default function InsuranceTaxPost({ post, related = [], latest = [], sign
             </div>
 
             {hero && <ArticleHero src={hero} alt={post.title} />}
+
+            {/* Insert disclaimer and table of contents */}
+            <RiskDisclaimer />
+            <TableOfContents />
 
 
             <div

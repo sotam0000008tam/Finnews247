@@ -47,7 +47,10 @@ export default function PrivacyPolicy() {
         <li>Provide and personalise our services, including delivering trading signals and content.</li>
         <li>Analyse site usage to enhance performance and user experience.</li>
         <li>Communicate with you about updates, newsletters or promotional offers (with your consent).</li>
-        <li>Display relevant advertisements through Google AdSense and other ad networks.</li>
+        <li>
+          Display relevant advertisements through third‑party ad networks (for example,
+          Mediavine) that may serve personalised or contextually relevant ads.
+        </li>
         <li>Prevent fraudulent activity and ensure the security of our platform.</li>
       </ul>
       <h2 className="text-2xl font-semibold mt-4">Cookies and Tracking</h2>

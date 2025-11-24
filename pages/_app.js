@@ -12,7 +12,8 @@ import AutoAdsRescan from "../components/AutoAdsRescan";
 export default function App({ Component, pageProps }) {
   const router = useRouter();
 
-  // GA4 page_view cho SPA (chỉ GA4; AutoAdsRescan sẽ lo phần AdSense)
+  // GA4 page_view for SPA.  We only send GA4 events here; the AutoAdsRescan
+  // component has been disabled and does not handle ad injection anymore.
   useEffect(() => {
     const handleRouteChange = (url) => {
       if (window.gtag) {
@@ -56,7 +57,7 @@ export default function App({ Component, pageProps }) {
       {/* SEO mặc định */}
       <DefaultSeo {...SEO} />
 
-      {/* Auto Ads re-scan cho toàn site (SPA) */}
+      {/* Placeholder for dynamic ad re‑scanning (currently disabled) */}
       <AutoAdsRescan />
 
       {/* Layout chung */}

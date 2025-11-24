@@ -1,4 +1,7 @@
 import { NextSeo } from "next-seo";
+// Import risk disclaimer and table of contents to display for crypto-insurance posts
+import RiskDisclaimer from "../../components/RiskDisclaimer";
+import TableOfContents from "../../components/TableOfContents";
 
 export default function InsuranceDetail({ post }) {
   if (!post) return <p className="p-6">Post not found.</p>;
@@ -23,9 +26,14 @@ export default function InsuranceDetail({ post }) {
       <h1 className="text-2xl font-bold mb-4">{post.title}</h1>
       <p className="text-gray-600 mb-6">{post.date}</p>
 
-      {/* Nội dung chi tiết */}
+      {/* Insert risk disclaimer and table of contents to improve transparency and navigation */}
+      <RiskDisclaimer />
+      <TableOfContents />
+
+      {/* Nội dung chi tiết: attach the 'post-body' class so the
+          TableOfContents component can scan headings within this article. */}
       <div
-        className="prose dark:prose-invert"
+        className="prose dark:prose-invert post-body"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
 

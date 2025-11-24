@@ -1,6 +1,9 @@
 ﻿// pages/crypto-market/[slug].jsx
 import ArticleSeo from "../../components/ArticleSeo";
 import ArticleHero from "../../components/ArticleHero";
+// Import risk disclaimer and table of contents to satisfy Mediavine requirements
+import RiskDisclaimer from "../../components/RiskDisclaimer";
+import TableOfContents from "../../components/TableOfContents";
 import fs from "fs";
 import path from "path";
 import Link from "next/link";
@@ -213,6 +216,10 @@ export default function MarketPostPage({ post, related = [], latest = [], signal
 
             {/* HERO */}
             {hero && <ArticleHero src={hero} alt={post.title} />}
+
+            {/* Inject a risk disclaimer and in‑page table of contents for better UX */}
+            <RiskDisclaimer />
+            <TableOfContents />
 
 
             {/* Content */}

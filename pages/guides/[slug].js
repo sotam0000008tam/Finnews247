@@ -1,6 +1,9 @@
 // pages/guides/[slug].jsx
 import ArticleSeo from "../../components/ArticleSeo";
 import ArticleHero from "../../components/ArticleHero";
+// Import risk disclaimer and TableOfContents for compliance
+import RiskDisclaimer from "../../components/RiskDisclaimer";
+import TableOfContents from "../../components/TableOfContents";
 import fs from "fs";
 import path from "path";
 import Link from "next/link";
@@ -212,6 +215,10 @@ export default function GuidesPostPage({ post, related = [], latest = [], signal
 
             {/* HERO */}
             {hero && <ArticleHero src={hero} alt={post.title} />}
+
+            {/* Show risk disclaimer and table of contents */}
+            <RiskDisclaimer />
+            <TableOfContents />
 
 
             {/* Content */}

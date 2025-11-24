@@ -72,6 +72,8 @@ import TopExchanges from "../../components/TopExchanges";
 import BestWallets from "../../components/BestWallets";
 import TopStaking from "../../components/TopStaking";
 import PostCard from "../../components/PostCard";
+// Import risk disclaimer to show a standard warning on the signals landing page
+import RiskDisclaimer from "../../components/RiskDisclaimer";
 
 export default function SignalsPage({ signals = [], latest = [] }) {
   return (
@@ -97,6 +99,8 @@ export default function SignalsPage({ signals = [], latest = [] }) {
               <p className="text-sm text-gray-600 mt-1">
                 Explore the latest cryptocurrency trading signals with clear entry, target, and stoploss levels.
               </p>
+              {/* Show a risk disclaimer immediately below the introductory copy */}
+              <RiskDisclaimer />
             </div>
 
             {signals.length === 0 ? (
@@ -112,7 +116,8 @@ export default function SignalsPage({ signals = [], latest = [] }) {
               /*
                * Hiển thị tín hiệu dưới dạng các thẻ bài lớn giống trang index.
                * Mỗi thẻ bao gồm ảnh, tiêu đề, đoạn trích và liên kết tới trang tín hiệu.
-               * Sử dụng PostCard để tăng chiều cao nội dung, giúp Google Auto Ads nhận diện nhiều vị trí hơn.
+               * Sử dụng PostCard để tăng chiều cao nội dung, giúp các mạng quảng cáo tự động
+               * nhận diện nhiều vị trí hơn mà không ảnh hưởng tới trải nghiệm người đọc.
                */
               <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {signals.map((s) => {

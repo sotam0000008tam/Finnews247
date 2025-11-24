@@ -20,8 +20,9 @@ function readJsonSafe(fileName) {
 }
 
 // Lấy slug từ 1 item trong JSON
+// (signals dùng id, các group khác dùng slug/path)
 function getSlug(item) {
-  const raw = item?.slug || item?.path || "";
+  const raw = item?.slug || item?.path || item?.id || "";
   return String(raw).replace(/^\/+/, "").trim();
 }
 
@@ -53,6 +54,9 @@ function escapeXml(str = "") {
 // Định nghĩa các nhóm chính của bạn
 // LƯU Ý: chỉnh lại file JSON cho đúng với /data của bạn
 const SECTION_CONFIG = [
+  // Trading Signals
+  { file: "signals.json", basePath: "/signals" },
+
   // Altcoin Analysis
   { file: "altcoins.json", basePath: "/altcoins" },
 
@@ -73,7 +77,7 @@ const SECTION_CONFIG = [
 
   // Guides & Reviews
   { file: "guides.json", basePath: "/guides" },
-  { file: "reviews.json", basePath: "/guides" },
+  { file: "reviews.json", basePath: "/guides" }, // hiện tại reviews.json chưa có thì cũng không sao
 ];
 
 // Các trang tĩnh cố định
@@ -83,6 +87,7 @@ const STATIC_PATHS = [
   "/contact",
   "/privacy",
   "/terms",
+  "/signals",
   "/altcoins",
   "/crypto-exchanges",
   "/best-crypto-apps",

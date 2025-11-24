@@ -3,6 +3,9 @@ import fs from "fs";
 import path from "path";
 import Link from "next/link";
 import { NextSeo } from "next-seo";
+// Import components for risk disclaimer and table of contents
+import RiskDisclaimer from "../../components/RiskDisclaimer";
+import TableOfContents from "../../components/TableOfContents";
 
 /* ===== Helpers ===== */
 const stripHtml = (html = "") =>
@@ -170,6 +173,10 @@ export default function TaxPost({ post, related = [], latest = [] }) {
                 <img src={hero} alt={post.title} loading="lazy" />
               </div>
             )}
+
+            {/* Add risk disclaimer and table of contents before the article body */}
+            <RiskDisclaimer />
+            <TableOfContents />
 
 
             {/* Content */}

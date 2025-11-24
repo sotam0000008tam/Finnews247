@@ -4,6 +4,9 @@ import path from "path";
 import Link from "next/link";
 import ArticleSeo from "../../components/ArticleSeo";
 import ArticleHero from "../../components/ArticleHero";
+// Import risk disclaimer and table of contents for Mediavine compliance
+import RiskDisclaimer from "../../components/RiskDisclaimer";
+import TableOfContents from "../../components/TableOfContents";
 
 /* ===== Helpers (đồng bộ mẫu Altcoin) ===== */
 const stripHtml = (html = "") =>
@@ -216,6 +219,10 @@ export default function ExchangesPostPage({ post, related = [], latest = [], sig
 
             {/* ✅ HERO tối ưu LCP */}
             {hero && <ArticleHero src={hero} alt={post.title} />}
+
+            {/* Display disclaimer and Table of Contents */}
+            <RiskDisclaimer />
+            <TableOfContents />
 
 
             {/* Content */}

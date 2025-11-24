@@ -12,20 +12,10 @@ export default function Document() {
         />
         <meta name="robots" content="max-image-preview:large" />
 
-        {/* Preconnect giúp tải AdSense nhanh hơn (không bắt buộc) */}
-        <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossOrigin="" />
-        <link rel="preconnect" href="https://googleads.g.doubleclick.net" crossOrigin="" />
-        <link rel="preconnect" href="https://tpc.googlesyndication.com" crossOrigin="" />
-
-        {/* AdSense Auto Ads — chỉ chèn 1 lần trong toàn site */}
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5515217135736755"
-          crossOrigin="anonymous"
-        ></script>
-        <meta name="google-adsense-account" content="ca-pub-5515217135736755" />
-
-        {/* Có thể thêm các meta khác tại đây nếu cần */}
+        {/* 
+          Đặt thêm các thẻ <meta> hoặc <link> dùng chung cho toàn site tại đây.
+        
+        */}
       </Head>
       <body>
         <Main />

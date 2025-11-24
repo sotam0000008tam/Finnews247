@@ -20,10 +20,12 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    // Header sits underneath the ticker.  Removing the `sticky` and `top`
-    // classes allows Google AdSense to show top anchor ads, which
-    // improves overall ad density.  We keep the relative positioning
-    // and z-index so the header still layers correctly.
+    /*
+      The header sits underneath the ticker.  We avoid using sticky positioning so the
+      ticker and header layer correctly while leaving room for any future ad networks
+      to place top anchor ads.  Relative positioning with a high z-index ensures
+      the header always appears above the page content.
+    */
     <header className="relative w-full bg-white dark:bg-gray-900 shadow-sm z-50">
       <div className="container 2xl:max-w-[1600px] mx-auto px-4 lg:px-6">
         {/* Header thấp: giảm py và gap */}

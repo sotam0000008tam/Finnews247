@@ -3,6 +3,9 @@ import fs from "fs";
 import path from "path";
 import Link from "next/link";
 import { NextSeo } from "next-seo";
+// Import risk disclaimer and table of contents components
+import RiskDisclaimer from "../../components/RiskDisclaimer";
+import TableOfContents from "../../components/TableOfContents";
 
 /* Helpers */
 const stripHtml=(h="")=>String(h).replace(/<script[\s\S]*?<\/script>/gi,"").replace(/<style[\s\S]*?<\/style>/gi,"").replace(/<[^>]+>/g," ").replace(/\s+/g," ").trim();
@@ -64,6 +67,9 @@ export default function TaxDetail({post,related=[],latest=[]}) {
 
           {hero && (<div className="article-hero my-3"><img src={hero} alt={post.title} loading="lazy"/></div>)}
 
+          {/* Insert a risk disclaimer and table of contents before the article body */}
+          <RiskDisclaimer />
+          <TableOfContents />
 
           <div className="prose lg:prose-lg post-body max-w-none" dangerouslySetInnerHTML={{__html:post.content||post.body||""}}/>
 

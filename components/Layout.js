@@ -43,13 +43,14 @@ export default function Layout({ children, title }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {/* Ticker placed statically instead of fixed.  This allows
-          Google top anchor ads to appear. */}
+      {/* The ticker is placed statically instead of being fixed.  This layout leaves
+          room for any future top anchor ads that may be inserted by ad networks,
+          and avoids the need for spacer elements to offset subsequent content. */}
       <div className="w-full">
         <CryptoTicker />
       </div>
-      {/* Since the ticker is no longer fixed, we do not need an
-          invisible spacer to offset subsequent content. */}
+      {/* Since the ticker is no longer fixed, we do not need an invisible spacer to
+          offset subsequent content. */}
 
       {/* Header */}
       <Header />
@@ -78,7 +79,9 @@ export default function Layout({ children, title }) {
           line-height: 1.6;
         }
 
-        /* Giữ bố cục gọn, trang dài hơn để Auto Ads có nhiều điểm chèn */
+        /* Keep the layout tidy; a longer page allows ad networks to insert
+           advertisements in more positions without breaking the reading
+           experience. */
         /* Không ép container 1600px; để Tailwind container tự xử lý */
 
         /* NỘI DUNG BÀI VIẾT: bỏ giới hạn độ rộng để nội dung sử dụng

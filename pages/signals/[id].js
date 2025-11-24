@@ -3,6 +3,9 @@ import { NextSeo } from "next-seo";
 import Link from "next/link";
 import Script from "next/script";
 import { useState } from "react";
+// Pull in the RiskDisclaimer component so each signal page clearly
+// communicates that trading information is not financial advice.
+import RiskDisclaimer from "../../components/RiskDisclaimer";
 
 /* ================= Const & helpers (shared) ================= */
 const BASE = "https://www.finnews247.com";
@@ -334,6 +337,11 @@ export default function SignalDetailPage({
             {date && <p className="text-gray-600 mt-1">{date}</p>}
             {excerpt && <p className="mt-2">{fixMojibake(excerpt)}</p>}
           </header>
+
+          {/* Insert a standard risk disclaimer immediately after the header.  This ensures
+              visitors understand the speculative nature of trading signals before
+              viewing any entry, target or stoploss levels. */}
+          <RiskDisclaimer />
 
           {/* Levels */}
           <div className="grid md:grid-cols-3 gap-4 mb-6">

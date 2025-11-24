@@ -1,6 +1,8 @@
 // pages/reviews/[slug].js
 import { useRouter } from "next/router";
 import { NextSeo } from "next-seo";
+// Import the shared risk disclaimer so reviews include a standard warning
+import RiskDisclaimer from "../../components/RiskDisclaimer";
 
 // Demo data (sau này bạn có thể chuyển ra JSON riêng)
 const reviews = {
@@ -87,9 +89,11 @@ export default function ReviewDetail() {
           </ul>
         </div>
 
-        {/* Ads-ready slot */}
+        {/* A placeholder for an ad slot was here.  Since the site is migrating
+            to Mediavine and no longer uses that advertising network, remove the slot
+            entirely to keep the layout clean. */}
         <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg flex items-center justify-center">
-          <span className="text-gray-500 text-sm">[Google AdSense slot here]</span>
+          {/* Intentionally left blank – ad slots are managed by Mediavine once approved. */}
         </div>
       </div>
 
@@ -97,10 +101,8 @@ export default function ReviewDetail() {
       <div className="prose dark:prose-invert max-w-3xl mt-6">
         <p>{review.content}</p>
       </div>
-
-      <div className="mt-6 p-3 bg-yellow-100 text-yellow-900 text-sm rounded">
-        ⚠️ <b>Disclaimer:</b> This review is for informational purposes only and not financial advice.
-      </div>
+      {/* Display a consistent risk disclaimer across all review pages */}
+      <RiskDisclaimer />
     </div>
   );
 }

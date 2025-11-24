@@ -4,6 +4,9 @@ import path from "path";
 import Link from "next/link";
 import ArticleSeo from "../../components/ArticleSeo";
 import ArticleHero from "../../components/ArticleHero";
+// Import risk disclaimer and table of contents to improve credibility and navigation
+import RiskDisclaimer from "../../components/RiskDisclaimer";
+import TableOfContents from "../../components/TableOfContents";
 
 /* ===== Helpers ===== */
 const stripHtml = (html = "") =>
@@ -215,6 +218,10 @@ export default function BestAppsPostPage({ post, related = [], latest = [], sign
 
             {/* ✅ HERO tối ưu LCP */}
             {hero && <ArticleHero src={hero} alt={post.title} />}
+
+            {/* Display risk disclaimer and Table of Contents */}
+            <RiskDisclaimer />
+            <TableOfContents />
 
 
             {/* Content */}

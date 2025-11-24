@@ -1,6 +1,9 @@
 ﻿// pages/altcoins/[slug].jsx
 import ArticleSeo from "../../components/ArticleSeo";
 import ArticleHero from "../../components/ArticleHero";
+// Import risk disclaimer and table of contents to improve user trust and navigation
+import RiskDisclaimer from "../../components/RiskDisclaimer";
+import TableOfContents from "../../components/TableOfContents";
 import fs from "fs";
 import path from "path";
 import Link from "next/link";
@@ -221,6 +224,10 @@ export default function AltcoinsPostPage({ post, related = [], latest = [], sign
 
             {/* ✅ Hero tối ưu LCP/CLS */}
             {hero && <ArticleHero src={hero} alt={post.title} />}
+
+            {/* Display a clear risk disclaimer and generate an in‑page table of contents. */}
+            <RiskDisclaimer />
+            <TableOfContents />
 
 
             <div
