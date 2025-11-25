@@ -7,7 +7,7 @@ import ThemeToggle from "./ThemeToggle";
 // Menu đúng tên & thứ tự như file gốc
 const NAV_ITEMS = [
   { href: "/", label: "Home" },
-  { href: "/signals", label: "Trading Signals" },
+  
   { href: "/altcoins", label: "Altcoin Analysis" },
   { href: "/crypto-exchanges", label: "Exchanges" },
   { href: "/best-crypto-apps", label: "Apps & Wallets" },

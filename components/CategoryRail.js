@@ -2,7 +2,7 @@
 import Link from "next/link";
 
 const CATS = [
-  { href: "/signals", label: "Trading Signals" },
+  
   { href: "/altcoins", label: "Altcoin Analysis" },
   { href: "/crypto-exchanges", label: "Exchanges" },
   { href: "/best-crypto-apps", label: "Apps & Wallets" },

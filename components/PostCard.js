@@ -54,7 +54,6 @@ export default function PostCard({ post = {} }) {
 
   // 7) Signals hoặc không có category
   } else if (cat === "signals" || !post.category) {
-    postUrl = `/signals/${slug}`;
   }
 
   return (

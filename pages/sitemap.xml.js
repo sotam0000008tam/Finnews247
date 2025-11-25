@@ -55,7 +55,6 @@ function escapeXml(str = "") {
 // LƯU Ý: chỉnh lại file JSON cho đúng với /data của bạn
 const SECTION_CONFIG = [
   // Trading Signals
-  { file: "signals.json", basePath: "/signals" },
 
   // Altcoin Analysis
   { file: "altcoins.json", basePath: "/altcoins" },
@@ -87,7 +86,6 @@ const STATIC_PATHS = [
   "/contact",
   "/privacy",
   "/terms",
-  "/signals",
   "/altcoins",
   "/crypto-exchanges",
   "/best-crypto-apps",

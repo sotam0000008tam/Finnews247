@@ -115,13 +115,11 @@ module.exports = {
     // Trang chính
     [
       '/', '/about', '/contact', '/privacy', '/terms',
-      '/signals', '/altcoins', '/crypto-exchanges',
       '/best-crypto-apps', '/insurance', '/crypto-market', '/guides',
     ].forEach(p => pushUrl(out, seen, p));
 
     // signals
     for (const it of readJsonSafe('signals.json')) {
-      const loc = buildPath('/signals', it.slug || it.id);
       pushUrl(out, seen, loc, lastmodOf(it));
     }
 

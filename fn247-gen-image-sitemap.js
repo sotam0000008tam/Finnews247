@@ -104,7 +104,6 @@ function addEntries(out, base, items) {
   addEntries(chunks, '/best-crypto-apps', readJsonSafe('bestapps.json'));
   addEntries(chunks, '/insurance', readJsonSafe('insurance.json'));
   addEntries(chunks, '/guides', readJsonSafe('guides.json'));
-  addEntries(chunks, '/signals', readJsonSafe('signals.json'));
 
   const xml = [header, ...chunks, '</urlset>'].join('\n');
   fs.writeFileSync(path.join(process.cwd(), 'public', 'image-sitemap.xml'), xml, 'utf8');

@@ -17,7 +17,8 @@ export default function Footer() {
           <div className="min-w-0 md:justify-self-center text-center">
             <h4 className="text-lg font-semibold text-white mb-4">Categories</h4>
             <ul className="list-none m-0 p-0 space-y-2 text-sm md:text-center">
-              <li><Link href="/signals">Trading Signals</Link></li>
+              <li>
+</li>
               <li><Link href="/altcoins">Altcoin Analysis</Link></li>
               <li><Link href="/crypto-exchanges">Exchanges</Link></li>
               <li><Link href="/best-crypto-apps">Apps & Wallets</Link></li>

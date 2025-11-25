@@ -133,12 +133,13 @@ export default function Home({
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
         {/* Sidebar (trái) — nhỏ lại: span 3 */}
         <aside className="md:col-span-3 w-full space-y-6">
-          <TradingSignalsBoxMini />
+          {/* Latest toàn site (có thumbnail) — đưa lên đầu sidebar */}
+          <LatestMini items={latestAll} />
+
+          {/* Các box promo còn lại */}
           <TopExchanges variant="sidebar" />
           <BestWallets variant="sidebar" />
           <TopStaking variant="sidebar" />
-          {/* Latest toàn site (có thumbnail) */}
-          <LatestMini items={latestAll} />
         </aside>
 
         {/* Main (phải) — to hơn: span 9 */}

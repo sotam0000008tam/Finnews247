@@ -70,52 +70,13 @@ const typeColor = (t = "") =>
     ? "bg-green-100 text-green-700 ring-green-200"
     : "bg-red-100 text-red-700 ring-red-200";
 
-function TradingSignalsCompact({ items = [] }) {
-  return (
-    <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
-      <div className="px-4 py-3 border-b dark:border-gray-800">
-        <h3 className="text-sm font-semibold">📈 Trading Signals</h3>
-      </div>
-
-      {items.length === 0 ? (
-        <div className="px-4 py-3 text-xs text-gray-500">No signals.</div>
-      ) : (
-        <ul className="divide-y dark:divide-gray-800">
-          {items.map((s) => (
-            <li key={s.id}>
-              <Link
-                href={`/signals/${s.id}`}
-                className="block px-3 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-medium truncate">
-                    {s.pair || s.title}
-                  </span>
-                  <span
-                    className={`text-[10px] px-2 py-0.5 rounded-full ring-1 ${typeColor(s.type)}`}
-                  >
-                    {prettyType(s.type)}
-                  </span>
-                  {s.date && (
-                    <span className="ml-auto text-[11px] text-gray-500">
-                      {s.date}
-                    </span>
-                  )}
-                </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      <div className="px-3 py-2">
-        <Link href="/signals" className="text-sm text-sky-600 hover:underline">
-          View all signals →
-        </Link>
-      </div>
-    </section>
-  );
+function TradingSignalsCompact({ items = [] } = {}) {
+  // Trading signals đã được tắt (không còn hiển thị).
+  // Giữ component để tránh phải sửa JSX phía dưới.
+  return null;
 }
+
+
 
 /* Sidebar mini item (45x45) */
 function SideMiniItem({ item }) {
