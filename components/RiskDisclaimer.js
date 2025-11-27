@@ -10,13 +10,7 @@ export default function RiskDisclaimer() {
   return (
     <div className="p-4 my-4 rounded border border-yellow-200 bg-yellow-50 dark:bg-yellow-900 text-yellow-900 dark:text-yellow-200 text-sm">
       <span className="font-bold">⚠ Risk Disclaimer:</span>{" "}
-      All information provided on FinNews247, including trading signals,
-      analyses and reviews, is for informational and educational purposes
-      only and does not constitute financial advice. Investing in
-      cryptocurrencies or other financial instruments involves significant
-      risk, including the potential loss of your entire investment. Always
-      conduct your own research or consult with a qualified financial
-      professional before making any investment decisions.
+      All information provided on FinNews247, including market analysis, data, opinions and reviews, is for informational and educational purposes only and should not be considered financial, investment, legal or tax advice. The crypto and financial markets are highly volatile and you can lose some or all of your capital. Nothing on this site constitutes a recommendation to buy, sell or hold any asset, or to follow any particular strategy. Always conduct your own research and, where appropriate, consult a qualified professional before making investment decisions. FinNews247 and its contributors are not responsible for any losses or actions taken based on the information provided on this website.
     </div>
   );
 }

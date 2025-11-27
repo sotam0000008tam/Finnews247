@@ -4,7 +4,7 @@ const siteUrl = 'https://www.finnews247.com';
 export default {
   titleTemplate: '%s | FinNews247',
   defaultTitle: 'FinNews247',
-  description: 'Crypto news, analysis, and trading signals.',
+  description: 'Crypto market news, altcoin analysis, exchange and wallet reviews, and guides for investors and traders.',
   canonical: siteUrl,
   openGraph: {
     type: 'website',

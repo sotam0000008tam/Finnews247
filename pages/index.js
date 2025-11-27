@@ -14,16 +14,19 @@ function parseDate(d) {
   const t = Date.parse(d);
   return isNaN(t) ? 0 : t;
 }
+
 function extractFirstImage(html = "") {
   const m = html?.match?.(/<img[^>]+src=["']([^"']+)["']/i);
   return m ? m[1] : null;
 }
+
 function pickThumb(p) {
   if (p?.thumb) return p.thumb;
   if (p?.ogImage) return p.ogImage;
   if (p?.image) return p.image;
   return extractFirstImage(p?.content || p?.body || "") || "/images/dummy/altcoins64.jpg";
 }
+
 // tạo url an toàn theo _cat hoặc category
 function hrefOf(p) {
   const slug = p?.slug;
@@ -59,7 +62,10 @@ function LatestMini({ items = [] }) {
           const img = pickThumb(p);
           return (
             <li key={(p.slug || p.title) + "-latest"}>
-              <Link href={href} className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+              <Link
+                href={href}
+                className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+              >
                 <img
                   src={img}
                   alt={p?.title || "post"}
@@ -95,13 +101,14 @@ export default function Home({
   guidePosts,
   latestAll,
 }) {
+  // Tagline mới: FinNews247 – Crypto Market News & Analysis
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: "FinNews247 - Crypto Trading Signals & Market Coverage",
+    name: "FinNews247 – Crypto Market News & Analysis",
     url: "https://www.finnews247.com/",
     description:
-      "FinNews247 provides professional finance coverage with a focus on crypto trading signals, entry, target, stoploss, plus updates on cryptocurrencies, stocks, economy, and global markets.",
+      "FinNews247 provides professional coverage of the crypto market with news, altcoin and exchange analysis, app and wallet reviews, plus updates on stocks, the economy and global markets.",
     publisher: {
       "@type": "Organization",
       name: "FinNews247",
@@ -113,13 +120,13 @@ export default function Home({
   return (
     <>
       <NextSeo
-        title="FinNews247 - Crypto Trading Signals & Market Coverage"
-        description="Stay updated with reliable crypto trading signals (entry, target, stoploss) and market insights across cryptocurrencies, stocks, economy, and global markets."
+        title="FinNews247 – Crypto Market News & Analysis"
+        description="Stay updated with crypto market news, in-depth altcoin and exchange analysis, app and wallet reviews, plus coverage of stocks, the economy and global markets."
         canonical="https://www.finnews247.com/"
         openGraph={{
-          title: "FinNews247 - Crypto Trading Signals & Market Coverage",
+          title: "FinNews247 – Crypto Market News & Analysis",
           description:
-            "FinNews247 delivers professional finance coverage with crypto trading signals, stock updates, economy, and market news.",
+            "FinNews247 delivers professional finance coverage with crypto news, altcoin analysis, exchange insights, app and wallet reviews, and broader market updates.",
           url: "https://www.finnews247.com/",
           images: [{ url: "https://www.finnews247.com/logo.png" }],
         }}
@@ -201,7 +208,7 @@ export default function Home({
                 <PostCard key={p.slug} post={{ ...p, href: `/${p.slug}` }} />
               ))}
             </div>
-            
+
             <div className="mt-4">
               <Link href="/crypto-market" className="text-sky-600 hover:underline text-sm">
                 View all Market News →
@@ -226,11 +233,7 @@ export default function Home({
   );
 }
 
-/** SSG + ISR: build tĩnh và tái tạo định kỳ → giảm serverless request */
-// Changed from getStaticProps (SSG + ISR) to getServerSideProps (SSR)
-// to ensure that updates to JSON data (in /data) are reflected immediately
-// without needing to rebuild the entire Next.js project. By using
-// getServerSideProps, the data is read at request time from the filesystem.
+/** SSR: đọc JSON mỗi lần request để luôn cập nhật */
 export async function getServerSideProps() {
   const SECTION_COUNTS = {
     altcoins: 8,
