@@ -5,18 +5,22 @@ export default function Document() {
   return (
     <Html lang="vi">
       <Head>
-        {/* Ezoic domain verification */}
-        <meta
-          name="ezoic-site-verification"
-          content="X6ThJDF0csGSQJYlS2FqZcnD7hBSzm"
-        />
-
         {/* Viewport + tối ưu hiển thị */}
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, viewport-fit=cover"
         />
         <meta name="robots" content="max-image-preview:large" />
+
+        {/* Site verifications */}
+        <meta
+          name="ezoic-site-verification"
+          content="X6ThJDF0csGSQJYlS2FqZcnD7hBSzm"
+        />
+        <meta
+          name="coinzilla"
+          content="03663c7dfaaa9339ce67204520a48640"
+        />
 
         {/* Ezoic Privacy Scripts */}
         <script
@@ -38,10 +42,6 @@ export default function Document() {
             `,
           }}
         />
-
-        {/* 
-          Đặt thêm các thẻ <meta> hoặc <link> dùng chung cho toàn site tại đây.
-        */}
       </Head>
       <body>
         <Main />
