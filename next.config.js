@@ -6,6 +6,13 @@ const nextConfig = {
 
   async redirects() {
     return [
+      // ---- NEW: Ezoic ads.txt redirect ----
+      {
+        source: '/ads.txt',
+        destination: 'https://srv.adstxtmanager.com/19390/finnews247.com',
+        permanent: true,
+      },
+
       // ---- NEW: hợp nhất sitemap cũ → sitemap mới (duy nhất) ----
       { source: '/sitemap-:n.xml', destination: '/sitemap.xml', permanent: true },
       { source: '/sitemap-index.xml', destination: '/sitemap.xml', permanent: true },
