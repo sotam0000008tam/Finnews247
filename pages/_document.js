@@ -5,6 +5,12 @@ export default function Document() {
   return (
     <Html lang="vi">
       <Head>
+        {/* Ezoic domain verification */}
+        <meta
+          name="ezoic-site-verification"
+          content="X6ThJDF0csGSQJYlS2FqZcnD7hBSzm"
+        />
+
         {/* Viewport + tối ưu hiển thị */}
         <meta
           name="viewport"
