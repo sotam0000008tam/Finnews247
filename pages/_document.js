@@ -12,9 +12,29 @@ export default function Document() {
         />
         <meta name="robots" content="max-image-preview:large" />
 
+        {/* Ezoic Privacy Scripts */}
+        <script
+          src="https://cmp.gatekeeperconsent.com/min.js"
+          data-cfasync="false"
+        />
+        <script
+          src="https://the.gatekeeperconsent.com/cmp.min.js"
+          data-cfasync="false"
+        />
+
+        {/* Ezoic Header Script */}
+        <script async src="//www.ezojs.com/ezoic/sa.min.js" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.ezstandalone = window.ezstandalone || {};
+              ezstandalone.cmd = ezstandalone.cmd || [];
+            `,
+          }}
+        />
+
         {/* 
           Đặt thêm các thẻ <meta> hoặc <link> dùng chung cho toàn site tại đây.
-        
         */}
       </Head>
       <body>
