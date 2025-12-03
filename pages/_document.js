@@ -12,36 +12,12 @@ export default function Document() {
         />
         <meta name="robots" content="max-image-preview:large" />
 
-        {/* Site verifications */}
-        <meta
-          name="ezoic-site-verification"
-          content="X6ThJDF0csGSQJYlS2FqZcnD7hBSzm"
-        />
+        {/* Site verifications khác (Coinzilla, v.v.) */}
         <meta
           name="coinzilla"
           content="03663c7dfaaa9339ce67204520a48640"
         />
-
-        {/* Ezoic Privacy Scripts */}
-        <script
-          src="https://cmp.gatekeeperconsent.com/min.js"
-          data-cfasync="false"
-        />
-        <script
-          src="https://the.gatekeeperconsent.com/cmp.min.js"
-          data-cfasync="false"
-        />
-
-        {/* Ezoic Header Script */}
-        <script async src="//www.ezojs.com/ezoic/sa.min.js" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.ezstandalone = window.ezstandalone || {};
-              ezstandalone.cmd = ezstandalone.cmd || [];
-            `,
-          }}
-        />
+        {/* Nếu sau này Monumetric / GAM có yêu cầu meta riêng thì thêm ở đây */}
       </Head>
       <body>
         <Main />
