@@ -6,14 +6,9 @@ const nextConfig = {
 
   async redirects() {
     return [
-      // ---- NEW: Ezoic ads.txt redirect ----
-      {
-        source: '/ads.txt',
-        destination: 'https://srv.adstxtmanager.com/19390/finnews247.com',
-        permanent: true,
-      },
+      // ---- ads.txt: để Next phục vụ file local trong /public/ads.txt 
 
-      // ---- NEW: hợp nhất sitemap cũ → sitemap mới (duy nhất) ----
+      // ---- hợp nhất sitemap cũ → sitemap mới (duy nhất) ----
       { source: '/sitemap-:n.xml', destination: '/sitemap.xml', permanent: true },
       { source: '/sitemap-index.xml', destination: '/sitemap.xml', permanent: true },
       { source: '/sitemap.xml.gz', destination: '/sitemap.xml', permanent: true },
@@ -66,7 +61,7 @@ const nextConfig = {
 
   async headers() {
     return [
-      // ---- NEW: Cache sitemap.xml hợp lý (10 phút) ----
+      // ---- Cache sitemap.xml hợp lý (10 phút) ----
       {
         source: '/sitemap.xml',
         headers: [
