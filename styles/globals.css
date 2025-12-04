@@ -41,24 +41,42 @@ h1, h2, h3, h4, h5, h6 {
 img { max-width: 100%; height: auto; display: block; }
 
 /* ===== Header compact (giữ logo/menu size — chỉ bóp chiều cao) ===== */
-header.sticky.top-10 .container { padding-top: 0.35rem !important; padding-bottom: 0.35rem !important; }
-header.sticky.top-10 .container img[alt="FinNews Logo"] { max-height: 36px; height: auto; }
+header.sticky.top-10 .container {
+  padding-top: 0.35rem !important;
+  padding-bottom: 0.35rem !important;
+}
+header.sticky.top-10 .container img[alt="FinNews Logo"] {
+  max-height: 36px;
+  height: auto;
+}
 
 /* ===== Default 2-col layout narrower sidebar ===== */
 @media (min-width: 768px) {
   /* cho grid 12 cột: main 9 / sidebar 3 là mặc định tốt */
-  .post-layout { display: grid; grid-template-columns: repeat(12, minmax(0,1fr)); gap: 2rem; }
+  .post-layout {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 2rem;
+  }
   .post-layout .main-col { grid-column: span 9 / span 9; }
   .post-layout .side-col { grid-column: span 3 / span 3; }
 }
 
 /* ====== CryptoTicker animation ====== */
-@keyframes marquee { 0% { transform: translateX(0%);} 100% { transform: translateX(-50%);} }
-.animate-marquee { display:flex; width:200%; animation: marquee 40s linear infinite; }
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  display: flex;
+  width: 200%;
+  animation: marquee 40s linear infinite;
+}
 .animate-marquee:hover { animation-play-state: paused; }
 
 /* ====== Ảnh trong bài ====== */
-.prose .post-body img, .post-body img {
+.prose .post-body img,
+.post-body img {
   display: block !important;
   margin: 1.5rem auto !important;
   height: auto !important;
@@ -68,24 +86,70 @@ header.sticky.top-10 .container img[alt="FinNews Logo"] { max-height: 36px; heig
 }
 
 /* HERO 16:9 */
-.article-hero{ position:relative; width:100%; padding-top:56.25%; border-radius:0.75rem; overflow:hidden; background:#f3f4f6; }
-.article-hero img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.article-hero {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #f3f4f6;
+}
+.article-hero img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
 /* Sidebar mini item */
-.fn-mini { display:flex; align-items:center; gap:0.75rem; padding:0.5rem; border-radius:0.5rem; text-decoration:none; }
+.fn-mini {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+}
 .fn-mini:hover { background: rgba(0,0,0,0.04); }
-@media (prefers-color-scheme: dark) { .fn-mini:hover { background: rgba(255,255,255,0.06); } }
-.fn-mini img { width:45px; height:45px; object-fit:cover; border-radius:0.5rem; flex-shrink:0; }
-.fn-mini .title { font-size:0.9rem; line-height:1.25; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-.fn-mini .date { font-size:0.75rem; color:#6b7280; margin-top:2px; }
+@media (prefers-color-scheme: dark) {
+  .fn-mini:hover { background: rgba(255,255,255,0.06); }
+}
+.fn-mini img {
+  width: 45px;
+  height: 45px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  flex-shrink: 0;
+}
+.fn-mini .title {
+  font-size: 0.9rem;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.fn-mini .date {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 2px;
+}
 
 /* Sidebar mini item – chống tràn chồng chữ */
 .sidebar-scope .group { align-items: flex-start; }
-.sidebar-scope img { flex: 0 0 45px; width:45px; height:45px; object-fit: cover; border-radius: 8px; }
+.sidebar-scope img {
+  flex: 0 0 45px;
+  width: 45px;
+  height: 45px;
+  object-fit: cover;
+  border-radius: 8px;
+}
 .sidebar-scope .min-w-0 { min-width: 0; }
 
 /* ===== Force 100% base on all browsers ===== */
-html, :root {
+html,
+:root {
   font-size: 100% !important;              /* 16px mặc định */
   -webkit-text-size-adjust: 100% !important;
   text-size-adjust: 100% !important;
@@ -98,3 +162,13 @@ body {
 
 /* Nếu trang nào dùng .prose (typography) thì tránh bị bóp còn 65ch */
 .prose { max-width: 100%; }
+
+/* ===== Code blocks – tránh tràn ngang trên mobile ===== */
+.post-body pre {
+  white-space: pre-wrap;    /* cho phép xuống dòng */
+  word-break: break-word;   /* bẻ từ dài nếu cần */
+  overflow-x: auto;         /* vẫn có thể scroll ngang nếu quá dài */
+}
+.post-body code {
+  word-break: break-word;
+}

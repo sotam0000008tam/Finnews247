@@ -54,16 +54,18 @@ export default function PostCard({ post = {} }) {
 
   // 7) Signals hoặc không có category
   } else if (cat === "signals" || !post.category) {
+    // giữ nguyên /slug mặc định
   }
 
   return (
     <article className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
       {post.image && (
         <div className="w-full">
+          {/* cố định chiều cao để card đều nhau, tránh ảnh dọc làm vỡ layout */}
           <img
             src={post.image}
             alt={post.title || "post"}
-            className="w-full h-auto rounded-t-lg"
+            className="w-full h-48 object-cover rounded-t-lg"
             loading="lazy"
           />
         </div>
