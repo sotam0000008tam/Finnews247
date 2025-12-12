@@ -2980,6 +2980,18 @@
     </image:image>
   </url>
   <url>
+    <loc>https://www.finnews247.com/altcoins/bitcoin-trader-realized-price-bands-relief-rally</loc>
+    <image:image>
+      <image:loc>https://www.finnews247.com/images/bitcoin-trader-realized-price-bands-dec-2025.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.finnews247.com/altcoins/prediction-markets-opportunity-and-risk-when-forecasts-become-assets</loc>
+    <image:image>
+      <image:loc>https://www.finnews247.com/images/polymarket-weekly-volume-2025.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.finnews247.com/altcoins/sec-vs-binance-implications-for-the-wider-crypto-market</loc>
     <image:image>
       <image:loc>https://www.finnews247.com/images/dummy/sec01.jpg</image:loc>
@@ -3343,6 +3355,12 @@
     <loc>https://www.finnews247.com/crypto-exchanges/cftc-first-spot-crypto-trading-us-regulated-exchanges</loc>
     <image:image>
       <image:loc>https://www.finnews247.com/images/cftc-spot-crypto-us-exchanges.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.finnews247.com/crypto-exchanges/gemini-titan-cftc-prediction-markets</loc>
+    <image:image>
+      <image:loc>https://www.finnews247.com/images/gemini-titan-cftc-prediction-markets.jpg</image:loc>
     </image:image>
   </url>
   <url>
@@ -3919,6 +3937,12 @@
     <loc>https://www.finnews247.com/guides/macd-indicator-technical-analysis-guide</loc>
     <image:image>
       <image:loc>https://www.finnews247.com/images/macd-indicator-technical-analysis-crypto-2025.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.finnews247.com/guides/moving-average-complete-guide-technical-analysis</loc>
+    <image:image>
+      <image:loc>https://www.finnews247.com/images/moving-average-complete-guide-technical-analysis-crypto-2025.jpg</image:loc>
     </image:image>
   </url>
 </urlset>
