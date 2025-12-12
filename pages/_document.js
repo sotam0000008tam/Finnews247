@@ -5,19 +5,25 @@ export default function Document() {
   return (
     <Html lang="vi">
       <Head>
-        {/* Viewport + tối ưu hiển thị */}
+        {/* Viewport + hiển thị */}
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, viewport-fit=cover"
         />
         <meta name="robots" content="max-image-preview:large" />
 
-        {/* Site verifications khác (Coinzilla, v.v.) */}
+        {/* Coinzilla verification (an toàn, có thể giữ) */}
         <meta
           name="coinzilla"
           content="03663c7dfaaa9339ce67204520a48640"
         />
-        {/* Nếu sau này Monumetric / GAM có yêu cầu meta riêng thì thêm ở đây */}
+
+        {/* Monumetric head code */}
+        <script
+          type="text/javascript"
+          src="//monu.delivery/site/e/4/7835ef-697c-4270-b513-1b2b6975d566.js"
+          data-cfasync="false"
+        ></script>
       </Head>
       <body>
         <Main />
