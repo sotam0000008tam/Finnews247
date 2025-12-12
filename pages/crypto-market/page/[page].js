@@ -29,10 +29,11 @@ const hrefMixed = (p) => {
   if (c.includes("sec-coin") || c.includes("sec coin") || c.includes("seccoin"))
     return `/altcoins/${s}`;
   if (c.includes("altcoin")) return `/altcoins/${s}`;
-  if (c.includes("fidelity")) return `/crypto-exchanges/${s}`;
-  if (c.includes("exchange")) return `/crypto-exchanges/${s}`;
-  if (c.includes("app") || c.includes("wallet")) return `/best-crypto-apps/${s}`;
-  if (c.includes("insurance")) return `/insurance/${s}`;
+  if (c.includes("fidelity") || c.includes("exchange"))
+    return `/crypto-exchanges/${s}`;
+  if (c.includes("app") || c.includes("wallet"))
+    return `/best-crypto-apps/${s}`;
+  if (c.includes("insurance") || c.includes("tax")) return `/insurance/${s}`;
   if (c.includes("guide") || c.includes("review")) return `/guides/${s}`;
   if (c.includes("market") || c.includes("news") || c.includes("crypto-market"))
     return `/crypto-market/${s}`;
@@ -82,67 +83,77 @@ export default function CryptoMarketPage({
   const description = "Crypto market news & analysis.";
 
   return (
-    <div className="container mx-auto px-4 py-6 container-1600">
-      <NextSeo
-        title={title}
-        description={description}
-        canonical={canonical}
-        openGraph={{ title, description, url: canonical }}
-      />
-      <div className="mb-4">
-        <h1 className="text-2xl md:text-3xl font-bold">{title}</h1>
-      </div>
-      <div className="grid md:grid-cols-12 gap-8">
-        <section className="md:col-span-9">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {(items || []).map((it) => (
-              <PostCard key={it.slug || it.title} post={it} />
-            ))}
-          </div>
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-6">
-              {Array.from({ length: totalPages }).map((_, i) => {
-                const p = i + 1;
-                const href =
-                  p === 1
-                    ? "/crypto-market"
-                    : `/crypto-market/page/${p}`;
-                const active = p === page;
-                return (
-                  <Link
-                    key={p}
-                    href={href}
-                    className={
-                      "px-3 py-1 rounded border " +
-                      (active
-                        ? "bg-gray-900 text-white border-gray-900"
-                        : "hover:bg-gray-50 dark:hover:bg-gray-800")
-                    }
-                  >
-                    {p}
-                  </Link>
-                );
-              })}
-            </div>
-          )}
-        </section>
-        <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
-          <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
-            <div className="px-4 py-3 border-b dark:border-gray-700">
-              <h3 className="text-sm font-semibold">Latest on FinNews247</h3>
-            </div>
-            <ul className="divide-y dark:divide-gray-800">
-              {(latest ?? []).map((it) => (
-                <li key={(it.slug || it.title) + "-latest"}>
-                  <SideMiniItem item={it} />
-                </li>
+    <div className="crypto-market-page">
+      <div className="container mx-auto px-4 py-6 container-1600">
+        <NextSeo
+          title={title}
+          description={description}
+          canonical={canonical}
+          openGraph={{ title, description, url: canonical }}
+        />
+        <div className="mb-4">
+          <h1 className="text-2xl md:text-3xl font-bold">{title}</h1>
+        </div>
+        <div className="grid md:grid-cols-12 gap-8">
+          <section className="md:col-span-9">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {(items || []).map((it) => (
+                <PostCard key={it.slug || it.title} post={it} />
               ))}
-            </ul>
+            </div>
+            {totalPages > 1 && (
+              /*
+               * Allow pagination links to wrap on small screens.  Without
+               * `flex-wrap` the row of page numbers could overflow the
+               * viewport when there are many pages.
+               */
+              <div className="flex flex-wrap items-center justify-center gap-2 mt-6">
+                {Array.from({ length: totalPages }).map((_, i) => {
+                  const p = i + 1;
+                  const href =
+                    p === 1 ? "/crypto-market" : `/crypto-market/page/${p}`;
+                  const active = p === page;
+                  return (
+                    <Link
+                      key={p}
+                      href={href}
+                      className={
+                        "px-3 py-1 rounded border " +
+                        (active
+                          ? "bg-gray-900 text-white border-gray-900"
+                          : "hover:bg-gray-50 dark:hover:bg-gray-800")
+                      }
+                    >
+                      {p}
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
           </section>
-        </aside>
+          <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
+            <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
+              <div className="px-4 py-3 border-b dark:border-gray-700">
+                <h3 className="text-sm font-semibold">Latest on FinNews247</h3>
+              </div>
+              <ul className="divide-y dark:divide-gray-800">
+                {(latest ?? []).map((it) => (
+                  <li key={(it.slug || it.title) + "-latest"}>
+                    <SideMiniItem item={it} />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          </aside>
+        </div>
       </div>
       <style jsx global>{`
-        .sidebar-scope img {
+        .crypto-market-page {
+          width: 100%;
+          max-width: 100%;
+          overflow-x: hidden;
+        }
+        .crypto-market-page .sidebar-scope img {
           width: 45px !important;
           height: 45px !important;
           max-width: none !important;

@@ -10,9 +10,16 @@ body {
   line-height: 1.5;
 }
 
-a { @apply text-sky-600 hover:underline; }
+a {
+  @apply text-sky-600 hover:underline;
+}
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   @apply font-semibold text-gray-900 dark:text-gray-100;
 }
 
@@ -30,15 +37,23 @@ h1, h2, h3, h4, h5, h6 {
 .container.container-1600 {
   max-width: 1600px !important;
   width: 100%;
-  padding-left: 1rem;   /* ~px-4 */
+  padding-left: 1rem; /* ~px-4 */
   padding-right: 1rem;
 }
-@media (min-width: 1024px) { /* lg */
-  .container.container-1600 { padding-left: 1.5rem; padding-right: 1.5rem; } /* ~lg:px-6 */
+@media (min-width: 1024px) {
+  /* lg */
+  .container.container-1600 {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  } /* ~lg:px-6 */
 }
 
 /* ✅ UNIVERSAL image safety */
-img { max-width: 100%; height: auto; display: block; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
 
 /* ===== Header compact (giữ logo/menu size — chỉ bóp chiều cao) ===== */
 header.sticky.top-10 .container {
@@ -58,21 +73,31 @@ header.sticky.top-10 .container img[alt="FinNews Logo"] {
     grid-template-columns: repeat(12, minmax(0, 1fr));
     gap: 2rem;
   }
-  .post-layout .main-col { grid-column: span 9 / span 9; }
-  .post-layout .side-col { grid-column: span 3 / span 3; }
+  .post-layout .main-col {
+    grid-column: span 9 / span 9;
+  }
+  .post-layout .side-col {
+    grid-column: span 3 / span 3;
+  }
 }
 
 /* ====== CryptoTicker animation ====== */
 @keyframes marquee {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 .animate-marquee {
   display: flex;
   width: 200%;
   animation: marquee 40s linear infinite;
 }
-.animate-marquee:hover { animation-play-state: paused; }
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
 
 /* ====== Ảnh trong bài ====== */
 .prose .post-body img,
@@ -81,7 +106,7 @@ header.sticky.top-10 .container img[alt="FinNews Logo"] {
   margin: 1.5rem auto !important;
   height: auto !important;
   border-radius: 0.5rem !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
   max-width: 100% !important;
 }
 
@@ -111,9 +136,13 @@ header.sticky.top-10 .container img[alt="FinNews Logo"] {
   border-radius: 0.5rem;
   text-decoration: none;
 }
-.fn-mini:hover { background: rgba(0,0,0,0.04); }
+.fn-mini:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
 @media (prefers-color-scheme: dark) {
-  .fn-mini:hover { background: rgba(255,255,255,0.06); }
+  .fn-mini:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
 }
 .fn-mini img {
   width: 45px;
@@ -137,7 +166,9 @@ header.sticky.top-10 .container img[alt="FinNews Logo"] {
 }
 
 /* Sidebar mini item – chống tràn chồng chữ */
-.sidebar-scope .group { align-items: flex-start; }
+.sidebar-scope .group {
+  align-items: flex-start;
+}
 .sidebar-scope img {
   flex: 0 0 45px;
   width: 45px;
@@ -145,30 +176,75 @@ header.sticky.top-10 .container img[alt="FinNews Logo"] {
   object-fit: cover;
   border-radius: 8px;
 }
-.sidebar-scope .min-w-0 { min-width: 0; }
+.sidebar-scope .min-w-0 {
+  min-width: 0;
+}
 
 /* ===== Force 100% base on all browsers ===== */
 html,
 :root {
-  font-size: 100% !important;              /* 16px mặc định */
+  font-size: 100% !important; /* 16px mặc định */
   -webkit-text-size-adjust: 100% !important;
   text-size-adjust: 100% !important;
 }
 
+/* Quan trọng: chặn tràn ngang làm mobile bị thu nhỏ */
 body {
-  font-size: 1rem !important;              /* 1rem = 16px */
+  font-size: 1rem !important; /* 1rem = 16px */
   line-height: 1.5;
+  width: 100%;
+  overflow-x: hidden; /* ⬅️ khóa mọi overflow ngang toàn site */
 }
 
 /* Nếu trang nào dùng .prose (typography) thì tránh bị bóp còn 65ch */
-.prose { max-width: 100%; }
+.prose {
+  max-width: 100%;
+}
 
 /* ===== Code blocks – tránh tràn ngang trên mobile ===== */
 .post-body pre {
-  white-space: pre-wrap;    /* cho phép xuống dòng */
-  word-break: break-word;   /* bẻ từ dài nếu cần */
-  overflow-x: auto;         /* vẫn có thể scroll ngang nếu quá dài */
+  white-space: pre-wrap; /* cho phép xuống dòng */
+  word-break: break-word; /* bẻ từ dài nếu cần */
+  overflow-x: auto; /* vẫn có thể scroll ngang nếu quá dài */
 }
 .post-body code {
   word-break: break-word;
+}
+
+/*
+ * Extra word-wrapping rules
+ *
+ * We noticed some pages (notably the crypto‑market listings) could overflow horizontally
+ * on small screens when they contained very long words or unbroken strings (for example,
+ * token tickers or lengthy URLs).  To ensure the layout stays within the viewport on
+ * mobile devices, explicitly allow long words to break and wrap where necessary.  These
+ * rules apply to common text containers used throughout the site, including post cards,
+ * sidebar lists and the rich post body.  Tables inside posts are also made responsive
+ * by allowing horizontal scrolling rather than forcing the entire page to overflow.
+ */
+
+/* Break long words and wrap anywhere within post cards */
+.post-card-title,
+.post-card-excerpt {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Ensure sidebar titles and dates wrap properly */
+.sidebar-scope .text-sm,
+.sidebar-scope .text-xs {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Avoid tables overflowing their container in article bodies */
+.post-body table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.post-body th,
+.post-body td {
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }

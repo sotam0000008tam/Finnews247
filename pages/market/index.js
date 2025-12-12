@@ -1,81 +1,12 @@
-// pages/market/index.js
-import fs from "fs";
-import path from "path";
-import Link from "next/link";
-import PostCard from "../../components/PostCard";
-import { NextSeo } from "next-seo";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 
-export default function Market({ posts, totalPages, currentPage }) {
-  const isFirst = currentPage === 1;
-  const pageSuffix = isFirst ? "" : ` – Page ${currentPage}`;
-  const baseUrl = "https://www.finnews247.com/market";
-  const canonical = isFirst ? baseUrl : `${baseUrl}?page=${currentPage}`;
-  const prevHref =
-    currentPage > 1 ? (currentPage === 2 ? baseUrl : `${baseUrl}?page=${currentPage - 1}`) : null;
-  const nextHref = currentPage < totalPages ? `${baseUrl}?page=${currentPage + 1}` : null;
+export default function MarketRedirect() {
+  const router = useRouter();
 
-  return (
-    <>
-      <NextSeo
-        title={`Crypto & Market News | FinNews247${pageSuffix}`}
-        description={`Latest news and analysis on cryptocurrencies and global markets${pageSuffix}.`}
-        canonical={canonical}
-        openGraph={{
-          title: `Crypto & Market News | FinNews247${pageSuffix}`,
-          description: `Comprehensive updates on crypto and financial markets: Bitcoin, Ethereum, stocks, forex, and commodities${pageSuffix}.`,
-          url: canonical,
-          images: [{ url: "https://www.finnews247.com/images/market-banner.jpg" }],
-        }}
-        additionalLinkTags={[
-          prevHref ? { rel: "prev", href: prevHref } : null,
-          nextHref ? { rel: "next", href: nextHref } : null,
-        ].filter(Boolean)}
-      />
+  useEffect(() => {
+    router.replace("/crypto-market");
+  }, [router]);
 
-      <div>
-        <h1 className="text-3xl font-semibold mb-6">Crypto & Market</h1>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          {posts.map((p) => (
-            <PostCard key={p.slug} post={p} />
-          ))}
-        </div>
-
-        {totalPages > 1 && (
-          <div className="mt-6 flex justify-center space-x-2">
-            {Array.from({ length: totalPages }).map((_, i) => {
-              const pageNum = i + 1;
-              return (
-                <Link
-                  key={pageNum}
-                  href={pageNum === 1 ? "/market" : `/market?page=${pageNum}`}
-                  className={`px-3 py-1 rounded ${
-                    pageNum === currentPage
-                      ? "bg-sky-600 text-white"
-                      : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
-                  }`}
-                >
-                  {pageNum}
-                </Link>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    </>
-  );
-}
-
-export async function getServerSideProps({ query }) {
-  const raw = fs.readFileSync(path.join(process.cwd(), "data", "news.json"), "utf-8");
-  const all = JSON.parse(raw); // giữ logic gốc: lấy tất cả
-  all.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-  const perPage = 30;
-  const page = Math.max(1, parseInt(query.page || "1", 10));
-  const totalPages = Math.max(1, Math.ceil(all.length / perPage));
-  const start = (page - 1) * perPage;
-  const pagePosts = all.slice(start, start + perPage);
-
-  return { props: { posts: pagePosts, totalPages, currentPage: page } };
+  return null;
 }

@@ -155,7 +155,12 @@ export default function GuidesIndex({
           </div>
 
           {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-6">
+            /*
+             * Allow pagination links to wrap on small screens.  Without
+             * `flex-wrap` the row of page numbers could overflow the
+             * viewport when there are many pages.
+             */
+            <div className="flex flex-wrap items-center justify-center gap-2 mt-6">
               {Array.from({ length: totalPages }).map((_, i) => {
                 const p = i + 1;
                 const href = p === 1 ? "/guides" : `/guides/page/${p}`;

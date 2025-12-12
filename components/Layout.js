@@ -28,7 +28,7 @@ export default function Layout({ children, title }) {
   const isArticle = ARTICLE_PATHS.has(router.pathname);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 overflow-x-hidden">
       <Head>
         <meta charSet="utf-8" />
         <title>{title ? `${title} | FinNews` : "FinNews"}</title>
@@ -74,9 +74,15 @@ export default function Layout({ children, title }) {
       <style jsx global>{`
         html {
           font-size: 120%;
+          width: 100%;
+          max-width: 100%;
+          overflow-x: hidden;
         }
         body {
           line-height: 1.6;
+          width: 100%;
+          max-width: 100%;
+          overflow-x: hidden;
         }
 
         /* Keep the layout tidy; a longer page allows ad networks to insert

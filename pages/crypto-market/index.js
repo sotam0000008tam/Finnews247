@@ -1,3 +1,4 @@
+// pages/crypto-market/index.js
 import Link from "next/link";
 import { NextSeo } from "next-seo";
 import PostCard from "../../components/PostCard";
@@ -14,86 +15,44 @@ const stripHtml = (h = "") =>
 const firstImage = (h = "") =>
   (String(h).match(/<img[^>]+src=["']([^"']+)["']/i) || [])[1] || null;
 
-const pickThumb = (p, f = "/images/dummy/altcoins64.jpg") =>
-  p?.thumb || p?.ogImage || p?.image || firstImage(p?.content || p?.body || "") || f;
+const pickThumb = (item = {}) =>
+  item.image || firstImage(item.content || "") || null;
 
-const hrefMk = (slug) =>
-  `/crypto-market/${String(slug || "").replace(/^\//, "")}`;
-
-/* Map link sidebar Latest */
+/*
+ * Map a post (or slug) to its appropriate URL.  We do not always link to
+ * `/crypto-market/${slug}` because some posts aggregated into the latest pool may
+ * belong to other categories (altcoins, exchanges, apps, guides, etc.).  The
+ * logic here mirrors the `hrefMixed` helper used on the paginated crypto‑market
+ * pages (`/crypto-market/page/[page].js`) and on the individual article pages.
+ * If a post provides an explicit `href` property we honour it; otherwise we
+ * derive the link based on its category.  Default fallback is a guides URL.
+ */
 const hrefMixed = (p) => {
-  if (p?.href) return p.href;
-  const s = String(p?.slug || "").replace(/^\//, "");
-  if (!s) return "#";
-  const c = String(p?._cat || p?.category || "").toLowerCase();
-
-  if (c.includes("sec-coin") || c.includes("seccoin")) return `/altcoins/${s}`;
-  if (c.includes("altcoin")) return `/altcoins/${s}`;
-  if (c.includes("fidelity") || c.includes("exchange"))
-    return `/crypto-exchanges/${s}`;
-  if (c.includes("app") || c.includes("wallet")) return `/best-crypto-apps/${s}`;
-  if (c.includes("insurance") || c.includes("tax")) return `/insurance/${s}`;
-  if (c.includes("guide") || c.includes("review")) return `/guides/${s}`;
-  if (c.includes("market") || c.includes("news") || c.includes("crypto-market"))
-    return `/crypto-market/${s}`;
-  return `/guides/${s}`;
+  if (!p) return "#";
+  // If p is a simple string (slug) assume it's a crypto‑market slug
+  if (typeof p === "string") {
+    const slug = String(p).replace(/^\//, "");
+    return slug ? `/crypto-market/${slug}` : "/crypto-market";
+  }
+  if (p.href) return p.href;
+  const slug = String(p.slug || "").replace(/^\//, "");
+  if (!slug) return "#";
+  const cat = String(p._cat || p.category || "").toLowerCase();
+  if (cat.includes("sec-coin") || cat.includes("sec coin") || cat.includes("seccoin"))
+    return `/altcoins/${slug}`;
+  if (cat.includes("altcoin")) return `/altcoins/${slug}`;
+  if (cat.includes("fidelity") || cat.includes("exchange"))
+    return `/crypto-exchanges/${slug}`;
+  if (cat.includes("app") || cat.includes("wallet"))
+    return `/best-crypto-apps/${slug}`;
+  if (cat.includes("insurance") || cat.includes("tax")) return `/insurance/${slug}`;
+  if (cat.includes("guide") || cat.includes("review")) return `/guides/${slug}`;
+  if (cat.includes("market") || cat.includes("news") || cat.includes("crypto-market"))
+    return `/crypto-market/${slug}`;
+  return `/guides/${slug}`;
 };
 
-/* ===== Signals compact ===== */
-const prettyType = (t = "") =>
-  String(t).toLowerCase() === "long" ? "Long" : "Short";
-const typeColor = (t = "") =>
-  String(t).toLowerCase() === "long"
-    ? "bg-green-100 text-green-700 ring-green-200"
-    : "bg-red-100 text-red-700 ring-red-200";
-
-function TradingSignalsCompact({ items = [] } = {}) {
-  // Trading signals đã được tắt (không còn hiển thị).
-  // Giữ component để tránh phải sửa JSX phía dưới.
-  return null;
-}
-
-
-
-/* ===== Card ===== */
-function Card({ item }) {
-  const href = hrefMk(item.slug);
-  const img = pickThumb(item);
-  return (
-    <Link
-      href={href}
-      className="group block rounded-xl overflow-hidden border bg-white dark:bg-gray-900 hover:shadow-md transition"
-    >
-      {img && (
-        <img
-          src={img}
-          alt={item?.title || "post"}
-          className="w-full h-48 object-cover"
-          loading="lazy"
-        />
-      )}
-      <div className="p-3">
-        <div className="font-semibold leading-snug line-clamp-2 group-hover:underline">
-          {item?.title || "Untitled"}
-        </div>
-        {(item?.date || item?.updatedAt) && (
-          <div className="text-xs text-gray-500 mt-1">
-            {item.date || item.updatedAt}
-          </div>
-        )}
-        {/* Show a longer snippet so there is more vertical content for AutoAds. */}
-        {item?.excerpt && (
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-4">
-            {stripHtml(item.excerpt).slice(0, 250)}
-            {stripHtml(item.excerpt).length > 250 ? "…" : ""}
-          </p>
-        )}
-      </div>
-    </Link>
-  );
-}
-
-/* ===== Mini Latest ===== */
+/* Sidebar mini item (dùng chung với Guides) */
 function SideMiniItem({ item }) {
   const href = hrefMixed(item);
   const img = pickThumb(item);
@@ -102,12 +61,14 @@ function SideMiniItem({ item }) {
       href={href}
       className="group flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition"
     >
-      <img
-        src={img}
-        alt={item?.title || "post"}
-        className="w-[45px] h-[45px] rounded-md object-cover border dark:border-gray-700 shrink-0"
-        loading="lazy"
-      />
+      {img && (
+        <img
+          src={img}
+          alt={item?.title || "post"}
+          className="w-[45px] h-[45px] rounded-md object-cover border dark:border-gray-700 shrink-0"
+          loading="lazy"
+        />
+      )}
       <div className="min-w-0">
         <div className="text-sm leading-snug line-clamp-2 group-hover:underline">
           {item?.title || "Untitled"}
@@ -122,6 +83,12 @@ function SideMiniItem({ item }) {
   );
 }
 
+/* Trading signals: hiện tại tắt hẳn */
+function TradingSignalsCompact() {
+  return null;
+}
+
+/* ===== Trang index Crypto & Market ===== */
 export default function MarketIndex({
   items = [],
   latest = [],
@@ -130,11 +97,20 @@ export default function MarketIndex({
   signalsLatest = [],
 }) {
   const title = "Crypto & Market";
+  const description =
+    "Latest news and professional analysis on cryptocurrencies, macro and institutional digital asset markets.";
   const canonical = "https://www.finnews247.com/crypto-market";
-  const description = "Crypto market news & analysis.";
 
   return (
-    <div className="container mx-auto px-4 py-6 container-1600">
+    // Wrap the entire page in a crypto‑market page scope.  This wrapper mirrors
+    // the structure used on /crypto-market/page/[page] to ensure consistent
+    // overflow handling on mobile.  Without this wrapper the index page could
+    // still allow horizontal overflow on very small screens when a long word or
+    // element exceeds the viewport.  By adding this wrapper and a scoped
+    // overflow-x: hidden style (see style tag below), we guarantee that any
+    // overflow is clipped rather than causing the page to extend.
+    <div className="crypto-market-page">
+      <div className="container mx-auto px-4 py-6 container-1600">
       <NextSeo
         title={title}
         description={description}
@@ -147,6 +123,7 @@ export default function MarketIndex({
       </div>
 
       <div className="grid md:grid-cols-12 gap-8">
+        {/* MAIN */}
         <section className="md:col-span-9">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {(items || []).map((it) => (
@@ -154,8 +131,20 @@ export default function MarketIndex({
             ))}
           </div>
 
+          {/* Phân trang 1,2,3… */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-6">
+            /*
+             * Pagination container
+             *
+             * On mobile screens with many pages (e.g. 12+), the row of page
+             * numbers can exceed the viewport width and force a horizontal
+             * scrollbar or cause overflow.  Allow the flex container to
+             * wrap so that page links flow onto multiple lines.  This
+             * preserves readability and prevents horizontal scrolling on
+             * small devices.  The `flex-wrap` utility from Tailwind
+             * achieves this.
+             */
+            <div className="flex flex-wrap items-center justify-center gap-2 mt-6">
               {Array.from({ length: totalPages }).map((_, i) => {
                 const p = i + 1;
                 const href =
@@ -183,13 +172,14 @@ export default function MarketIndex({
         {/* SIDEBAR */}
         <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
           <TradingSignalsCompact items={signalsLatest} />
+
           <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
             <div className="px-4 py-3 border-b dark:border-gray-700">
               <h3 className="text-sm font-semibold">Latest on FinNews247</h3>
             </div>
             <ul className="divide-y dark:divide-gray-800">
               {(latest ?? []).map((it) => (
-                <li key={(it.slug || it.title) + "-latest"}>
+                <li key={it.slug || it.title} className="first:border-t-0">
                   <SideMiniItem item={it} />
                 </li>
               ))}
@@ -198,21 +188,46 @@ export default function MarketIndex({
         </aside>
       </div>
 
-      <style jsx global>{`
-        .sidebar-scope img {
-          width: 45px !important;
-          height: 45px !important;
-          max-width: none !important;
-          object-fit: cover !important;
-          border-radius: 8px !important;
-          display: block !important;
-        }
-      `}</style>
+        {/* Chỉ giữ phần ảnh sidebar giống Guides */}
+        <style jsx global>{`
+          /*
+           * Sidebar thumbnail sizing
+           *
+           * Keep the thumbnail dimensions consistent across pages.  These rules
+           * mirror those used on the paginated crypto‑market pages to ensure
+           * identical rendering between index and paginated routes.
+           */
+          .sidebar-scope img {
+            width: 45px !important;
+            height: 45px !important;
+            max-width: none !important;
+            object-fit: cover !important;
+            border-radius: 8px !important;
+            display: block !important;
+          }
+
+          /*
+           * Crypto market page wrapper
+           *
+           * Set width and max‑width to 100% and hide any horizontal overflow.
+           * This wrapper encapsulates the entire page content so that any
+           * inadvertent overflow (from long words or large elements) does not
+           * create a horizontal scroll bar on mobile.  The paginated
+           * /crypto-market/page/[page] implementation already defines these
+           * styles; duplicating them here aligns the index route behavior.
+           */
+          .crypto-market-page {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+          }
+        `}</style>
+      </div>
     </div>
   );
 }
 
-/* ===== SSR ===== */
+/* ===== getServerSideProps giống Guides, chỉ đổi sang readCat("crypto-market") ===== */
 export async function getServerSideProps() {
   const { readCat, readMany } = await import("../../lib/serverCat");
   const { latestSignals } = await import("../../lib/sidebar.server");
@@ -221,6 +236,7 @@ export async function getServerSideProps() {
     const t = Date.parse(d);
     return Number.isNaN(t) ? 0 : t;
   };
+
   const uniqBySlug = (arr = []) => {
     const seen = new Set();
     const out = [];
@@ -233,7 +249,7 @@ export async function getServerSideProps() {
     return out;
   };
 
-  // Crypto-market chỉ đọc news.json (readCat('crypto-market'))
+  // Chỉ đọc nhóm crypto-market (news.json)
   const posts = uniqBySlug(readCat("crypto-market")).sort(
     (a, b) => parseD(b.date || b.updatedAt) - parseD(a.date || a.updatedAt)
   );
@@ -241,7 +257,7 @@ export async function getServerSideProps() {
   const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));
   const items = posts.slice(0, PAGE_SIZE);
 
-  // Sidebar Latest
+  // Sidebar Latest: giống Guides
   const groups = {
     "crypto-market": ["crypto-market"],
     altcoins: ["altcoins"],
@@ -254,10 +270,8 @@ export async function getServerSideProps() {
   const byCat = {};
   for (const [cat, keys] of Object.entries(groups)) {
     const arr =
-      keys.length === 1
-        ? readCat(keys[0])
-        : uniqBySlug(readMany(keys));
-    byCat[cat] = arr
+      keys.length === 1 ? readCat(keys[0]) : uniqBySlug(readMany(keys));
+    byCat[cat] = (arr || [])
       .map((p) => ({ ...p, _cat: cat }))
       .sort(
         (a, b) => parseD(b.date || b.updatedAt) - parseD(a.date || a.updatedAt)
@@ -269,9 +283,11 @@ export async function getServerSideProps() {
     .filter(Boolean);
 
   const poolAll = Object.values(byCat).flat();
-  const seenSlug = new Set(coverage.map((x) => String(x.slug).toLowerCase()));
+  const seenSlug = new Set(
+    coverage.map((x) => String(x.slug || "").toLowerCase())
+  );
   const rest = poolAll.filter(
-    (p) => p?.slug && !seenSlug.has(String(p.slug).toLowerCase())
+    (p) => p?.slug && !seenSlug.has(String(p.slug || "").toLowerCase())
   );
 
   const LATEST_LIMIT = 10;
@@ -281,5 +297,6 @@ export async function getServerSideProps() {
   );
 
   const signalsLatest = latestSignals(5);
+
   return { props: { items, latest, page: 1, totalPages, signalsLatest } };
 }

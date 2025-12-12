@@ -11,7 +11,7 @@ export default function PostCard({ post = {} }) {
   if (cat === "fidelity crypto" || cat === "crypto exchanges") {
     postUrl = `/crypto-exchanges/${slug}`;
 
-  // 2) Altcoins: gộp SEC Coin + Altcoins → /altcoins
+    // 2) Altcoins: gộp SEC Coin + Altcoins → /altcoins
   } else if (
     cat === "sec coin" ||
     cat === "sec-coin" ||
@@ -20,7 +20,7 @@ export default function PostCard({ post = {} }) {
   ) {
     postUrl = `/altcoins/${slug}`;
 
-  // 3) Apps & Wallets → /best-crypto-apps
+    // 3) Apps & Wallets → /best-crypto-apps
   } else if (
     cat === "best crypto apps" ||
     cat === "wallets" ||
@@ -28,11 +28,11 @@ export default function PostCard({ post = {} }) {
   ) {
     postUrl = `/best-crypto-apps/${slug}`;
 
-  // 4) Guides & Reviews → /guides
+    // 4) Guides & Reviews → /guides
   } else if (cat === "guides" || cat === "reviews") {
     postUrl = `/guides/${slug}`;
 
-  // 5) Insurance & Tax → /insurance (1 nhóm)
+    // 5) Insurance & Tax → /insurance (1 nhóm)
   } else if (
     cat === "crypto tax & compliance" ||
     cat === "crypto insurance & risk" ||
@@ -41,7 +41,7 @@ export default function PostCard({ post = {} }) {
   ) {
     postUrl = `/insurance/${slug}`;
 
-  // 6) Crypto & Market (news / market / economy / stocks / crypto) → /crypto-market
+    // 6) Crypto & Market (news / market / economy / stocks / crypto) → /crypto-market
   } else if (
     cat === "crypto market" ||
     cat === "market" ||
@@ -52,16 +52,16 @@ export default function PostCard({ post = {} }) {
   ) {
     postUrl = `/crypto-market/${slug}`;
 
-  // 7) Signals hoặc không có category
+    // 7) Signals hoặc không có category → giữ nguyên /slug mặc định
   } else if (cat === "signals" || !post.category) {
-    // giữ nguyên /slug mặc định
+    // keep default /slug
   }
 
   return (
-    <article className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+    <article className="post-card bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
       {post.image && (
         <div className="w-full">
-          {/* cố định chiều cao để card đều nhau, tránh ảnh dọc làm vỡ layout */}
+          {/* Cố định chiều cao để card đều nhau, tránh ảnh dọc làm vỡ layout */}
           <img
             src={post.image}
             alt={post.title || "post"}
@@ -72,16 +72,18 @@ export default function PostCard({ post = {} }) {
       )}
 
       <div className="p-4">
-        <div className="text-xs text-gray-500 mb-2">{post.date}</div>
+        {post.date && (
+          <div className="text-xs text-gray-500 mb-2">{post.date}</div>
+        )}
 
-        <h3 className="text-lg font-semibold mb-2">
+        <h3 className="post-card-title text-lg font-semibold mb-2">
           <Link href={postUrl} className="hover:underline">
             {post.title}
           </Link>
         </h3>
 
         {post.excerpt && (
-          <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+          <p className="post-card-excerpt text-sm text-gray-600 dark:text-gray-300 mb-3">
             {post.excerpt}
           </p>
         )}
