@@ -12535,10 +12535,7 @@
   "date": "2026-01-04 07:00",
   "author": "Daniel Harris",
   "category": "Crypto",
-  "image": {
-    "url": "/images/venezuela-oil-bitcoin-2026-01-04.jpg",
-    "alt": "An abstract illustration of oil infrastructure, satellite connectivity, and a Bitcoin symbol"
-  },
+  "image": "/images/venezuela-oil-bitcoin-2026-01-04.jpg",
   "tags": [
     "Bitcoin",
     "Macro",
