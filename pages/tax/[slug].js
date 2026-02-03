@@ -1,4 +1,4 @@
-﻿// pages/tax/[slug].js
+// pages/tax/[slug].js
 import fs from "fs";
 import path from "path";
 import Link from "next/link";
@@ -6,6 +6,8 @@ import { NextSeo } from "next-seo";
 // Import risk disclaimer and table of contents components
 import RiskDisclaimer from "../../components/RiskDisclaimer";
 import TableOfContents from "../../components/TableOfContents";
+import BitmediaAd from "../../components/BitmediaAd";
+import { BITMEDIA_UNITS } from "../../components/bitmediaUnits";
 
 /* Helpers */
 const stripHtml=(h="")=>String(h).replace(/<script[\s\S]*?<\/script>/gi,"").replace(/<style[\s\S]*?<\/style>/gi,"").replace(/<[^>]+>/g," ").replace(/\s+/g," ").trim();
@@ -71,8 +73,19 @@ export default function TaxDetail({post,related=[],latest=[]}) {
           <RiskDisclaimer />
           <TableOfContents />
 
+          {/* Bitmedia: Article inline slot #1 */}
+          <div className="w-full flex justify-center my-6 min-h-[250px]">
+            <BitmediaAd unitId={BITMEDIA_UNITS.ART_INLINE_1} />
+          </div>
+
+
           <div className="prose lg:prose-lg post-body max-w-none" dangerouslySetInnerHTML={{__html:post.content||post.body||""}}/>
 
+
+          {/* Bitmedia: Article inline slot #2 */}
+          <div className="w-full flex justify-center my-6 min-h-[250px]">
+            <BitmediaAd unitId={BITMEDIA_UNITS.ART_INLINE_2} />
+          </div>
 
           <div className="mt-8">
             <div className="flex items-center justify-between mb-3"><h3 className="text-lg font-semibold">More from {cname.title}</h3><Link href={cname.base} className="text-sm text-sky-600 hover:underline">View all</Link></div>
@@ -94,12 +107,24 @@ export default function TaxDetail({post,related=[],latest=[]}) {
         </article>
 
         <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
+          {/* Bitmedia: Sidebar slot #1 */}
+          <div className="w-full flex justify-center min-h-[250px]">
+            <BitmediaAd unitId={BITMEDIA_UNITS.SIDEBAR_1} />
+          </div>
+
+
           <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
             <div className="px-4 py-3 border-b dark:border-gray-700"><h3 className="text-sm font-semibold">Latest on FinNews247</h3></div>
             <ul className="divide-y dark:divide-gray-800">
               {latest.length? latest.map(it=>(<li key={(it.slug||it.title)+"-latest"}><SideMiniItem item={it}/></li>)) : (<li className="px-4 py-3 text-xs text-gray-500">No recent posts.</li>)}
             </ul>
           </section>
+
+          {/* Bitmedia: Sidebar slot #2 */}
+          <div className="w-full flex justify-center min-h-[250px]">
+            <BitmediaAd unitId={BITMEDIA_UNITS.SIDEBAR_2} />
+          </div>
+
         </aside>
       </div>
     </div>

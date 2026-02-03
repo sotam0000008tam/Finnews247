@@ -8,6 +8,8 @@ import TopExchanges from "../components/TopExchanges";
 import BestWallets from "../components/BestWallets";
 import TopStaking from "../components/TopStaking";
 import { readJsonSafe, sortDescByDate, shallowPosts } from "../lib/data";
+import BitmediaAd from "../components/BitmediaAd";
+import { BITMEDIA_UNITS } from "../components/bitmediaUnits";
 
 /* ================= Helpers for Latest ================= */
 function parseDate(d) {
@@ -153,6 +155,11 @@ export default function Home({
         <main className="md:col-span-9 space-y-12">
           <TradingSignalsBoxMain />
 
+          {/* Bitmedia: Home feed slot #1 */}
+          <div className="w-full flex justify-center my-2 min-h-[250px]">
+            <BitmediaAd unitId={BITMEDIA_UNITS.HOME_FEED_1} />
+          </div>
+
           <section>
             <h2 className="text-2xl font-semibold mb-4">Altcoin Analysis</h2>
             <div className="grid md:grid-cols-2 gap-6">
@@ -188,6 +195,11 @@ export default function Home({
               </Link>
             </div>
           </section>
+
+          {/* Bitmedia: Home feed slot #2 */}
+          <div className="w-full flex justify-center my-2 min-h-[250px]">
+            <BitmediaAd unitId={BITMEDIA_UNITS.HOME_FEED_2} />
+          </div>
 
           <section>
             <h2 className="text-2xl font-semibold mb-4">Crypto Insurance & Tax</h2>

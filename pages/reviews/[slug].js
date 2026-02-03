@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import { NextSeo } from "next-seo";
 // Import the shared risk disclaimer so reviews include a standard warning
 import RiskDisclaimer from "../../components/RiskDisclaimer";
+import BitmediaAd from "../../components/BitmediaAd";
+import { BITMEDIA_UNITS } from "../../components/bitmediaUnits";
 
 // Demo data (sau này bạn có thể chuyển ra JSON riêng)
 const reviews = {
@@ -93,7 +95,10 @@ export default function ReviewDetail() {
             to Mediavine and no longer uses that advertising network, remove the slot
             entirely to keep the layout clean. */}
         <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg flex items-center justify-center">
-          {/* Intentionally left blank – ad slots are managed by Mediavine once approved. */}
+          {/* Bitmedia: Reviews slot (uses SIDEBAR_1 unit) */}
+          <div className="w-full flex justify-center min-h-[250px]">
+            <BitmediaAd unitId={BITMEDIA_UNITS.SIDEBAR_1} />
+          </div>
         </div>
       </div>
 

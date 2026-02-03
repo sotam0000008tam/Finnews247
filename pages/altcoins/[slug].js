@@ -4,6 +4,8 @@ import ArticleHero from "../../components/ArticleHero";
 // Import risk disclaimer and table of contents to improve user trust and navigation
 import RiskDisclaimer from "../../components/RiskDisclaimer";
 import TableOfContents from "../../components/TableOfContents";
+import BitmediaAd from "../../components/BitmediaAd";
+import { BITMEDIA_UNITS } from "../../components/bitmediaUnits";
 import fs from "fs";
 import path from "path";
 import Link from "next/link";
@@ -190,6 +192,11 @@ export default function AltcoinsPostPage({ post, related = [], latest = [], sign
             <RiskDisclaimer />
             <TableOfContents />
 
+            {/* Bitmedia: Article inline slot #1 */}
+            <div className="w-full flex justify-center my-6 min-h-[250px]">
+              <BitmediaAd unitId={BITMEDIA_UNITS.ART_INLINE_1} />
+            </div>
+
 
             <div
               className="prose lg:prose-lg post-body"
@@ -197,6 +204,11 @@ export default function AltcoinsPostPage({ post, related = [], latest = [], sign
                 __html: post.content || post.body || "",
               }}
             />
+
+            {/* Bitmedia: Article inline slot #2 */}
+            <div className="w-full flex justify-center my-6 min-h-[250px]">
+              <BitmediaAd unitId={BITMEDIA_UNITS.ART_INLINE_2} />
+            </div>
 
 
             <div className="mt-8">
@@ -233,6 +245,11 @@ export default function AltcoinsPostPage({ post, related = [], latest = [], sign
           </article>
 
           <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
+            {/* Bitmedia: Sidebar slot #1 */}
+            <div className="w-full flex justify-center min-h-[250px]">
+              <BitmediaAd unitId={BITMEDIA_UNITS.SIDEBAR_1} />
+            </div>
+
             <TradingSignalsCompact items={signalsLatest} />
             <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
               <div className="px-4 py-3 border-b dark:border-gray-700">
@@ -252,6 +269,11 @@ export default function AltcoinsPostPage({ post, related = [], latest = [], sign
                 )}
               </ul>
             </section>
+
+            {/* Bitmedia: Sidebar slot #2 */}
+            <div className="w-full flex justify-center min-h-[250px]">
+              <BitmediaAd unitId={BITMEDIA_UNITS.SIDEBAR_2} />
+            </div>
           </aside>
         </div>
       </div>

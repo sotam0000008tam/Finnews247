@@ -2,6 +2,8 @@ import { NextSeo } from "next-seo";
 // Import risk disclaimer and table of contents to display for crypto-insurance posts
 import RiskDisclaimer from "../../components/RiskDisclaimer";
 import TableOfContents from "../../components/TableOfContents";
+import BitmediaAd from "../../components/BitmediaAd";
+import { BITMEDIA_UNITS } from "../../components/bitmediaUnits";
 
 export default function InsuranceDetail({ post }) {
   if (!post) return <p className="p-6">Post not found.</p>;
@@ -30,12 +32,26 @@ export default function InsuranceDetail({ post }) {
       <RiskDisclaimer />
       <TableOfContents />
 
+      {/* Bitmedia: Article inline slot #1 */}
+      <div className="w-full flex justify-center my-6 min-h-[250px]">
+        <BitmediaAd unitId={BITMEDIA_UNITS.ART_INLINE_1} />
+      </div>
+
+
       {/* Nội dung chi tiết: attach the 'post-body' class so the
           TableOfContents component can scan headings within this article. */}
       <div
         className="prose dark:prose-invert post-body"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
+
+
+      {/* Bitmedia: Article inline slot #2 */}
+      <div className="w-full flex justify-center my-6 min-h-[250px]">
+        <BitmediaAd unitId={BITMEDIA_UNITS.ART_INLINE_2} />
+      </div>
+
+
 
       {/* Sidebar mini widgets */}
       

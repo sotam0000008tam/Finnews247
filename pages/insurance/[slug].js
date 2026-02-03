@@ -3,6 +3,8 @@ import ArticleSeo from "../../components/ArticleSeo";
 import ArticleHero from "../../components/ArticleHero";
 import RiskDisclaimer from "../../components/RiskDisclaimer";
 import TableOfContents from "../../components/TableOfContents";
+import BitmediaAd from "../../components/BitmediaAd";
+import { BITMEDIA_UNITS } from "../../components/bitmediaUnits";
 import fs from "fs";
 import path from "path";
 import Link from "next/link";
@@ -218,12 +220,22 @@ export default function InsuranceTaxPost({
             <RiskDisclaimer />
             <TableOfContents />
 
+            {/* Bitmedia: Article inline slot #1 */}
+            <div className="w-full flex justify-center my-6 min-h-[250px]">
+              <BitmediaAd unitId={BITMEDIA_UNITS.ART_INLINE_1} />
+            </div>
+
             <div
               className="prose lg:prose-lg post-body max-w-none"
               dangerouslySetInnerHTML={{
                 __html: post.content || post.body || "",
               }}
             />
+
+            {/* Bitmedia: Article inline slot #2 */}
+            <div className="w-full flex justify-center my-6 min-h-[250px]">
+              <BitmediaAd unitId={BITMEDIA_UNITS.ART_INLINE_2} />
+            </div>
 
             {related && related.length > 0 && (
               <div className="mt-10 border-t pt-6">
@@ -244,6 +256,11 @@ export default function InsuranceTaxPost({
 
           {/* Sidebar (không còn Trading Signals, chỉ Latest) */}
           <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
+            {/* Bitmedia: Sidebar slot #1 */}
+            <div className="w-full flex justify-center min-h-[250px]">
+              <BitmediaAd unitId={BITMEDIA_UNITS.SIDEBAR_1} />
+            </div>
+
             <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
               <div className="px-4 py-3 border-b dark:border-gray-700">
                 <h3 className="text-sm font-semibold">Latest on FinNews247</h3>
@@ -262,6 +279,11 @@ export default function InsuranceTaxPost({
                 )}
               </ul>
             </section>
+
+            {/* Bitmedia: Sidebar slot #2 */}
+            <div className="w-full flex justify-center min-h-[250px]">
+              <BitmediaAd unitId={BITMEDIA_UNITS.SIDEBAR_2} />
+            </div>
           </aside>
         </div>
       </div>

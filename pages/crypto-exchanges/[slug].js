@@ -7,6 +7,8 @@ import ArticleHero from "../../components/ArticleHero";
 // Import risk disclaimer and table of contents for Mediavine compliance
 import RiskDisclaimer from "../../components/RiskDisclaimer";
 import TableOfContents from "../../components/TableOfContents";
+import BitmediaAd from "../../components/BitmediaAd";
+import { BITMEDIA_UNITS } from "../../components/bitmediaUnits";
 
 /* ===== Helpers (đồng bộ mẫu Altcoin) ===== */
 const stripHtml = (html = "") =>
@@ -185,12 +187,22 @@ export default function ExchangesPostPage({ post, related = [], latest = [], sig
             <RiskDisclaimer />
             <TableOfContents />
 
+            {/* Bitmedia: Article inline slot #1 */}
+            <div className="w-full flex justify-center my-6 min-h-[250px]">
+              <BitmediaAd unitId={BITMEDIA_UNITS.ART_INLINE_1} />
+            </div>
+
 
             {/* Content */}
             <div
               className="prose lg:prose-lg post-body"
               dangerouslySetInnerHTML={{ __html: post.content || post.body || "" }}
             />
+
+            {/* Bitmedia: Article inline slot #2 */}
+            <div className="w-full flex justify-center my-6 min-h-[250px]">
+              <BitmediaAd unitId={BITMEDIA_UNITS.ART_INLINE_2} />
+            </div>
 
 
             {/* More from Exchanges */}
@@ -229,6 +241,11 @@ export default function ExchangesPostPage({ post, related = [], latest = [], sig
 
           {/* SIDEBAR */}
           <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
+            {/* Bitmedia: Sidebar slot #1 */}
+            <div className="w-full flex justify-center min-h-[250px]">
+              <BitmediaAd unitId={BITMEDIA_UNITS.SIDEBAR_1} />
+            </div>
+
             <TradingSignalsCompact items={signalsLatest} />
 
             <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
@@ -247,6 +264,11 @@ export default function ExchangesPostPage({ post, related = [], latest = [], sig
                 )}
               </ul>
             </section>
+
+            {/* Bitmedia: Sidebar slot #2 */}
+            <div className="w-full flex justify-center min-h-[250px]">
+              <BitmediaAd unitId={BITMEDIA_UNITS.SIDEBAR_2} />
+            </div>
           </aside>
         </div>
       </div>

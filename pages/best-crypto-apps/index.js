@@ -2,6 +2,8 @@
 import { NextSeo } from "next-seo";
 import PostCard from "../../components/PostCard";
 
+import BitmediaAd from "../../components/BitmediaAd";
+import { BITMEDIA_UNITS } from "../../components/bitmediaUnits";
 /* ===== Helpers ===== */
 const stripHtml = (h = "") =>
   String(h)
@@ -154,6 +156,15 @@ export default function AppsIndex({
             ))}
           </div>
 
+          {/* Bitmedia FEED (index pages) */}
+
+          <div className="w-full flex justify-center my-6">
+
+            <BitmediaAd unitId={BITMEDIA_UNITS.HOME_FEED_1} minHeight={250} />
+
+          </div>
+
+
           {totalPages > 1 && (
             /*
              * Allow pagination links to wrap on small screens.  Without
@@ -189,7 +200,13 @@ export default function AppsIndex({
 
         {/* SIDEBAR */}
         <aside className="md:col-span-3 w-full sticky top-24 self-start space-y-6 sidebar-scope">
-          <TradingSignalsCompact items={signalsLatest} />
+          
+          {/* Bitmedia SIDEBAR #1 */}
+          <div className="w-full flex justify-center">
+            <BitmediaAd unitId={BITMEDIA_UNITS.SIDEBAR_1} minHeight={250} />
+          </div>
+
+<TradingSignalsCompact items={signalsLatest} />
           <section className="rounded-xl border bg-white dark:bg-gray-900 overflow-hidden">
             <div className="px-4 py-3 border-b dark:border-gray-700">
               <h3 className="text-sm font-semibold">Latest on FinNews247</h3>
@@ -202,6 +219,11 @@ export default function AppsIndex({
               ))}
             </ul>
           </section>
+          {/* Bitmedia SIDEBAR #2 */}
+          <div className="w-full flex justify-center">
+            <BitmediaAd unitId={BITMEDIA_UNITS.SIDEBAR_2} minHeight={250} />
+          </div>
+
         </aside>
       </div>
 

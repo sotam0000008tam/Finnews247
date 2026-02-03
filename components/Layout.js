@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 import Header from "./Header";
 import Footer from "./Footer";
 import CryptoTicker from "./CryptoTicker";
+import BitmediaAd from "./BitmediaAd";
+import { BITMEDIA_UNITS } from "./bitmediaUnits";
 
 export default function Layout({ children, title }) {
   const router = useRouter();
@@ -48,6 +50,11 @@ export default function Layout({ children, title }) {
           and avoids the need for spacer elements to offset subsequent content. */}
       <div className="w-full">
         <CryptoTicker />
+      </div>
+
+      {/* Bitmedia: Top / header slot */}
+      <div className="w-full flex justify-center my-3 min-h-[50px] md:min-h-[90px]">
+        <BitmediaAd unitId={BITMEDIA_UNITS.TOP} />
       </div>
       {/* Since the ticker is no longer fixed, we do not need an invisible spacer to
           offset subsequent content. */}

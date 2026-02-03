@@ -5,6 +5,8 @@ import Link from "next/link";
 import PostCard from "../../components/PostCard";
 import { NextSeo } from "next-seo";
 
+import BitmediaAd from "../../components/BitmediaAd";
+import { BITMEDIA_UNITS } from "../../components/bitmediaUnits";
 export default function Crypto({ posts, totalPages, currentPage }) {
   const isFirst = currentPage === 1;
   const pageSuffix = isFirst ? "" : ` – Page ${currentPage}`;
@@ -40,6 +42,15 @@ export default function Crypto({ posts, totalPages, currentPage }) {
             <PostCard key={p.slug} post={p} />
           ))}
         </div>
+
+        {/* Bitmedia FEED (index pages) */}
+
+        <div className="w-full flex justify-center my-6">
+
+          <BitmediaAd unitId={BITMEDIA_UNITS.HOME_FEED_1} minHeight={250} />
+
+        </div>
+
 
         {totalPages > 1 && (
           <div className="mt-6 flex justify-center space-x-2">
